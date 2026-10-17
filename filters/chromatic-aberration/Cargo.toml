@@ -1,0 +1,16 @@
+[package]
+name = "moxocraft-chromatic-aberration"
+description = "Chromatic Aberration: a PhotoCraft filter plug-in by MoxoCraft"
+version.workspace = true
+edition.workspace = true
+publish = false
+
+[lib]
+# cdylib is the .wasm PhotoCraft loads; rlib lets the tests and the preview example call it natively.
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+moxocraft-sdk.workspace = true
+
+[dev-dependencies]
+png = "0.17"

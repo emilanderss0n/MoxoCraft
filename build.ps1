@@ -1,0 +1,18 @@
+# Builds every MoxoCraft filter as a PhotoCraft plug-in and copies the .wasm files into dist/.
+#
+#   ./build.ps1
+#
+# Then in PhotoCraft: Filter > Plug-ins > Install Plug-in... and pick a file from dist/, or point
+# Edit > Preferences > Plug-ins > Additional Plug-ins Folder at dist/.
+$ErrorActionPreference = 'Stop'
+Set-Location $PSScriptRoot
+
+rustup target add wasm32-unknown-unknown | Out-Null
+cargo build --release --target wasm32-unknown-unknown --workspace --exclude moxocraft-sdk --exclude moxocraft-bench
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+New-Item -ItemType Directory -Force dist | Out-Null
+Get-ChildItem target/wasm32-unknown-unknown/release/moxocraft_*.wasm | ForEach-Object {
+    Copy-Item $_.FullName dist/ -Force
+    Write-Host ("dist/{0}  ({1:N0} KB)" -f $_.Name, ($_.Length / 1KB))
+}

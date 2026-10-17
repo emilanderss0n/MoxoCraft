@@ -1,0 +1,11 @@
+[package]
+name = "moxocraft-bench"
+description = "Measures a built plug-in in the same WebAssembly interpreter PhotoCraft uses"
+version.workspace = true
+edition.workspace = true
+publish = false
+
+[dependencies]
+moxocraft-sdk.workspace = true
+# Same version and features as PhotoCraft's plug-in host (crates/plugins/Cargo.toml).
+wasmi = { version = "2.0.0", default-features = false, features = ["std", "validate", "stable", "portable-dispatch"] }

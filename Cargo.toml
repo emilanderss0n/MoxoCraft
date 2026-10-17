@@ -1,0 +1,19 @@
+[workspace]
+resolver = "3"
+members = ["crates/moxocraft-sdk", "filters/chromatic-aberration", "tools/bench"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+
+[workspace.dependencies]
+moxocraft-sdk = { path = "crates/moxocraft-sdk" }
+
+# Plug-ins run inside PhotoCraft's WebAssembly interpreter, where every instruction counts, so we
+# optimise for speed rather than file size (the host allows modules up to 32 MiB).
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true

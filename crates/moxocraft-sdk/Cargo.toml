@@ -1,0 +1,8 @@
+[package]
+name = "moxocraft-sdk"
+description = "Shared plumbing for MoxoCraft's PhotoCraft filter plug-ins (plug-in ABI v1)"
+version.workspace = true
+edition.workspace = true
+publish = false
+
+[dependencies]
