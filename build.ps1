@@ -14,5 +14,5 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 New-Item -ItemType Directory -Force dist | Out-Null
 Get-ChildItem target/wasm32-unknown-unknown/release/moxocraft_*.wasm | ForEach-Object {
     Copy-Item $_.FullName dist/ -Force
-    Write-Host ("dist/{0}  ({1:N0} KB)" -f $_.Name, ($_.Length / 1KB))
+    Write-Host ("dist/{0}  ({1} KB)" -f $_.Name, [math]::Round($_.Length / 1KB))
 }

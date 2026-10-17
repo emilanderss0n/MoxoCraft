@@ -1,12 +1,14 @@
 # MoxoCraft
 
 Filters for [PhotoCraft](https://github.com/storytold/photocraft), the open-source Rust image
-editor. Each filter is a PhotoCraft plug-in: a small sandboxed WebAssembly file that works the same
-on Windows, macOS, Linux and PhotoCraft's web version.
+editor. Each filter is a PhotoCraft plug-in: a sandboxed WebAssembly file that works the same on
+Windows, macOS, Linux and PhotoCraft's web version. They all appear under **Filter › Plug-ins**
+with names starting "MoxoCraft -", each with PhotoCraft's settings dialog and live preview;
+nothing changes in the document until you press OK.
 
 ## Filters
 
-### Chromatic Aberration
+### MoxoCraft - Chromatic Aberration
 
 Splits red, green and blue apart the way a real lens does, from a subtle lens-edge fringe to a
 full rainbow smear or a hard RGB-split glitch.
@@ -34,6 +36,36 @@ Notes:
   4 threads. Very large images with very long smears automatically use fewer samples, to stay well
   inside PhotoCraft's 60-second limit for a plug-in run.
 
+### MoxoCraft - LUT
+
+Gives the image the colour and contrast of a film stock or grade, from the LUTs in [`luts/`](luts).
+
+| Setting | What it does |
+|---|---|
+| **LUT** | Which look to apply. The list is every `.cube` file in `luts/` when the plug-in was built. |
+| **Intensity** | How strongly it applies, from 0 (original) to 100 (the full look). |
+
+Notes:
+
+- Works on RGB documents at 8, 16 and 32 bits. Alpha is left alone. 32-bit documents (linear
+  light) are converted to sRGB for the lookup and back, and brighter-than-white values keep their
+  extra brightness.
+- Colours are looked up with tetrahedral interpolation, as grading software does.
+- About 2 s for a 24-megapixel photo on a 16-thread machine, 7 s on 4 threads.
+
+**Adding LUTs.** Drop a 3D `.cube` file into `luts/` and run `./build.ps1`; it appears in the list
+under its file name (underscores shown as spaces). LUTs are built into the plug-in because
+PhotoCraft gives plug-ins no file access, and they must fit PhotoCraft's 32 MB plug-in limit:
+about 18 LUTs of 65 points, or many more of 33.
+
+**LUTs made inside DaVinci Resolve.** Some LUTs, like the FUJIFILM and KODAK 2383 ones here, work
+inside Resolve's *DaVinci Wide Gamut / DaVinci Intermediate* colour space rather than on normal
+images. Applied directly to a photo, they come out milky and break saturated colours into flat
+blocks. List those in [`luts/davinci-intermediate.txt`](luts/davinci-intermediate.txt): the build
+then bakes the conversion into that space and back into the LUT, so it works on normal photos at
+full speed. LUTs with "Rec709" in the name are usually made for normal images and don't belong in
+that list.
+
 ## Install in PhotoCraft
 
 ```powershell
@@ -42,16 +74,17 @@ Notes:
 
 That builds every filter into `dist/`. Then, in PhotoCraft, either:
 
-- **Filter › Plug-ins › Install Plug-in…** and pick `dist/moxocraft_chromatic_aberration.wasm`, or
+- **Filter › Plug-ins › Install Plug-in…** and pick each `.wasm` in `dist/`, or
 - **Edit › Preferences › Plug-ins**: turn on *Use Additional Plug-ins Folder* and point it at
   `dist/`. Every filter there loads at startup.
 
-The filter then appears under **Filter › Plug-ins** with a settings dialog and live preview.
+The filters then appear under **Filter › Plug-ins** with a settings dialog and live preview.
 
 From the command line (handy for batch work):
 
 ```bash
 photocraft-cli run photo.jpg --cmd plugin.install --params '{"path":"dist/moxocraft_chromatic_aberration.wasm"}' --cmd plugin.run --params '{"id":"moxocraft.chromatic-aberration","params":{"amount":20,"fringe":"Spectral"}}' --out photo-ca.jpg
+photocraft-cli run photo.jpg --cmd plugin.install --params '{"path":"dist/moxocraft_lut.wasm"}' --cmd plugin.run --params '{"id":"moxocraft.lut","params":{"lut":"KODAK 2383 D65","intensity":80}}' --out photo-graded.jpg
 ```
 
 ## Project layout
@@ -59,15 +92,17 @@ photocraft-cli run photo.jpg --cmd plugin.install --params '{"path":"dist/moxocr
 ```text
 crates/moxocraft-sdk/          shared plug-in plumbing: the PhotoCraft exports, settings JSON,
                                and a stand-in for PhotoCraft (`host`) for tests and previews
-filters/chromatic-aberration/  the Chromatic Aberration filter
+filters/chromatic-aberration/  MoxoCraft - Chromatic Aberration
+filters/lut/                   MoxoCraft - LUT (build.rs bakes in the LUTs from luts/)
+luts/                          the .cube files, and davinci-intermediate.txt
 tools/bench/                   runs a built .wasm in the interpreter PhotoCraft uses and reports
                                the cost per pixel and the expected time for a whole image
 build.ps1                      builds every filter into dist/
 ```
 
-To add a filter, copy `filters/chromatic-aberration`, give it a new manifest `id`, implement
-`moxocraft_sdk::Filter`, call `export_filter!`, and add it to the workspace members in
-`Cargo.toml`.
+To add a filter, copy `filters/chromatic-aberration`, give it a new manifest `id` and a name
+starting "MoxoCraft - ", implement `moxocraft_sdk::Filter`, call `export_filter!`, and add it to
+the workspace members in `Cargo.toml`.
 
 ## Development
 
@@ -86,6 +121,13 @@ cargo run --release -p moxocraft-chromatic-aberration --example preview
 
 Renders a test scene and several looks into `target/preview/` (add `out-dir width height` to
 change the folder or size). These match PhotoCraft's own output to within one level in 255.
+
+```bash
+cargo run --release -p moxocraft-lut --example lut_preview -- photo.png
+```
+
+Renders every LUT on a PNG of your own (or a test card, without one) into `target/preview-lut/`.
+These match PhotoCraft's output exactly.
 
 ```bash
 cargo run --release -p moxocraft-bench -- dist/moxocraft_chromatic_aberration.wasm "{\"amount\":28}"

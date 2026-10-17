@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["crates/moxocraft-sdk", "filters/chromatic-aberration", "tools/bench"]
+members = ["crates/moxocraft-sdk", "filters/chromatic-aberration", "filters/lut", "tools/bench"]
 
 [workspace.package]
 version = "0.1.0"

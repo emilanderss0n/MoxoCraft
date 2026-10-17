@@ -34,7 +34,7 @@ use moxocraft_sdk::{Error, Filter, Geometry, Image, Params, export_filter, try_v
 /// also the furthest any colour can move, so displacements are capped to it.
 pub const MANIFEST: &str = r#"{
   "id": "moxocraft.chromatic-aberration",
-  "name": "Chromatic Aberration",
+  "name": "MoxoCraft - Chromatic Aberration",
   "version": "0.1.0",
   "kind": "filter",
   "author": "MoxoCraft",

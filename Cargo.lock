@@ -135,6 +135,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "moxocraft-lut"
+version = "0.1.0"
+dependencies = [
+ "moxocraft-sdk",
+ "png",
+]
+
+[[package]]
 name = "moxocraft-sdk"
 version = "0.1.0"
 
