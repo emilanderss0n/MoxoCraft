@@ -8,6 +8,26 @@ fn run(pixels: &[f32], w: usize, h: usize, format: Format, params: &str) -> Resu
     host::apply::<ChromaticAberration>(pixels, w, h, format, params, Bands::PHOTOCRAFT)
 }
 
+/// One band, margins included, straight through the plug-in's entry point. Unlike `run`, nothing
+/// tidies up the result afterwards, so every returned sample can be compared bit for bit.
+fn run_band(pixels: &[f32], w: usize, h: usize, format: Format, params: &str) -> Vec<f32> {
+    let Some(Json::Object(fields)) = Json::parse(params) else { panic!("{params} isn't a JSON object") };
+    let ov = host::manifest_overlap(MANIFEST);
+    let text = host::band_params(&fields, (-(ov as i64), -(ov as i64)), (w, h), ov, (w - 2 * ov, h - 2 * ov), format);
+    let mut data = pixels.to_vec();
+    assert_eq!(moxocraft_sdk::abi::run::<ChromaticAberration>(&mut data, w, h, format.channels(), format.code(), text.as_bytes()), 0, "{params}");
+    data
+}
+
+fn bits(v: &[f32]) -> Vec<u32> {
+    v.iter().map(|x| x.to_bits()).collect()
+}
+
+/// RGB with and without alpha, at 8, 16 and 32 bits.
+fn every_rgb_format() -> [Format; 6] {
+    [8, 16, 32].map(|depth| [false, true].map(|alpha| Format { depth, alpha, mode: ColorMode::Rgb })).concat().try_into().unwrap()
+}
+
 /// An RGB image: black with one white vertical line at column `x`.
 fn line(w: usize, h: usize, x: usize) -> Vec<f32> {
     let mut px = vec![0.0; w * h * 3];
@@ -108,7 +128,12 @@ fn each_colour_weighs_exactly_one_for_every_setting() {
 fn flat_colour_is_left_alone() {
     let (w, h) = (300, 300);
     let px: Vec<f32> = (0..w * h).flat_map(|_| [0.8, 0.4, 0.1]).collect();
-    for params in [r#"{}"#, r#"{"mode":"Directional","amount":-40,"angle":33,"fringe":"RGB Split","softness":0}"#, r#"{"amount":128,"softness":100}"#] {
+    for params in [
+        r#"{}"#,
+        r#"{"mode":"Directional","amount":-40,"angle":33,"fringe":"RGB Split","softness":0}"#,
+        r#"{"amount":128,"softness":100}"#,
+        r#"{"amount":30,"strength":50}"#,
+    ] {
         let out = run(&px, w, h, Format::RGB8, params).unwrap();
         assert!(max_diff(&px, &out) < 1e-5, "{params}");
     }
@@ -118,6 +143,58 @@ fn flat_colour_is_left_alone() {
 fn zero_amount_changes_nothing() {
     let px = scene(200, 150, 3);
     assert_eq!(run(&px, 200, 150, Format::RGB8, r#"{"amount":0}"#).unwrap(), px);
+}
+
+#[test]
+fn zero_strength_returns_every_sample_untouched() {
+    let (w, h) = (300, 280);
+    for format in every_rgb_format() {
+        let mut px = scene(w, h, format.channels());
+        // Values a normal document never holds, in colour and alpha alike: they must come back
+        // exactly as they went in, down to the sign of zero.
+        let odd = [f32::NAN, f32::INFINITY, f32::NEG_INFINITY, 1e20, -3.0, 40.0, -0.0, 1e-40];
+        for i in 0..px.len() / 997 {
+            px[i * 997] = odd[i % odd.len()];
+        }
+        for params in [
+            r#"{"strength":0}"#,
+            r#"{"strength":0,"mode":"Directional","fringe":"RGB Split","amount":-30,"softness":0}"#,
+            r#"{"strength":0,"amount":128,"softness":100,"clearCenter":0}"#,
+        ] {
+            assert_eq!(bits(&run_band(&px, w, h, format, params)), bits(&px), "{format:?} {params}");
+            // At full strength the same settings do change the band, so the check above is real.
+            let full = params.replace(r#""strength":0"#, r#""strength":100"#);
+            assert_ne!(bits(&run_band(&px, w, h, format, &full)), bits(&px), "{format:?} {full}");
+        }
+    }
+}
+
+#[test]
+fn full_strength_is_the_effect_as_it_was() {
+    let (w, h) = (300, 280);
+    for format in every_rgb_format() {
+        let px = scene(w, h, format.channels());
+        for (without, with) in [
+            (r#"{}"#, r#"{"strength":100}"#),
+            (r#"{"mode":"Directional","fringe":"RGB Split","softness":0}"#, r#"{"mode":"Directional","fringe":"RGB Split","softness":0,"strength":100}"#),
+        ] {
+            assert_eq!(bits(&run_band(&px, w, h, format, with)), bits(&run_band(&px, w, h, format, without)), "{format:?} {with}");
+        }
+    }
+}
+
+#[test]
+fn strength_mixes_the_effect_into_the_original_in_linear_light() {
+    let (w, h) = (256, 192);
+    let px = scene(w, h, 3);
+    let full = run(&px, w, h, Format::RGB8, r#"{"amount":20,"softness":40}"#).unwrap();
+    for strength in [1.0f32, 25.0, 50.0, 90.0, 99.9] {
+        let out = run(&px, w, h, Format::RGB8, &format!(r#"{{"amount":20,"softness":40,"strength":{strength}}}"#)).unwrap();
+        // 8-bit pixels are mixed as gamma 2: squared on the way in, square-rooted on the way out.
+        let s = strength / 100.0;
+        let worst = (0..px.len()).fold(0.0f32, |m, i| m.max((out[i] - (s * full[i] * full[i] + (1.0 - s) * px[i] * px[i]).sqrt()).abs()));
+        assert!(worst < 1e-4, "strength {strength}: off by {worst}");
+    }
 }
 
 #[test]
@@ -172,7 +249,11 @@ fn bands_join_without_seams() {
     let (w, h) = (333, 277);
     for (format, channels) in [(Format::RGB8, 3), (Format::RGBA8, 4)] {
         let px = scene(w, h, channels);
-        for params in [r#"{"amount":40,"softness":50}"#, r#"{"mode":"Directional","amount":-25,"angle":135,"fringe":"Green/Magenta"}"#] {
+        for params in [
+            r#"{"amount":40,"softness":50}"#,
+            r#"{"mode":"Directional","amount":-25,"angle":135,"fringe":"Green/Magenta"}"#,
+            r#"{"amount":30,"softness":20,"strength":40}"#,
+        ] {
             let whole = host::apply::<ChromaticAberration>(&px, w, h, format, params, Bands::WHOLE).unwrap();
             let banded = host::apply::<ChromaticAberration>(&px, w, h, format, params, Bands { width: 64, height: 48 }).unwrap();
             // Positions are worked out from each band's own corner, so float rounding differs a
@@ -225,6 +306,28 @@ fn shapes_on_transparent_layers_get_coloured_fringes_not_dark_halos() {
 }
 
 #[test]
+fn strength_fades_fringes_on_transparent_layers_without_dark_halos() {
+    // The same white square as above, at half strength.
+    let (w, h) = (40, 40);
+    let mut px = vec![0.0; w * h * 4];
+    for y in 10..30 {
+        for x in 10..30 {
+            px[(y * w + x) * 4..(y * w + x) * 4 + 4].fill(1.0);
+        }
+    }
+    let out = run(&px, w, h, Format::RGBA8, r#"{"mode":"Directional","fringe":"RGB Split","amount":2,"softness":0,"strength":50}"#).unwrap();
+    let p = |x: usize, y: usize| &out[(y * w + x) * 4..(y * w + x) * 4 + 4];
+    let near = |a: &[f32], b: [f32; 4]| a.iter().zip(b).all(|(x, y)| (x - y).abs() < 1e-5);
+    // Left of the square the red copy arrives half as strongly: half as opaque, still pure red.
+    assert!(near(p(9, 20), [1.0, 0.0, 0.0, 0.5]), "{:?}", p(9, 20));
+    // On its left edge, blue has moved away: at full strength the pixel is yellow, at half it
+    // keeps half its blue light (the square root of 0.5 in gamma 2) and stays opaque.
+    assert!(near(p(10, 20), [1.0, 1.0, 0.5f32.sqrt(), 1.0]), "{:?}", p(10, 20));
+    assert!(p(20, 20).iter().all(|&v| v > 0.999));
+    assert_eq!(p(2, 2)[3], 0.0);
+}
+
+#[test]
 fn float_documents_stay_linear_and_keep_bright_values() {
     let (w, h) = (64, 8);
     let mut px = line(w, h, 30);
@@ -262,6 +365,9 @@ fn odd_settings_never_crash() {
         r#"{"amount":1e30,"falloff":-1,"clearCenter":1000,"centerX":-50,"centerY":1e9}"#,
         r#"{"amount":-128,"softness":100,"clearCenter":100,"falloff":4}"#,
         r#"{"fringe":"Nope","mode":"Sideways"}"#,
+        r#"{"strength":"half","amount":40}"#,
+        r#"{"strength":-5,"amount":40}"#,
+        r#"{"strength":1e30,"amount":40,"softness":0}"#,
     ] {
         let out = run(&px, w, h, Format::RGBA8, params).unwrap();
         assert!(out.iter().all(|v| v.is_finite()), "{params}");

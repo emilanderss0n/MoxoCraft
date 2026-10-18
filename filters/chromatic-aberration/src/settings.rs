@@ -62,6 +62,8 @@ pub(crate) struct Settings {
     pub amount: f32,
     /// 0–1.
     pub softness: f32,
+    /// How much of the effect is mixed over the original picture, 0–1.
+    pub strength: f32,
     /// Fraction of the centre-to-corner distance left untouched in Lens mode, 0–1.
     pub clear_center: f32,
     /// How quickly the effect builds from the clear centre to the corners: 1 is even, higher
@@ -80,6 +82,7 @@ impl Default for Settings {
             fringe: Fringe::Spectral,
             amount: 12.0,
             softness: 0.3,
+            strength: 1.0,
             clear_center: 0.25,
             falloff: 1.5,
             center: [0.5, 0.5],
@@ -98,6 +101,7 @@ impl Settings {
             fringe: p.text("fringe").and_then(Fringe::from_name).unwrap_or(d.fringe),
             amount: num("amount", d.amount, -128.0, 128.0),
             softness: num("softness", d.softness * 100.0, 0.0, 100.0) / 100.0,
+            strength: num("strength", d.strength * 100.0, 0.0, 100.0) / 100.0,
             clear_center: num("clearCenter", d.clear_center * 100.0, 0.0, 100.0) / 100.0,
             falloff: num("falloff", d.falloff, 0.25, 4.0),
             center: [num("centerX", 50.0, 0.0, 100.0) / 100.0, num("centerY", 50.0, 0.0, 100.0) / 100.0],

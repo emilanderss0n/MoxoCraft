@@ -17,6 +17,7 @@ use moxocraft_sdk::host::{self, Bands};
 const PRESETS: &[(&str, &str)] = &[
     ("lens-spectral", r#"{}"#),
     ("lens-strong", r#"{"amount":28,"softness":45,"clearCenter":15,"falloff":1.2}"#),
+    ("lens-strong-faded", r#"{"amount":28,"softness":45,"clearCenter":15,"falloff":1.2,"strength":40}"#),
     ("lens-red-cyan", r#"{"fringe":"Red/Cyan","amount":16,"softness":20}"#),
     ("lens-purple", r#"{"fringe":"Green/Magenta","amount":-10,"softness":35}"#),
     ("rgb-split", r#"{"mode":"Directional","fringe":"RGB Split","amount":10,"softness":0}"#),

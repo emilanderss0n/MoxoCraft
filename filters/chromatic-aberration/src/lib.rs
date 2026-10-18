@@ -14,6 +14,8 @@
 //! 3. Mix in linear light (8- and 16-bit pixels are roughly gamma 2, so we square them first and
 //!    take the square root at the end). Fringes on bright highlights then glow the way real ones
 //!    do instead of turning muddy (`render.rs`).
+//! 4. Below full Strength, mix the pixel's own value back in, in the same linear light. Strength
+//!    fades the fringes without moving them; at 0 the band is left exactly as it came.
 //!
 //! PhotoCraft runs plug-ins in an interpreter (roughly 100× slower than native code) and stops a
 //! run after 60 seconds, so the tap count is budgeted per image and the pixel loops are written to
@@ -49,12 +51,13 @@ pub const MANIFEST: &str = concat!(
     r#"",
   "kind": "filter",
   "author": "MoxoCraft",
-  "description": "Splits red, green and blue apart like a real lens. Lens pushes colours outward from a centre point, strongest at the corners; Directional shifts them one way. Amount is the shift in pixels (at the corners in Lens mode); negative values swap the fringe colours. Softness and Spectral blend the colours into smooth rainbow fringes. Very large amounts are capped at what PhotoCraft lets a plug-in read around each pixel: about 65 to 125 px, less with more softness.",
+  "description": "Splits red, green and blue apart like a real lens. Lens pushes colours outward from a centre point, strongest at the corners; Directional shifts them one way. Amount is the shift in pixels (at the corners in Lens mode); negative values swap the fringe colours. Softness and Spectral blend the colours into smooth rainbow fringes. Strength fades the whole effect over your original without changing how far the colours move. Clear Center, Falloff and Center X/Y only affect Lens mode; Angle only affects Directional mode. Very large amounts are capped at what PhotoCraft lets a plug-in read around each pixel: about 65 to 125 px, less with more softness.",
   "params": {
     "mode": {"type": "choice", "options": ["Lens", "Directional"], "default": "Lens"},
     "fringe": {"type": "choice", "options": ["Spectral", "RGB Split", "Red/Cyan", "Green/Magenta", "Blue/Yellow"], "default": "Spectral"},
     "amount": {"type": "number", "min": -128, "max": 128, "default": 12},
     "softness": {"type": "number", "min": 0, "max": 100, "default": 30},
+    "strength": {"type": "number", "min": 0, "max": 100, "default": 100},
     "clearCenter": {"type": "number", "min": 0, "max": 100, "default": 25},
     "falloff": {"type": "number", "min": 0.25, "max": 4, "default": 1.5},
     "centerX": {"type": "number", "min": 0, "max": 100, "default": 50},

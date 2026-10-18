@@ -39,25 +39,88 @@ the "MoxoCraft - LUT" filter from version 0.1.0.)
 Real lenses bend red, green and blue light by slightly different amounts, which leaves coloured
 fringes along high-contrast edges. This filter recreates that, from barely there to bold.
 
-| Setting | What it does |
-|---|---|
-| **Mode** | *Lens*: colours spread outward from a centre point, strongest towards the corners, like a real lens. *Directional*: colours shift the same way across the whole image. |
-| **Fringe** | Which colours separate. *Spectral* gives a smooth rainbow, *RGB Split* sends red and blue opposite ways, and *Red/Cyan*, *Green/Magenta* (purple fringing) and *Blue/Yellow* give two-colour fringes. |
-| **Amount** | How far the colours move, in pixels (at the corners, in Lens mode). Negative values swap which colour lands on which side. |
-| **Softness** | 0 gives crisp separate copies of each colour; higher values blend them into smooth gradients. |
-| **Clear Center** | Lens mode: how much of the middle stays untouched. |
-| **Falloff** | Lens mode: how quickly the effect builds towards the edges. 1 is even; higher keeps it near the corners, lower spreads it inward. |
-| **Center X / Y** | Lens mode: where the lens centre sits, as a percentage of the image width and height. |
-| **Angle** | Directional mode: the direction of the shift in degrees, counter-clockwise from pointing right. |
+The dialog always shows every setting, whichever **Mode** you pick. **Clear Center**,
+**Falloff** and **Center X / Y** only do anything in *Lens* mode, and **Angle** only in
+*Directional* mode; the other mode ignores them.
+
+| Setting | Mode | What it does |
+|---|---|---|
+| **Mode** | Both | *Lens*: colours spread outward from a centre point, strongest towards the corners, like a real lens. *Directional*: colours shift the same way across the whole image. |
+| **Fringe** | Both | Which colours separate. *Spectral* gives a smooth rainbow, *RGB Split* sends red and blue opposite ways, and *Red/Cyan*, *Green/Magenta* (purple fringing) and *Blue/Yellow* give two-colour fringes. |
+| **Amount** | Both | How far the colours move, in pixels (at the corners, in Lens mode). Negative values swap which colour lands on which side. |
+| **Softness** | Both | 0 gives crisp separate copies of each colour; higher values blend them into smooth gradients. |
+| **Strength** | Both | How strongly the effect shows over your original, from 0 (unchanged) to 100 (the full effect). It fades the fringes without moving them. |
+| **Clear Center** | Lens | How much of the middle stays untouched. |
+| **Falloff** | Lens | How quickly the effect builds towards the edges. 1 is even; higher keeps it near the corners, lower spreads it inward. |
+| **Center X / Y** | Lens | Where the lens centre sits, as a percentage of the image width and height. |
+| **Angle** | Directional | The direction of the shift in degrees, counter-clockwise from pointing right. |
 
 Tips:
 
 - For a natural lens look, keep **Mode** on *Lens* with a small **Amount** (try 3–10 px on a
   24-megapixel photo).
+- If the fringes are the right shape but too strong, lower **Strength** rather than **Amount**.
+  Amount changes how far the colours move, so lowering it narrows the fringes as well as
+  fading them. Strength only fades them.
+- Strength isn't quite the same as putting the effect on a duplicate layer and lowering its
+  opacity. It blends light the way a lens does, rather than the values you see on screen. At 50%,
+  bright fringes against a dark background stay a little stronger, and dark fringes against a
+  bright sky fade a little more, than they would on a layer at 50% opacity.
 - For a glitch look, use *Directional*, *RGB Split* and **Softness** 0.
 - The effect shows most on bright edges against dark backgrounds. Fringes around highlights glow
   rather than turning muddy.
 - The largest possible shift is about 65–125 px, depending on Softness.
+
+### Recipes
+
+Four starting points. Settings not listed stay at their defaults. The amounts are for a photo
+about 6000 px wide (24 megapixels). Amount is measured in pixels, so for other sizes scale it with
+the width: half as much on a photo 3000 px wide, for example. Each picture is a 400 px crop near a
+corner at 100%, before on the left and after on the right.
+
+**Subtle Lens**: *Lens*, *Red/Cyan*, **Amount** 4, **Softness** 30, **Clear Center** 10,
+**Falloff** 1.
+
+Thin red and cyan edges like a real lens leaves towards the corners, without softening much
+detail. Best on sharp, high-contrast subjects: architecture, window frames, branches. At
+fit-to-screen size you'll hardly see it, which is the point.
+
+![Subtle Lens before and after: a steel roof with thin red and cyan edges](docs/images/chromatic-aberration/subtle-lens.jpg)
+
+**Purple Fringing**: *Lens*, *Green/Magenta*, **Amount** -4, **Softness** 50,
+**Clear Center** 10, **Falloff** 1, **Strength** 60.
+
+The purple outline cheaper lenses leave on dark edges against a bright sky. Best on backlit
+scenes: branches, wires, window frames or silhouettes against the sky. Green/Magenta also leaves
+a green edge on the other side of each line. Strength 60 fades that green more than the purple:
+on the example photo, the purple came out about 30% stronger than the green, where at Strength
+100 they are about even.
+
+![Purple Fringing before and after: bare branches against a white sky with purple edges](docs/images/chromatic-aberration/purple-fringing.jpg)
+
+**Dreamy Spectral**: *Lens*, *Spectral*, **Amount** 30, **Softness** 80, **Clear Center** 30,
+**Falloff** 1.2.
+
+Soft rainbow glows that grow towards the edges while the middle stays sharp. Best on soft,
+backlit or night photos with bright highlights: sun on water, out-of-focus lights, a portrait
+with the subject in the middle. It smears fine detail near the edges, so it doesn't suit sharp
+architecture.
+
+![Dreamy Spectral before and after: out-of-focus sun reflections with blue and orange glows](docs/images/chromatic-aberration/dreamy-spectral.jpg)
+
+**RGB Glitch**: *Directional*, *RGB Split*, **Amount** 12, **Softness** 0.
+
+Hard red, green and blue copies shifted sideways across the whole picture. Best on bold, graphic
+images: architecture, neon and night scenes, posters. Raise **Amount** to 20–30 for a bigger
+split, or change **Angle** to shift the copies another way.
+
+![RGB Glitch before and after: a steel roof split into red, green and blue copies](docs/images/chromatic-aberration/rgb-glitch.jpg)
+
+The example photos are public domain (CC0), from Wikimedia Commons:
+[steel roof](https://commons.wikimedia.org/wiki/File:King_cross_roof_architecture_%28Unsplash%29.jpg),
+[bare branches](https://commons.wikimedia.org/wiki/File:Bare_branches_against_a_white_sky,_Quebec_City.jpg)
+and [surfer and sea](https://commons.wikimedia.org/wiki/File:Surfer_and_sea_reflecting_the_sun_%28Unsplash%29.jpg).
+They were resized to 6000 px wide before applying the filter.
 
 ## LUT filters
 
@@ -116,6 +179,7 @@ Tips:
   Other colour modes (Grayscale, CMYK, Lab) show an error instead.
 - On a 24-megapixel photo, Chromatic Aberration takes roughly 10–15 seconds on a fast 16-thread
   computer and up to about 35 seconds on a 4-core one; the LUT filters take 1–4 seconds.
+  With **Strength** between 0 and 100, Chromatic Aberration takes up to about 20% longer.
   PhotoCraft runs plug-ins in a safe, sandboxed way that is slower than its built-in filters.
 - Make a selection first to apply a filter to part of the image only; feathered selections blend
   smoothly, as with PhotoCraft's own filters.

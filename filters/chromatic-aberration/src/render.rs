@@ -28,8 +28,9 @@ pub(crate) fn render(image: &mut Image<'_>, s: &Settings) -> Result<(), Error> {
     if !image.format.mode.is_rgb() || n != 3 + usize::from(alpha) {
         return Err(Error::UnsupportedMode);
     }
-    // Blending between pixels needs at least a 2 × 2 block.
-    if s.amount.abs() < 1e-3 || image.width < 2 || image.height < 2 {
+    // Blending between pixels needs at least a 2 × 2 block. At zero strength the band is left
+    // exactly as it came, unusual values and all.
+    if s.strength <= 0.0 || s.amount.abs() < 1e-3 || image.width < 2 || image.height < 2 {
         return Ok(());
     }
     let (w, h) = (image.width, image.height);
@@ -47,9 +48,17 @@ pub(crate) fn render(image: &mut Image<'_>, s: &Settings) -> Result<(), Error> {
     let longest = field.longest();
     // How far main taps reach, and segments beyond them; only that much margin is copied out.
     let tap_margin = ((longest * Plan::worst_tap_reach(s.fringe, s.softness)).ceil() as usize + 2).min(ov);
-    let plan = Plan::new(s.fringe, s.softness, longest, &g, tap_margin);
+    let mut plan = Plan::new(s.fringe, s.softness, longest, &g, tap_margin);
     if plan.reach <= 0.0 {
         return Ok(());
+    }
+    // Below full strength the taps only add up to `strength`, and `run` makes up the rest from
+    // the pixel's own value. At full strength nothing here changes, so neither does the output.
+    let mix = s.strength < 1.0;
+    if mix {
+        for (_, wt) in &mut plan.taps {
+            *wt = wt.map(|v| v * s.strength);
+        }
     }
     let src_margin = if plan.segmented { (tap_margin + (longest * plan.segment).ceil() as usize + 2).min(ov) } else { tap_margin };
 
@@ -67,7 +76,7 @@ pub(crate) fn render(image: &mut Image<'_>, s: &Settings) -> Result<(), Error> {
     }
     let src = Plane { data: &src, width: sw, corner: src_corner };
 
-    let job = Job { w, h, ov, origin: [g.x, g.y], field: &field, plan: &plan, linear };
+    let job = Job { w, h, ov, origin: [g.x, g.y], field: &field, plan: &plan, linear, keep: 1.0 - s.strength };
     let seg_data;
     let read = if plan.segmented {
         let corner = ov - tap_margin;
@@ -83,10 +92,11 @@ pub(crate) fn render(image: &mut Image<'_>, s: &Settings) -> Result<(), Error> {
     } else {
         src
     };
-    if alpha {
-        job.run::<4, 8, true>(&read, image.data);
-    } else {
-        job.run::<3, 6, false>(&read, image.data);
+    match (alpha, mix) {
+        (false, false) => job.run::<3, 6, false, false>(&read, image.data),
+        (false, true) => job.run::<3, 6, false, true>(&read, image.data),
+        (true, false) => job.run::<4, 8, true, false>(&read, image.data),
+        (true, true) => job.run::<4, 8, true, true>(&read, image.data),
     }
     Ok(())
 }
@@ -165,6 +175,8 @@ struct Job<'a> {
     field: &'a Field,
     plan: &'a Plan,
     linear: bool,
+    /// How much of the pixel's own value goes into the mix: 1 − strength.
+    keep: f32,
 }
 
 impl Job<'_> {
@@ -243,8 +255,9 @@ impl Job<'_> {
     ///
     /// Written once per layout (`N` channels, last one alpha or not; `M` is always `2 * N`) so the
     /// compiler can unroll the channel loops and drop bounds checks; the interpreter rewards
-    /// every instruction saved.
-    fn run<const N: usize, const M: usize, const ALPHA: bool>(&self, plane: &Plane<'_>, dst: &mut [f32]) {
+    /// every instruction saved. `MIX` adds the pixel's own value for strengths below full, and is
+    /// its own copy so that full strength runs exactly the code it did before Strength existed.
+    fn run<const N: usize, const M: usize, const ALPHA: bool, const MIX: bool>(&self, plane: &Plane<'_>, dst: &mut [f32]) {
         let (w, h, ov) = (self.w, self.h, self.ov);
         let taps = self.plan.taps.as_slice();
         // Under a hundredth of a pixel: nothing visible would change. In Directional mode that's
@@ -278,6 +291,17 @@ impl Job<'_> {
                 }
                 let i = (row * w + col) * N;
                 let Some(out) = dst.get_mut(i..i + N) else { continue };
+                if MIX {
+                    // The pixel's own value, in linear light and premultiplied like the taps.
+                    // `out` still holds it: each pixel is written once, and taps read `plane`.
+                    let k = if ALPHA { self.keep * out[N - 1] } else { self.keep };
+                    for c in 0..3 {
+                        acc[c] += k * if self.linear { decode(out[c]) } else { out[c] };
+                        if ALPHA {
+                            cover[c] += k;
+                        }
+                    }
+                }
                 let finish = |v: f32| if self.linear { encode(v) } else { v };
                 if ALPHA {
                     // Each colour brings its own coverage; the pixel is as opaque as the most
