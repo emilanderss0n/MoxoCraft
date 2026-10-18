@@ -7,7 +7,10 @@
 //! always matches what is baked in.
 //!
 //! Add a LUT by dropping a `.cube` file into `luts/` and rebuilding. Its menu name is the file
-//! name, with underscores shown as spaces.
+//! name, with underscores shown as spaces; `luts/default.txt` (optional) names the one the dialog
+//! opens on. `luts/CREDITS.txt` (optional; lines starting with `#`
+//! are skipped) is added to the plug-in's description, so the LUTs' attribution travels inside the
+//! `.wasm`.
 //!
 //! LUTs made for DaVinci Resolve's DaVinci Wide Gamut / Intermediate working space (rather than
 //! normal images) are listed in `luts/davinci-intermediate.txt`. For those, the trip into that
@@ -43,7 +46,9 @@ fn main() {
         .filter_map(|e| e.ok().map(|e| e.path()))
         .filter(|p| p.extension().is_some_and(|x| x.eq_ignore_ascii_case("cube")))
         .collect();
-    files.sort();
+    // Menu order: by name, with numbers compared as numbers ("50D" before "200T") and a name
+    // before its longer variants ("Portra 800" before "Portra 800 (Push 1)").
+    files.sort_by_key(|f| natural_key(&display_name(f)));
     assert!(!files.is_empty(), "no .cube files in {}", dir.display());
 
     let davinci_list = dir.join("davinci-intermediate.txt");
@@ -85,7 +90,19 @@ fn main() {
     assert!(bytes.len() <= MAX_TOTAL_BYTES, "the LUTs take {} MB; PhotoCraft's 32 MiB module limit leaves room for about 30", bytes.len() >> 20);
     std::fs::write(out.join("luts.bin"), &bytes).expect("write luts.bin");
     std::fs::write(out.join("luts.rs"), table).expect("write luts.rs");
-    std::fs::write(out.join("manifest.json"), manifest(&cubes)).expect("write manifest.json");
+    // The LUTs' credits travel inside the plug-in, in the description PhotoCraft shows for it.
+    let credits_file = dir.join("CREDITS.txt");
+    println!("cargo:rerun-if-changed={}", credits_file.display());
+    let credits = std::fs::read_to_string(&credits_file).unwrap_or_default();
+    let credits = credits.lines().filter(|l| !l.trim_start().starts_with('#')).collect::<Vec<_>>().join(" ");
+    let credits = credits.split_whitespace().collect::<Vec<_>>().join(" ");
+    // The LUT the dialog opens on: named in `default.txt`, or else the first one.
+    let default_file = dir.join("default.txt");
+    println!("cargo:rerun-if-changed={}", default_file.display());
+    let default = std::fs::read_to_string(&default_file).unwrap_or_default();
+    let default = default.lines().map(str::trim).find(|l| !l.is_empty() && !l.starts_with('#')).map(str::to_owned).unwrap_or_else(|| cubes[0].name.clone());
+    assert!(cubes.iter().any(|c| c.name == default), "default.txt names {default:?}, but no LUT is called that");
+    std::fs::write(out.join("manifest.json"), manifest(&cubes, &credits, &default)).expect("write manifest.json");
 }
 
 /// A menu-safe name from the file name: underscores become spaces, and the characters PhotoCraft
@@ -101,8 +118,34 @@ fn read_cube(path: &Path) -> Result<CubeData, String> {
     cube::parse_cube(&std::fs::read_to_string(path).map_err(|e| e.to_string())?)
 }
 
-fn manifest(cubes: &[Cube]) -> String {
+/// A sort key that compares runs of digits by their value.
+fn natural_key(name: &str) -> Vec<(u64, String)> {
+    let mut key = Vec::new();
+    let mut chars = name.chars().peekable();
+    while let Some(&c) = chars.peek() {
+        let digits = c.is_ascii_digit();
+        let mut run = String::new();
+        while let Some(&c) = chars.peek() {
+            if c.is_ascii_digit() != digits {
+                break;
+            }
+            run.push(c);
+            chars.next();
+        }
+        key.push(if digits { (run.parse().unwrap_or(u64::MAX), String::new()) } else { (0, run.to_lowercase()) });
+    }
+    key
+}
+
+fn manifest(cubes: &[Cube], credits: &str, default: &str) -> String {
     let options: Vec<String> = cubes.iter().map(|c| json_string(&c.name)).collect();
+    let mut description = String::from("Gives the image the colour and contrast of a film stock or grade. Pick a LUT and set how strongly it applies.");
+    if !credits.is_empty() {
+        description.push(' ');
+        description.push_str(credits);
+    }
+    // PhotoCraft refuses descriptions over 1024 bytes.
+    assert!(description.len() <= 1024, "luts/CREDITS.txt makes the plug-in description {} bytes; PhotoCraft allows 1024", description.len());
     format!(
         r#"{{
   "id": "moxocraft.lut",
@@ -110,7 +153,7 @@ fn manifest(cubes: &[Cube]) -> String {
   "version": "0.1.0",
   "kind": "filter",
   "author": "MoxoCraft",
-  "description": "Gives the image the colour and contrast of a film stock or grade. Pick a LUT and set how strongly it applies.",
+  "description": {},
   "params": {{
     "lut": {{"type": "choice", "options": [{}], "default": {}}},
     "intensity": {{"type": "number", "min": 0, "max": 100, "default": 100}}
@@ -118,8 +161,9 @@ fn manifest(cubes: &[Cube]) -> String {
   "overlap": 0,
   "area": "content"
 }}"#,
+        json_string(&description),
         options.join(", "),
-        options[0]
+        json_string(default)
     )
 }
 

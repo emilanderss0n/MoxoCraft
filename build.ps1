@@ -16,3 +16,10 @@ Get-ChildItem target/wasm32-unknown-unknown/release/moxocraft_*.wasm | ForEach-O
     Copy-Item $_.FullName dist/ -Force
     Write-Host ("dist/{0}  ({1} KB)" -f $_.Name, [math]::Round($_.Length / 1KB))
 }
+
+# The LUT plug-in carries third-party LUTs whose licences require their notices to travel with
+# every copy, so the licence, credits and changelog go next to the plug-ins. (PhotoCraft only
+# loads *.wasm files directly in its plug-ins folder, so the subfolder is ignored there.)
+New-Item -ItemType Directory -Force dist/luts | Out-Null
+Get-ChildItem luts/*.txt -Exclude default.txt | ForEach-Object { Copy-Item $_.FullName dist/luts/ -Force }
+Write-Host "dist/luts/  (LUT licence and credits)"

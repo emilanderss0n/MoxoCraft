@@ -1,0 +1,38 @@
+MoxoCraft LUTs: changes from spektrafilm
+========================================
+
+The .cube files in this folder are derived from spektrafilm by Andrea Volpato
+(https://github.com/andreavolpato/spektrafilm) and licensed CC BY-SA 4.0; see
+SPEKTRAFILM_LICENSE.txt. Modified by MoxoCraft, as described below.
+
+Baked 2026-10-18 by tools/bake-luts/bake_spektrafilm.py with spektrafilm's LUT creator
+(spektrafilm 0.3.4, commit 3bb2c2d2801ff68b92019cf1dbcbb133d60832bc).
+
+Settings (spektrafilm's defaults unless noted):
+  - 1-LUT bundle, sRGB in and sRGB out, 33 points per axis.
+  - Each film printed on its own target print (listed below).
+  - stops_above_midgray = 2.47 (changed; spektrafilm's default for sRGB
+    input is 4.0). Keeps mid-grey where it was instead of brightening every photo by
+    over a stop, so the LUT changes colour and contrast, not exposure.
+
+Other changes:
+  - Files renamed from spektrafilm's bundle names to the film names below.
+  - The MoxoCraft - LUT plug-in stores each LUT inside its .wasm at 16-bit precision
+    (steps of about 0.00003); the values are otherwise unchanged.
+
+LUTs (menu name: film profile -> print profile):
+  - Kodak Portra 160: kodak_portra_160 -> kodak_portra_endura
+  - Kodak Portra 400: kodak_portra_400 -> kodak_portra_endura
+  - Kodak Portra 800: kodak_portra_800 -> kodak_portra_endura
+  - Kodak Portra 800 (Push 1): kodak_portra_800_push1 -> kodak_portra_endura
+  - Kodak Portra 800 (Push 2): kodak_portra_800_push2 -> kodak_portra_endura
+  - Kodak Gold 200: kodak_gold_200 -> kodak_portra_endura
+  - Kodak Ultramax 400: kodak_ultramax_400 -> kodak_portra_endura
+  - Kodak Ektar 100: kodak_ektar_100 -> kodak_portra_endura
+  - Fujifilm C200: fujifilm_c200 -> fujifilm_crystal_archive_typeii
+  - Fujifilm Pro 400H: fujifilm_pro_400h -> fujifilm_crystal_archive_typeii
+  - Fujifilm X-Tra 400: fujifilm_xtra_400 -> fujifilm_crystal_archive_typeii
+  - Kodak Vision3 50D (2383 print): kodak_vision3_50d -> kodak_2383
+  - Kodak Vision3 250D (2383 print): kodak_vision3_250d -> kodak_2383
+  - Kodak Vision3 200T (2383 print): kodak_vision3_200t -> kodak_2383
+  - Kodak Vision3 500T (2383 print): kodak_vision3_500t -> kodak_2383
