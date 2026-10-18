@@ -120,7 +120,7 @@ dependencies = [
 
 [[package]]
 name = "moxocraft-bench"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "moxocraft-sdk",
  "wasmi",
@@ -128,7 +128,7 @@ dependencies = [
 
 [[package]]
 name = "moxocraft-chromatic-aberration"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "moxocraft-sdk",
  "png",
@@ -136,35 +136,35 @@ dependencies = [
 
 [[package]]
 name = "moxocraft-lut"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "moxocraft-lut-core",
 ]
 
 [[package]]
 name = "moxocraft-lut-cinematic"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "moxocraft-lut-core",
 ]
 
 [[package]]
 name = "moxocraft-lut-core"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "moxocraft-sdk",
 ]
 
 [[package]]
 name = "moxocraft-lut-creative"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "moxocraft-lut-core",
 ]
 
 [[package]]
 name = "moxocraft-lut-preview"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "moxocraft-lut",
  "moxocraft-lut-cinematic",
@@ -176,7 +176,7 @@ dependencies = [
 
 [[package]]
 name = "moxocraft-sdk"
-version = "0.1.0"
+version = "0.2.0"
 
 [[package]]
 name = "png"
