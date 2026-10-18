@@ -3,27 +3,42 @@
 use moxocraft_sdk::{Error, Image, Params, try_vec};
 
 use crate::color;
-use crate::lut::{Lut, LutInfo};
+use crate::lut::{Lut, LutInfo, Stored};
 
 /// Runs the LUT the dialog picked (`lut`, falling back to the first) at its `intensity`.
 pub fn apply(luts: &[LutInfo], data: &[u8], image: &mut Image<'_>, params: &Params) -> Result<(), Error> {
     let name = params.text("lut").unwrap_or_default();
     let info = luts.iter().find(|l| l.name == name).or(luts.first()).ok_or(Error::BadInput)?;
-    let lut = Lut::new(data, info).ok_or(Error::BadInput)?;
+    // The table and the band are checked in that order whatever the intensity, but the table is
+    // only decoded when there is grading to do: at intensity 0 the band is left as it is.
+    let table = Stored::find(data, info)?;
     let intensity = (params.number("intensity", 100.0) as f32 / 100.0).clamp(0.0, 1.0);
-    render(image, &lut, intensity)
+    if leaves_unchanged(image, intensity)? {
+        return Ok(());
+    }
+    render(image, &table.decode()?, intensity)
+}
+
+/// Checks that the band is one a LUT can grade, then whether `intensity` leaves it unchanged.
+fn leaves_unchanged(image: &Image<'_>, intensity: f32) -> Result<bool, Error> {
+    if !image.format.mode.is_rgb() || image.channels != 3 + usize::from(image.format.alpha) {
+        return Err(Error::UnsupportedMode);
+    }
+    Ok(intensity <= 0.0)
 }
 
 /// Entries in the tables that convert 32-bit (linear) pixels to sRGB and back.
 const CURVE_POINTS: usize = 4096;
 
 /// A transfer curve sampled over 0–1, read with linear interpolation: much cheaper than `powf`
-/// per pixel in an interpreter.
-struct Curve(Vec<f32>);
+/// per pixel in an interpreter. The table's length is part of its type, so the compiler can see
+/// that every read is in range and adds no checks to the pixel loop.
+struct Curve(Box<[f32; CURVE_POINTS]>);
 
 impl Curve {
     fn new(f: impl Fn(f32) -> f32) -> Result<Curve, Error> {
-        let mut table = try_vec(CURVE_POINTS, 0.0f32)?;
+        // The conversion can't fail: the length is right.
+        let mut table: Box<[f32; CURVE_POINTS]> = try_vec(CURVE_POINTS, 0.0f32)?.into_boxed_slice().try_into().map_err(|_| Error::OutOfMemory)?;
         for (i, v) in table.iter_mut().enumerate() {
             *v = f(i as f32 / (CURVE_POINTS - 1) as f32);
         }
@@ -34,7 +49,7 @@ impl Curve {
     fn at(&self, v: f32) -> f32 {
         let pos = v.clamp(0.0, 1.0) * (CURVE_POINTS - 1) as f32;
         let i = (pos as usize).min(CURVE_POINTS - 2);
-        let (Some(&a), Some(&b)) = (self.0.get(i), self.0.get(i + 1)) else { return v };
+        let (a, b) = (self.0[i], self.0[i + 1]);
         a + (b - a) * (pos - i as f32)
     }
 }
@@ -44,33 +59,51 @@ impl Curve {
 /// 8- and 16-bit pixels are looked up as they are (LUTs are made for display-encoded values).
 /// 32-bit documents hold linear light, so their pixels are converted to sRGB for the lookup and
 /// back afterwards. Alpha is never changed.
-pub fn render(image: &mut Image<'_>, lut: &Lut<'_>, intensity: f32) -> Result<(), Error> {
-    let alpha = image.format.alpha;
-    let n = image.channels;
-    if !image.format.mode.is_rgb() || n != 3 + usize::from(alpha) {
-        return Err(Error::UnsupportedMode);
-    }
-    if intensity <= 0.0 {
+pub fn render(image: &mut Image<'_>, lut: &Lut, intensity: f32) -> Result<(), Error> {
+    if leaves_unchanged(image, intensity)? {
         return Ok(());
     }
+    let alpha = image.format.alpha;
     // 32-bit documents are linear light; LUTs expect display-encoded colour.
     let curves = if image.format.depth == 32 { Some((Curve::new(color::srgb_encode)?, Curve::new(color::srgb_decode)?)) } else { None };
-    for p in image.data.chunks_exact_mut(n) {
-        let original = [p[0], p[1], p[2]];
-        let encoded = match &curves {
-            Some((enc, _)) => original.map(|v| enc.at(v)),
-            None => original,
-        };
-        let graded = lut.lookup(encoded);
-        for c in 0..3 {
-            let mut v = encoded[c] + (graded[c] - encoded[c]) * intensity;
-            if let Some((_, dec)) = &curves {
-                // Values above 1 (brighter than white) can't go through a 0–1 LUT; keep the
-                // extra brightness on top of the graded white.
-                v = dec.at(v) + (original[c] - 1.0).max(0.0);
-            }
-            p[c] = v;
-        }
+    if alpha {
+        grade::<4>(image.data, lut, intensity, curves.as_ref());
+    } else {
+        grade::<3>(image.data, lut, intensity, curves.as_ref());
     }
     Ok(())
+}
+
+/// The pixel loop of [`render`], written once per layout (`N` channels, the first three red,
+/// green and blue) and once per colour encoding, so the interpreter runs no channel-count or
+/// bit-depth checks per pixel.
+fn grade<const N: usize>(data: &mut [f32], lut: &Lut, intensity: f32, curves: Option<&(Curve, Curve)>) {
+    let (pixels, _) = data.as_chunks_mut::<N>();
+    match curves {
+        None => {
+            for p in pixels {
+                let original = [p[0], p[1], p[2]];
+                let graded = lut.lookup(original);
+                for c in 0..3 {
+                    p[c] = original[c] + (graded[c] - original[c]) * intensity;
+                }
+            }
+        }
+        Some((enc, dec)) => {
+            for p in pixels {
+                let original = [p[0], p[1], p[2]];
+                let encoded = [enc.at(original[0]), enc.at(original[1]), enc.at(original[2])];
+                let graded = lut.lookup(encoded);
+                for c in 0..3 {
+                    let v = encoded[c] + (graded[c] - encoded[c]) * intensity;
+                    // Values above 1 (brighter than white) can't go through a 0–1 LUT; keep the
+                    // extra brightness on top of the graded white. (A comparison rather than
+                    // `max(0.0)`, whose NaN handling costs the interpreter more; a NaN gives 0
+                    // either way.)
+                    let over = original[c] - 1.0;
+                    p[c] = dec.at(v) + if over > 0.0 { over } else { 0.0 };
+                }
+            }
+        }
+    }
 }

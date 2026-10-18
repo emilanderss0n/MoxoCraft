@@ -115,7 +115,7 @@ Tips:
   transparency.
   Other colour modes (Grayscale, CMYK, Lab) show an error instead.
 - On a 24-megapixel photo, Chromatic Aberration takes roughly 10–15 seconds on a fast 16-thread
-  computer and up to about 35 seconds on a 4-core one; the LUT filters take 2–7 seconds.
+  computer and up to about 35 seconds on a 4-core one; the LUT filters take 1–4 seconds.
   PhotoCraft runs plug-ins in a safe, sandboxed way that is slower than its built-in filters.
 - Make a selection first to apply a filter to part of the image only; feathered selections blend
   smoothly, as with PhotoCraft's own filters.

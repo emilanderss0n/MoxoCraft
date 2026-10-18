@@ -65,6 +65,11 @@ impl Field {
         }
     }
 
+    /// The displacement when it is the same everywhere (Directional mode).
+    pub fn uniform(&self) -> Option<[f32; 2]> {
+        (self.mode == Mode::Directional).then_some(self.dir)
+    }
+
     /// The displacement in pixels at document position `(x, y)`, or `None` where there is none.
     #[inline(always)]
     pub fn at(&self, x: f32, y: f32) -> Option<[f32; 2]> {

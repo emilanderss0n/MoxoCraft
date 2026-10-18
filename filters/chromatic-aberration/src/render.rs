@@ -58,20 +58,12 @@ pub(crate) fn render(image: &mut Image<'_>, s: &Settings) -> Result<(), Error> {
     let linear = image.format.depth != 32;
     let src_corner = ov - src_margin;
     let (sw, sh) = (w - 2 * src_corner, h - 2 * src_corner);
-    let mut src = Vec::new();
-    src.try_reserve_exact(sw * sh * n).map_err(|_| Error::OutOfMemory)?;
-    for row in src_corner..src_corner + sh {
-        let start = (row * w + src_corner) * n;
-        let line = image.data.get(start..start + sw * n).ok_or(Error::BadInput)?;
-        for p in line.chunks_exact(n) {
-            let lin = if linear { [decode(p[0]), decode(p[1]), decode(p[2])] } else { [p[0], p[1], p[2]] };
-            if alpha {
-                let a = p[3];
-                src.extend_from_slice(&[lin[0] * a, lin[1] * a, lin[2] * a, a]);
-            } else {
-                src.extend_from_slice(&lin);
-            }
-        }
+    let mut src = try_vec(sw * sh * n, 0.0f32)?;
+    match (alpha, linear) {
+        (false, false) => copy_out::<3, false>(image.data, w, src_corner, &mut src, sw)?,
+        (false, true) => copy_out::<3, true>(image.data, w, src_corner, &mut src, sw)?,
+        (true, false) => copy_out::<4, false>(image.data, w, src_corner, &mut src, sw)?,
+        (true, true) => copy_out::<4, true>(image.data, w, src_corner, &mut src, sw)?,
     }
     let src = Plane { data: &src, width: sw, corner: src_corner };
 
@@ -99,16 +91,48 @@ pub(crate) fn render(image: &mut Image<'_>, s: &Settings) -> Result<(), Error> {
     Ok(())
 }
 
+/// Copies the block of the band (`band_width` pixels per row) from (`corner`, `corner`), `width`
+/// pixels wide, into `out`: in linear light when `LINEAR`, and premultiplied by alpha when there
+/// are 4 channels. Written once per layout, so the interpreter checks neither for every pixel.
+fn copy_out<const N: usize, const LINEAR: bool>(band: &[f32], band_width: usize, corner: usize, out: &mut [f32], width: usize) -> Result<(), Error> {
+    if width == 0 {
+        return Ok(());
+    }
+    let (out, _) = out.as_chunks_mut::<N>();
+    for (r, dst) in out.chunks_exact_mut(width).enumerate() {
+        let start = ((corner + r) * band_width + corner) * N;
+        let line = band.get(start..start + width * N).ok_or(Error::BadInput)?;
+        let (line, _) = line.as_chunks::<N>();
+        for (d, p) in dst.iter_mut().zip(line) {
+            let lin = if LINEAR { [decode(p[0]), decode(p[1]), decode(p[2])] } else { [p[0], p[1], p[2]] };
+            if N == 4 {
+                let a = p[N - 1];
+                d[0] = lin[0] * a;
+                d[1] = lin[1] * a;
+                d[2] = lin[2] * a;
+                d[N - 1] = a;
+            } else {
+                d[0] = lin[0];
+                d[1] = lin[1];
+                d[2] = lin[2];
+            }
+        }
+    }
+    Ok(())
+}
+
 /// Gamma 2 to linear, keeping the sign of out-of-range values.
 #[inline(always)]
 fn decode(v: f32) -> f32 {
     v * v.abs()
 }
 
-/// Linear back to gamma 2.
+/// Linear back to gamma 2, keeping the sign of out-of-range values. The square root of the size
+/// with the sign put back gives exactly what a branch per sign would, but the compiled branch ran
+/// both square roots for every value.
 #[inline(always)]
 fn encode(v: f32) -> f32 {
-    if v >= 0.0 { v.sqrt() } else { -(-v).sqrt() }
+    v.abs().sqrt().copysign(v)
 }
 
 /// A random-looking number in 0..1 for a pixel, the same for that pixel in every band.
@@ -119,6 +143,18 @@ fn hash01(x: f32, y: f32) -> f32 {
     h = h.wrapping_mul(0x5bd1_e995);
     h ^= h >> 15;
     (h >> 8) as f32 / 16_777_216.0
+}
+
+/// How one pixel samples its segment: `samples` points `step` apart (in units of the segment's
+/// half-length), along `[ux, uy]` (the half-length in pixels, pointing along the displacement),
+/// slid by a per-pixel amount when `jitter`.
+#[derive(Clone, Copy)]
+struct Segment {
+    samples: usize,
+    step: f32,
+    jitter: bool,
+    ux: f32,
+    uy: f32,
 }
 
 struct Job<'a> {
@@ -137,6 +173,8 @@ impl Job<'_> {
     /// the ends (a "tent"). Neighbouring taps' tents overlap and add up to an even, smooth
     /// coverage, so the smear has no steps.
     fn segments<const N: usize, const M: usize>(&self, src: &Plane<'_>, out: &mut [f32], width: usize, corner: usize) {
+        // In Directional mode every pixel has the same displacement, so the same segment.
+        let uniform = self.field.uniform().map(|v| self.segment(v));
         let rows = self.h - 2 * corner;
         for r in 0..rows {
             let row = corner + r;
@@ -150,34 +188,28 @@ impl Job<'_> {
                 let Some(dst) = out.get_mut(o..o + N) else { continue };
                 let mut value = [0.0f32; N];
                 let mut done = false;
-                if let Some([vx, vy]) = self.field.at(x, y) {
-                    let len = (vx * vx + vy * vy).sqrt();
-                    let half = self.plan.segment * len;
-                    let k = ((2.0 * half / SEGMENT_SPACING).ceil() as usize).clamp(1, self.plan.segment_taps);
-                    if half >= 0.25 && k > 1 {
-                        let step = 2.0 / k as f32;
-                        // Samples further apart than a pixel and a quarter can catch thin lines
-                        // unevenly. Sliding each pixel's samples by a different amount turns that
-                        // into fine grain, which the main taps then average away.
-                        let phase = if 2.0 * half / k as f32 > 1.25 { hash01(x, y) } else { 0.5 };
-                        let (ux, uy) = (vx / len * half, vy / len * half);
-                        let mut total = 0.0f32;
-                        for i in 0..k {
-                            let u = (i as f32 + phase) * step - 1.0;
-                            let wt = 1.0 - u.abs();
-                            if let Some(p) = bilinear::<N, M>(src.data, src.width, sx + u * ux, sy + u * uy) {
-                                for ch in 0..N {
-                                    value[ch] += wt * p[ch];
-                                }
-                                total += wt;
+                let segment = match uniform {
+                    Some(s) => s,
+                    None => self.field.at(x, y).and_then(|v| self.segment(v)),
+                };
+                if let Some(s) = segment {
+                    let phase = if s.jitter { hash01(x, y) } else { 0.5 };
+                    let mut total = 0.0f32;
+                    for i in 0..s.samples {
+                        let u = (i as f32 + phase) * s.step - 1.0;
+                        let wt = 1.0 - u.abs();
+                        if let Some(p) = bilinear::<N, M>(src.data, src.width, sx + u * s.ux, sy + u * s.uy) {
+                            for ch in 0..N {
+                                value[ch] += wt * p[ch];
                             }
+                            total += wt;
                         }
-                        if total > 0.0 {
-                            for v in &mut value {
-                                *v /= total;
-                            }
-                            done = true;
+                    }
+                    if total > 0.0 {
+                        for v in &mut value {
+                            *v /= total;
                         }
+                        done = true;
                     }
                 }
                 if !done {
@@ -190,6 +222,22 @@ impl Job<'_> {
         }
     }
 
+    /// How a pixel with displacement `[vx, vy]` samples its segment, or `None` when its segment
+    /// is too short to need sampling.
+    #[inline(always)]
+    fn segment(&self, [vx, vy]: [f32; 2]) -> Option<Segment> {
+        let len = (vx * vx + vy * vy).sqrt();
+        let half = self.plan.segment * len;
+        let k = ((2.0 * half / SEGMENT_SPACING).ceil() as usize).clamp(1, self.plan.segment_taps);
+        if !(half >= 0.25 && k > 1) {
+            return None;
+        }
+        // Samples further apart than a pixel and a quarter can catch thin lines unevenly. Sliding
+        // each pixel's samples by a different amount (`jitter`) turns that into fine grain, which
+        // the main taps then average away.
+        Some(Segment { samples: k, step: 2.0 / k as f32, jitter: 2.0 * half / k as f32 > 1.25, ux: vx / len * half, uy: vy / len * half })
+    }
+
     /// Second pass: the output. Each pixel reads its taps from `plane`: the segments, or for a
     /// hard split the band itself.
     ///
@@ -199,14 +247,20 @@ impl Job<'_> {
     fn run<const N: usize, const M: usize, const ALPHA: bool>(&self, plane: &Plane<'_>, dst: &mut [f32]) {
         let (w, h, ov) = (self.w, self.h, self.ov);
         let taps = self.plan.taps.as_slice();
+        // Under a hundredth of a pixel: nothing visible would change. In Directional mode that's
+        // the same answer for every pixel.
+        let still = |[vx, vy]: [f32; 2]| (vx * vx + vy * vy).sqrt() * self.plan.reach < 0.01;
+        let uniform = self.field.uniform();
+        if uniform.is_some_and(still) {
+            return;
+        }
         for row in ov..h - ov {
             let y = (self.origin[1] + row as i64) as f32 + 0.5;
             let fy = (row - plane.corner) as f32;
             for col in ov..w - ov {
                 let x = (self.origin[0] + col as i64) as f32 + 0.5;
                 let Some([vx, vy]) = self.field.at(x, y) else { continue };
-                // Under a hundredth of a pixel: nothing visible would change.
-                if (vx * vx + vy * vy).sqrt() * self.plan.reach < 0.01 {
+                if uniform.is_none() && still([vx, vy]) {
                     continue;
                 }
                 let fx = (col - plane.corner) as f32;

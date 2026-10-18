@@ -4,6 +4,8 @@
 //! [`Lut`] reads it inside the plug-in. Each table is `size³ × 3` little-endian `u16` values made
 //! with [`quantize`], red changing fastest, then green, then blue (the order of a `.cube` file).
 
+use moxocraft_sdk::Error;
+
 /// Where one baked-in LUT lives in its plug-in's data. The build script writes one per LUT, in
 /// menu order, into the plug-in's `LUTS` (see [`lut_pack!`](crate::lut_pack)).
 #[derive(Clone, Copy, Debug)]
@@ -38,35 +40,72 @@ pub(crate) fn dequantize(q: u16) -> f32 {
     STORE_MIN + f32::from(q) * (STORE_SPAN / 65535.0)
 }
 
-/// A baked-in LUT, ready to look colours up in.
-pub struct Lut<'a> {
-    /// The table as raw little-endian `u16` bytes.
-    data: &'a [u8],
+/// A baked table found in its plug-in's data and checked against its size, but not yet decoded:
+/// everything [`Lut::load`] checks, without the work, so a run that grades nothing can stop here.
+pub(crate) struct Stored<'a> {
+    bytes: &'a [u8],
     size: usize,
 }
 
-impl<'a> Lut<'a> {
+impl<'a> Stored<'a> {
+    /// The table `info` describes, from its plug-in's `data`.
+    pub(crate) fn find(data: &'a [u8], info: &LutInfo) -> Result<Stored<'a>, Error> {
+        let bytes = info.offset.checked_add(info.len).and_then(|end| data.get(info.offset..end)).ok_or(Error::BadInput)?;
+        Stored::new(bytes, info.size)
+    }
+
+    fn new(bytes: &'a [u8], size: usize) -> Result<Stored<'a>, Error> {
+        if !(size >= 2 && size.checked_pow(3).is_some_and(|cells| bytes.len() == cells * 6)) {
+            return Err(Error::BadInput);
+        }
+        Ok(Stored { bytes, size })
+    }
+
+    /// The table, ready to look colours up in.
+    pub(crate) fn decode(self) -> Result<Lut, Error> {
+        let Stored { bytes, size } = self;
+        let value = |q: &[u8]| dequantize(u16::from_le_bytes([q[0], q[1]]));
+        let mut texels = Vec::new();
+        texels.try_reserve_exact(bytes.len() / 6).map_err(|_| Error::OutOfMemory)?;
+        texels.extend(bytes.chunks_exact(6).map(|t| [value(&t[0..2]), value(&t[2..4]), value(&t[4..6])]));
+        Ok(Lut { texels, size, green_step: size, blue_step: size * size })
+    }
+}
+
+/// A baked-in LUT, ready to look colours up in.
+pub struct Lut {
+    /// The table's colours, turned from stored `u16`s back into colour values once, when the LUT
+    /// is loaded. Every pixel reads four of them, so converting each one there would cost the
+    /// interpreter far more than converting the whole table (at most about 430 KB) up front.
+    texels: Vec<[f32; 3]>,
+    size: usize,
+    /// How far apart neighbouring grid points are in `texels` along green and blue (red's are
+    /// next to each other), so a lookup finds a cell's corners by adding these.
+    green_step: usize,
+    blue_step: usize,
+}
+
+impl Lut {
     /// The LUT `info` describes, from its plug-in's `data`.
-    pub fn new(data: &'a [u8], info: &LutInfo) -> Option<Lut<'a>> {
-        let data = data.get(info.offset..info.offset.checked_add(info.len)?)?;
-        Lut::from_bytes(data, info.size)
+    pub fn new(data: &[u8], info: &LutInfo) -> Option<Lut> {
+        Lut::load(data, info).ok()
+    }
+
+    /// [`Lut::new`], saying why it failed: [`Error::BadInput`] when `info` doesn't match `data`,
+    /// [`Error::OutOfMemory`] when there is no room for the table.
+    pub fn load(data: &[u8], info: &LutInfo) -> Result<Lut, Error> {
+        Stored::find(data, info)?.decode()
     }
 
     /// A LUT from a table in the baked format, or `None` if the sizes don't match.
-    pub fn from_bytes(data: &'a [u8], size: usize) -> Option<Lut<'a>> {
-        (size >= 2 && data.len() == size.checked_pow(3)? * 6).then_some(Lut { data, size })
+    pub fn from_bytes(data: &[u8], size: usize) -> Option<Lut> {
+        Stored::new(data, size).and_then(Stored::decode).ok()
     }
 
-    /// The table entry at grid point (`r`, `g`, `b`).
+    /// The table entry at index `i` (grid point `r + g × green_step + b × blue_step`).
     #[inline(always)]
-    fn texel(&self, r: usize, g: usize, b: usize) -> [f32; 3] {
-        let i = ((b * self.size + g) * self.size + r) * 6;
-        let Some(&[r0, r1, g0, g1, b0, b1]) = self.data.get(i..i + 6) else { return [0.0; 3] };
-        [
-            dequantize(u16::from_le_bytes([r0, r1])),
-            dequantize(u16::from_le_bytes([g0, g1])),
-            dequantize(u16::from_le_bytes([b0, b1])),
-        ]
+    fn texel(&self, i: usize) -> [f32; 3] {
+        self.texels.get(i).copied().unwrap_or([0.0; 3])
     }
 
     /// The LUT's colour for `rgb` (each 0–1; values outside are clamped), by tetrahedral
@@ -81,32 +120,44 @@ impl<'a> Lut<'a> {
     #[inline(always)]
     pub fn lookup(&self, rgb: [f32; 3]) -> [f32; 3] {
         let top = (self.size - 1) as f32;
-        // `max`/`min` rather than `clamp`, so a NaN can't panic; it lands on 0.
-        let scaled = rgb.map(|v| (v * top).max(0.0).min(top));
-        let base = scaled.map(|v| (v as usize).min(self.size - 2));
+        // Comparisons rather than `clamp` (which panics on a NaN) or `max`/`min` (whose NaN
+        // handling costs the interpreter extra work): a NaN fails `> 0.0`, so it lands on 0.
+        let scale = |v: f32| {
+            let s = v * top;
+            let s = if s > 0.0 { s } else { 0.0 };
+            if s < top { s } else { top }
+        };
+        let scaled = [scale(rgb[0]), scale(rgb[1]), scale(rgb[2])];
+        let cell = |v: f32| (v as usize).min(self.size - 2);
+        let base = [cell(scaled[0]), cell(scaled[1]), cell(scaled[2])];
         let [fr, fg, fb] = [scaled[0] - base[0] as f32, scaled[1] - base[1] as f32, scaled[2] - base[2] as f32];
-        let [r, g, b] = base;
-        let c000 = self.texel(r, g, b);
-        let c111 = self.texel(r + 1, g + 1, b + 1);
+        // The cell's corners: `i` is its (r, g, b) corner, and stepping one grid point along red,
+        // green or blue adds 1, `dg` or `db`.
+        let (dg, db) = (self.green_step, self.blue_step);
+        let i = base[0] + base[1] * dg + base[2] * db;
+        let c000 = self.texel(i);
+        let c111 = self.texel(i + 1 + dg + db);
         // Which of the cell's six tetrahedra the colour is in decides the two middle corners and
         // the order the fractions apply in.
         let (c1, c2, w) = if fr >= fg {
             if fg >= fb {
-                (self.texel(r + 1, g, b), self.texel(r + 1, g + 1, b), [fr, fg, fb])
+                (self.texel(i + 1), self.texel(i + 1 + dg), [fr, fg, fb])
             } else if fr >= fb {
-                (self.texel(r + 1, g, b), self.texel(r + 1, g, b + 1), [fr, fb, fg])
+                (self.texel(i + 1), self.texel(i + 1 + db), [fr, fb, fg])
             } else {
-                (self.texel(r, g, b + 1), self.texel(r + 1, g, b + 1), [fb, fr, fg])
+                (self.texel(i + db), self.texel(i + 1 + db), [fb, fr, fg])
             }
         } else if fb >= fg {
-            (self.texel(r, g, b + 1), self.texel(r, g + 1, b + 1), [fb, fg, fr])
+            (self.texel(i + db), self.texel(i + dg + db), [fb, fg, fr])
         } else if fb >= fr {
-            (self.texel(r, g + 1, b), self.texel(r, g + 1, b + 1), [fg, fb, fr])
+            (self.texel(i + dg), self.texel(i + dg + db), [fg, fb, fr])
         } else {
-            (self.texel(r, g + 1, b), self.texel(r + 1, g + 1, b), [fg, fr, fb])
+            (self.texel(i + dg), self.texel(i + 1 + dg), [fg, fr, fb])
         };
         // Tables may run a little past black and white (see `STORE_MIN`); clamp after
-        // interpolating.
-        [0, 1, 2].map(|c| (c000[c] + w[0] * (c1[c] - c000[c]) + w[1] * (c2[c] - c1[c]) + w[2] * (c111[c] - c2[c])).clamp(0.0, 1.0))
+        // interpolating. Written per channel rather than with `array::map`, which the compiler
+        // doesn't always inline, and a call per pixel is slow in the interpreter.
+        let mix = |c: usize| (c000[c] + w[0] * (c1[c] - c000[c]) + w[1] * (c2[c] - c1[c]) + w[2] * (c111[c] - c2[c])).clamp(0.0, 1.0);
+        [mix(0), mix(1), mix(2)]
     }
 }
