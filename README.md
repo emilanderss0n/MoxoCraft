@@ -13,19 +13,18 @@ Linux and PhotoCraft in the browser.
 
 ## Install
 
-You need the plug-in files `moxocraft_chromatic_aberration.wasm` and `moxocraft_lut.wasm`.
-Ready-made downloads aren't published yet, so for now build them with one command (see
-[Development](#development)); they end up in the `dist` folder.
+1. Download `MoxoCraft-<version>.zip` from the latest
+   [release](https://github.com/emilanderss0n/MoxoCraft/releases/latest) and unzip it somewhere
+   you'll keep it. It holds the two plug-in files, `moxocraft_chromatic_aberration.wasm` and
+   `moxocraft_lut.wasm`, plus a `luts` folder with the film LUTs' licence and credits.
+2. In PhotoCraft, either:
+   - go to **Filter › Plug-ins › Install Plug-in…** and pick each `.wasm` file, or
+   - go to **Edit › Preferences › Plug-ins**, turn on **Use Additional Plug-ins Folder** and point
+     it at the unzipped folder. PhotoCraft then loads every MoxoCraft filter each time it starts;
+     to update, unzip a newer release into the same folder.
 
-Then, in PhotoCraft, either:
-
-- go to **Filter › Plug-ins › Install Plug-in…** and pick each `.wasm` file, or
-- go to **Edit › Preferences › Plug-ins**, turn on **Use Additional Plug-ins Folder** and point it
-  at the `dist` folder. PhotoCraft then loads every MoxoCraft filter each time it starts, including
-  new versions after an update.
-
-The filters appear under **Filter › Plug-ins**. To update a filter, install the new `.wasm` again;
-it replaces the old one.
+The filters appear under **Filter › Plug-ins**. If you installed them from the menu, update by
+installing the new `.wasm` files the same way; each replaces the old one.
 
 ## MoxoCraft - Chromatic Aberration
 
@@ -87,10 +86,11 @@ Tips:
   PhotoCraft runs plug-ins in a safe, sandboxed way that is slower than its built-in filters.
 - Make a selection first to apply a filter to part of the image only; feathered selections blend
   smoothly, as with PhotoCraft's own filters.
-- You can also run the filters from PhotoCraft's command line, for example on a batch of photos:
+- You can also run the filters from PhotoCraft's command line, for example on a batch of photos
+  (run from the unzipped MoxoCraft folder):
 
   ```bash
-  photocraft-cli run photo.jpg --cmd plugin.install --params '{"path":"dist/moxocraft_lut.wasm"}' --cmd plugin.run --params '{"id":"moxocraft.lut","params":{"lut":"Kodak Portra 400","intensity":80}}' --out photo-graded.jpg
+  photocraft-cli run photo.jpg --cmd plugin.install --params '{"path":"moxocraft_lut.wasm"}' --cmd plugin.run --params '{"id":"moxocraft.lut","params":{"lut":"Kodak Portra 400","intensity":80}}' --out photo-graded.jpg
   ```
 
 ## Credits
@@ -99,8 +99,8 @@ The film-stock LUTs are derived from [spektrafilm](https://github.com/andreavolp
 by Andrea Volpato, which simulates film from measured film data. They are licensed
 [CC BY-SA 4.0](luts/SPEKTRAFILM_LICENSE.txt); how they were made and what was changed is in
 [`luts/CHANGELOG.txt`](luts/CHANGELOG.txt). The licence covers the LUTs themselves, not the photos
-you make with them. If you share the MoxoCraft plug-ins, keep the `dist/luts` folder (licence,
-credits and changelog) with them.
+you make with them. If you share the MoxoCraft plug-ins, keep the `luts` folder (licence, credits
+and changelog) with them.
 
 Kodak, Fujifilm and the film names are trademarks of their owners. They are used only to describe
 the film stocks simulated; Kodak and Fujifilm don't endorse MoxoCraft.
