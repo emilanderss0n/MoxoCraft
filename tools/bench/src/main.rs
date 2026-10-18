@@ -2,9 +2,11 @@
 //!
 //!   cargo run --release -p moxocraft-bench -- <plugin.wasm> [params-json] [width height]
 //!
-//! Runs a spread of bands from an RGB 8-bit canvas (6000 × 4000 by default), cut and padded the way
-//! PhotoCraft cuts them, and reports instructions per pixel (PhotoCraft's "fuel") and time. From
-//! those it estimates a whole-image run, to compare against PhotoCraft's 60-second limit.
+//! Runs a spread of bands from an opaque RGBA 8-bit canvas (6000 × 4000 by default), cut and padded
+//! the way PhotoCraft cuts them, and reports instructions per pixel (PhotoCraft's "fuel") and time.
+//! From those it estimates a whole-image run, to compare against PhotoCraft's 60-second limit.
+//! RGBA because PhotoCraft always hands plug-ins an alpha channel, even for a photo with no
+//! transparency.
 
 use std::time::Instant;
 
@@ -37,7 +39,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     };
 
     // PhotoCraft's bands: one 256-pixel tile row, as many tiles across as fit in 4 MiB of f32.
-    let format = Format::RGB8;
+    let format = Format::RGBA8;
     let n = format.channels();
     let across = ((4usize << 20) / (256 * 256 * n * 4)).clamp(1, 1024) * 256;
     let mut bands = Vec::new();
@@ -63,7 +65,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 let x = (x0 + col).clamp(0, cw as i64 - 1) as f32;
                 // Busy detail everywhere, so no pixel gets an easy way out.
                 let v = ((x * 0.37).sin() * (y * 0.23).cos() * 0.5 + 0.5).clamp(0.0, 1.0);
-                data.extend_from_slice(&[v, 1.0 - v, (v * 2.0).fract()]);
+                data.extend_from_slice(&[v, 1.0 - v, (v * 2.0).fract(), 1.0]);
             }
         }
         let text = host::band_params(&fields, (x0, y0), (iw, ih), overlap, (cw, ch), format);

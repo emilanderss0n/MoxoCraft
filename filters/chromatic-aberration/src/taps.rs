@@ -17,11 +17,11 @@ pub(crate) const SEGMENT_SPACING: f32 = 1.0;
 /// Most samples in one segment.
 const MAX_SEGMENT_TAPS: usize = 32;
 
-/// How much interpreter work a whole image may take, in PhotoCraft's instruction units. At the
-/// ~500 million a second one thread manages, this is 30 seconds on 4 threads: well inside the
-/// 60-second limit. Big images with long smears get fewer samples to stay inside it.
+/// How much interpreter work a whole image may take, in PhotoCraft's instruction units. Big
+/// images with long smears get fewer taps and samples to stay inside it. The costs below
+/// undercount, so heavy settings really use up to about 1.5 times this (see `Plan::new`).
 const WORK_BUDGET: f64 = 60e9;
-/// Rough cost of a pixel without taps, and of one tap (measured with `moxocraft-bench`).
+/// Rough cost of a pixel without taps, and of one tap, from early measurements on RGB bands.
 const COST_PER_PIXEL: f64 = 600.0;
 const COST_PER_TAP: f64 = 150.0;
 
@@ -162,6 +162,16 @@ impl Plan {
         let ideal = ((2.0 * span * margin_cost / SEGMENT_SPACING).sqrt().ceil() as usize).clamp(MIN_TAPS, MAX_TAPS);
         let ideal_samples = ((2.0 * span / ideal as f32 / SEGMENT_SPACING).ceil() as usize).clamp(1, MAX_SEGMENT_TAPS);
         let pixels = (g.canvas_width.max(1) * g.canvas_height.max(1)) as f64;
+        // The costs undercount the RGBA bands PhotoCraft always sends, where a pixel really costs
+        // about margin_cost × (520 + 193 × segment samples) + 250 × main taps. So the heaviest
+        // settings (Lens, Amount 128, Softness 100, Clear Center 0) use 85–92 billion
+        // instructions on anything from 6 to 24 megapixels. On a fast desktop (Ryzen 7 7800X3D)
+        // a 24-megapixel image then takes about 50 seconds on 4 threads, 20 on 4 cores with
+        // hyperthreading and 13 on 16 threads. Budgeting for the real cost wouldn't buy much: the
+        // cheapest plan that still looks smooth only saves about 20%, cheaper ones make long
+        // smears grainy or split them into separate copies, and the default settings on big
+        // photos would change too. The constants pick the tap counts, so changing them changes
+        // the output.
         let budget = ((WORK_BUDGET / pixels - COST_PER_PIXEL) / COST_PER_TAP) as f32;
         let (count, samples) = if ideal as f32 + ideal_samples as f32 * margin_cost <= budget {
             (ideal, ideal_samples)
