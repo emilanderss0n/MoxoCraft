@@ -6,6 +6,9 @@ bands, hands each band to the plug-in with the dialog's settings, and writes bac
 returns. Plug-ins get no file access, no network and no windows of their own; PhotoCraft draws the
 settings dialog from each plug-in's manifest.
 
+The LUTs, where they come from and how to add or remove them are covered in
+[`luts.md`](luts.md).
+
 ## Building
 
 You need Rust; `build.ps1` adds the WebAssembly target itself.
@@ -14,30 +17,79 @@ You need Rust; `build.ps1` adds the WebAssembly target itself.
 ./build.ps1
 ```
 
-This builds every filter into `dist/` and copies the LUTs' licences, sources and changelog into
-`dist/luts/`, which must travel with the plug-ins.
+This builds every crate in `filters/` into a `.wasm` in `dist/` and copies the LUTs' licences,
+sources and changelog into `dist/luts/`, which must travel with the plug-ins. `dist/` and
+`target/` are output only: the build replaces what is in them, so never edit files there.
 
 ## Project layout
 
 ```text
-crates/moxocraft-sdk/          shared plug-in plumbing: the PhotoCraft exports, settings JSON,
-                               and a stand-in for PhotoCraft (`host`) for tests and previews
-crates/moxocraft-lut-core/     the LUT engine the LUT plug-ins share: lookups, baking .cube files
-                               at build time, and the tests every LUT plug-in runs
+crates/moxocraft-sdk/          shared plug-in plumbing every filter uses
+crates/moxocraft-lut-core/     the LUT engine the three LUT plug-ins share
 filters/chromatic-aberration/  MoxoCraft - Chromatic Aberration
-filters/lut/                   MoxoCraft - Film LUTs (bakes in luts/film-luts)
-filters/lut-cinematic/         MoxoCraft - Cinematic LUTs (bakes in luts/cinematic-luts)
-filters/lut-creative/          MoxoCraft - Creative LUTs (bakes in luts/creative-luts)
-luts/                          one folder of .cube files per LUT plug-in, plus the LUTs'
-                               licences, sources and changelog
-tools/bake-luts/               the recipe that bakes the Film category from spektrafilm
-tools/import-luts/             the recipe that imports every other LUT from its source collection
+filters/lut/                   MoxoCraft - Film LUTs      (its LUTs are in luts/film-luts)
+filters/lut-cinematic/         MoxoCraft - Cinematic LUTs (luts/cinematic-luts)
+filters/lut-creative/          MoxoCraft - Creative LUTs  (luts/creative-luts)
+luts/                          the LUT files, one folder per LUT plug-in, plus their licences,
+                               sources and changelog (see luts.md)
+tools/import-luts/             Python: imports the third-party LUTs into luts/ (see luts.md)
+tools/bake-luts/               Python: makes the Film category from spektrafilm (see luts.md)
 tools/lut-preview/             renders every LUT on a photo, as PNGs
-tools/bench/                   runs a built .wasm in the interpreter PhotoCraft uses and reports
-                               the cost per pixel and the expected time for a whole image
-tools/release.ps1              makes a GitHub release (see Releasing)
+tools/bench/                   runs a built .wasm in PhotoCraft's interpreter and reports its cost
+tools/release.ps1              publishes a GitHub release (see Releasing)
 build.ps1                      builds every filter into dist/
 ```
+
+Dependencies only point one way: filters depend on `moxocraft-lut-core` and `moxocraft-sdk`,
+`moxocraft-lut-core` depends on `moxocraft-sdk`, and the SDK depends on nothing. The tools depend
+on the crates and plug-ins they work with; no plug-in depends on a tool.
+
+### `moxocraft-sdk`: what every filter is built on
+
+A filter implements the `Filter` trait (its manifest and an `apply` function) and calls
+`export_filter!`. That is its whole connection to PhotoCraft.
+
+| File | What it does |
+|---|---|
+| `lib.rs` | the filter-facing API: `Filter`, `Error`, `try_vec`, `export_filter!`, re-exports |
+| `image.rs` | `Image`, `Format`, `ColorMode`, `Geometry`: the band and where it sits in the document |
+| `params.rs` | `Params`: reading the dialog's settings from PhotoCraft's JSON |
+| `abi.rs` | the four exports PhotoCraft calls; the only `unsafe` code. Filters never call it |
+| `json.rs` | a small JSON reader and writer, so plug-ins carry no extra dependency |
+| `host.rs` | a stand-in for PhotoCraft that cuts an image into bands exactly as PhotoCraft does; used by tests, previews and the benchmark |
+
+### `moxocraft-lut-core`: everything the LUT plug-ins share
+
+Each LUT plug-in crate is configuration only: its `build.rs` holds a `Pack` (its folder under
+`luts/`, manifest id, menu name and description) and its `lib.rs` is `lut_pack!();`. The work
+happens in two stages:
+
+```text
+build time (the plug-in's build.rs, native code)       run time (inside the .wasm)
+  luts/<pack>/  ──bake.rs──▶  OUT_DIR/luts.bin   ──┐
+  (.cube files,  cube.rs     OUT_DIR/luts.rs    ──┼─ lut_pack! ─▶ LutFilter ─▶ render.rs ─▶ lut.rs
+   *.txt config) color.rs    OUT_DIR/manifest.json┘
+```
+
+| File | Runs | What it does |
+|---|---|---|
+| `bake.rs` | build | reads a pack's folder and config files, orders and names the LUTs, writes the baked tables, their index (`LUTS`) and the manifest |
+| `cube.rs` | build | reads `.cube` files; full-precision maths on them, such as baking in the DaVinci conversion |
+| `color.rs` | both | sRGB and DaVinci Wide Gamut / Intermediate colour maths |
+| `lut.rs` | both | the baked table format (shared by `bake.rs` and the plug-in) and `Lut::lookup` |
+| `render.rs` | run | picks the LUT the dialog chose and applies it to a band, blended by Intensity |
+| `lib.rs` | run | `lut_pack!`, which puts a plug-in together from its baked files |
+| `testing.rs` | tests | `pack_tests!`, the tests every LUT plug-in runs on its own LUTs |
+
+`lut_pack!` is a macro because the baked files sit in each plug-in crate's own `OUT_DIR`, and
+`include!` can only reach them from code written in that crate.
+
+### `filters/chromatic-aberration`
+
+`lib.rs` holds the manifest and the `Filter` entry point; the rest follows a band through the
+filter: `settings.rs` reads the dialog, `field.rs` works out how far each pixel's colours move,
+`taps.rs` decides where each pixel reads and how many reads the image can afford, and `render.rs`
+does the pixel passes.
 
 ## Tests, previews and benchmarks
 
@@ -68,14 +120,25 @@ cargo run --release -p moxocraft-bench -- dist/moxocraft_chromatic_aberration.wa
 
 Measures a built filter in wasmi, the interpreter PhotoCraft runs plug-ins in. It is roughly 100×
 slower than normal compiled code, and PhotoCraft stops a plug-in run after 60 seconds, so check
-this on a 24-megapixel canvas (the default) after changing a pixel loop.
+this on a 24-megapixel canvas (the default) after changing a pixel loop. The instructions-per-pixel
+figure doesn't vary between runs, so it shows even small changes.
+
+## Adding a filter
+
+1. Copy `filters/chromatic-aberration` to a new folder in `filters/` and rename the package in
+   its `Cargo.toml`.
+2. Give the manifest a new `id` and a name starting "MoxoCraft - ", implement
+   `moxocraft_sdk::Filter`, and call `export_filter!`.
+3. Add the folder to the workspace `members` in the root `Cargo.toml`.
+4. Add its `.wasm` file name to `$Plugins` at the top of `tools/release.ps1` to ship it.
+
+`build.ps1` picks up every crate in `filters/` by itself.
 
 ## Releasing
 
 `tools/release.ps1` makes a GitHub release from a version number. First set the new version in
-two places: `version` in the root `Cargo.toml` (the LUT plug-ins take theirs from there) and the
-`"version"` in the manifest in `filters/chromatic-aberration/src/lib.rs`. Run `cargo build` so
-`Cargo.lock` picks it up, then commit and push to main.
+the root `Cargo.toml` (`[workspace.package]`); every plug-in's manifest takes it from there. Run
+`cargo build` so `Cargo.lock` picks it up, then commit and push to main.
 
 Write the release notes in a file outside the repo folder (the script refuses to run with stray
 files in it). The previous release's notes are a good starting point; keep the Credits section
@@ -93,74 +156,15 @@ Then try it without publishing, and publish once that looks right:
 ./tools/release.ps1 -Version 0.2.0 -NotesFile ../notes.md
 ```
 
-The script stops with a message if main has changes, isn't pushed, the version doesn't match in
-both places, the release already exists, or the notes are missing the spektrafilm credit or
-still name an older zip. Otherwise it runs the tests, rebuilds the plug-ins from scratch and packs
+The script stops with a message if main has changes, isn't pushed, the version doesn't match, the
+release already exists, or the notes are missing the spektrafilm credit or still name an older
+zip. Otherwise it runs the tests, rebuilds the plug-ins from scratch with `build.ps1` and packs
 `MoxoCraft-v0.2.0.zip` (the plug-ins, the README and the LUTs' licences, sources and changelog in
 `luts/`). It also writes `SHA256SUMS.txt` with Unix line endings, since `sha256sum -c` rejects
 Windows ones. Then it uploads the zip, the `.wasm` files and the checksums as a release of the
 commit it built, downloads them again and checks each one. `-DryRun` stops before uploading and
-prints the folder holding the files. If you add a `.txt` notice to `luts/`, add it to
-`$LutNotices` at the top of the script too; it stops until the two match.
+prints the folder holding the files.
 
-## Adding a filter
-
-Copy `filters/chromatic-aberration`, give it a new manifest `id` and a name starting
-"MoxoCraft - ", implement `moxocraft_sdk::Filter`, call `export_filter!`, and add it to the
-workspace members in `Cargo.toml`.
-
-## LUTs
-
-PhotoCraft gives plug-ins no file access, so each LUT plug-in's build script bakes its folder of
-`.cube` files into the `.wasm` (`moxocraft_lut_core::bake`) and writes the manifest, so the
-dialog's list always matches. PhotoCraft lists at most 64 choices in a dropdown, which is why the
-LUTs are spread over three plug-ins:
-
-```text
-luts/film-luts/       MoxoCraft - Film LUTs:      Film, Negative, Slide, Instant, Fujifilm Style
-luts/cinematic-luts/  MoxoCraft - Cinematic LUTs: Cinematic, Moody, Vintage, Black & White
-luts/creative-luts/   MoxoCraft - Creative LUTs:  Colorful, Scenic, Creative
-```
-
-Each plug-in folder holds a folder per category and three small files: `categories.txt` (the
-categories in menu order), `default.txt` (the LUT the dialog opens on) and `CREDITS.txt` (added to
-the plug-in's description, so the credit travels inside the `.wasm`). A LUT appears as
-"Category - File name", with underscores shown as spaces, in natural order within its category.
-The build stops if a plug-in goes over 64 LUTs or PhotoCraft's 32 MB module limit (about 140 LUTs
-of 33 points). The Film LUTs plug-in keeps v0.1.0's id, `moxocraft.lut`, and file name, so
-installing it replaces the old "MoxoCraft - LUT".
-
-**Adding a LUT.** Drop a 3D `.cube` file into a category folder and run `./build.ps1`. Check that
-its licence allows redistribution first, and add it to `tools/import-luts/import_luts.py` (so its
-source, licence and changes land in `luts/SOURCES.txt`) and its credit to the plug-in's
-`CREDITS.txt`. A new category also needs a line in `categories.txt`.
-
-**DaVinci Resolve LUTs.** LUTs made inside Resolve's *DaVinci Wide Gamut / DaVinci Intermediate*
-colour space, rather than for normal images, come out milky and break saturated colours into flat
-blocks when applied straight to a photo. List those in the plug-in folder's
-`davinci-intermediate.txt` (one `Category/File name.cube` per line): the build then bakes the
-conversion into that space and back into the LUT, so it works on normal photos at full speed.
-
-**Re-making the LUTs.** Two scripts record exactly where every LUT came from and what was done to
-it, which the CC BY and CC BY-SA licences ask for:
-
-- [`tools/bake-luts/bake_spektrafilm.py`](../tools/bake-luts/bake_spektrafilm.py) bakes the Film
-  category from [spektrafilm](https://github.com/andreavolpato/spektrafilm) (CC BY-SA 4.0): the
-  stocks, prints and settings, and the one-time setup of spektrafilm in its own Python
-  environment. It rewrites `luts/film-luts/Film` and `luts/CHANGELOG.txt`. Slide films are left
-  out there: spektrafilm's LUT tool always sends film through a print, while spektrafilm itself
-  shows slides scanned directly.
-- [`tools/import-luts/import_luts.py`](../tools/import-luts/import_luts.py) imports the other 132
-  LUTs from their collections at pinned commits (the setup is at the top of the script). It
-  converts HaldCLUT images to `.cube`, resamples anything over 33 points per axis down to 33,
-  writes a header into each file naming its source, author and licence, copies the licence texts
-  byte for byte, and rewrites `luts/SOURCES.txt`. Each source's licence was checked by hand; the
-  notes in the script say what was taken and what was left out.
-
-Then run `./build.ps1`.
-
-Licence conditions to keep: `luts/SPEKTRAFILM_LICENSE.txt` must stay byte-identical to upstream
-(`luts/.gitattributes` stops Git changing its line endings), every change to the spektrafilm LUTs
-goes in `luts/CHANGELOG.txt`, spektrafilm's name mustn't be used in product branding, and the LUTs
-mustn't be sold as a LUT pack (spektrafilm and slay both ask this). The licence texts, `SOURCES.txt`
-and `CHANGELOG.txt` must ship with the plug-ins.
+Two lists at the top of the script say what ships, and it stops until each matches what is on
+disk: `$Plugins` (the `.wasm` files `build.ps1` built) and `$LutNotices` (the `.txt` files in
+`luts/`).

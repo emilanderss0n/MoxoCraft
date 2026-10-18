@@ -11,6 +11,7 @@ members = [
     "tools/lut-preview",
 ]
 
+# The one version number for every plug-in: their manifests take it from here at build time.
 [workspace.package]
 version = "0.1.0"
 edition = "2024"

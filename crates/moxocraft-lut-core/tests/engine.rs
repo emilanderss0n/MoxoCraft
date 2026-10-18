@@ -2,7 +2,7 @@
 //! LUTs with `pack_tests!`.
 
 use moxocraft_lut_core::testing::{colours, identity};
-use moxocraft_lut_core::{Lut, cube};
+use moxocraft_lut_core::{Lut, color, cube};
 use moxocraft_sdk::{ColorMode, Format};
 
 #[test]
@@ -52,13 +52,13 @@ fn davinci_round_trip_with_a_neutral_lut_changes_nothing() {
 fn davinci_intermediate_hits_the_reference_points() {
     // Blackmagic's published values: 18% grey at 0.336, linear 1 at about 0.514, black at 0, and
     // the toe and log parts meet without a jump.
-    assert!((cube::davinci_intermediate(0.18) - 0.336).abs() < 0.001);
-    assert!((cube::davinci_intermediate(1.0) - 0.5139).abs() < 0.001);
-    assert_eq!(cube::davinci_intermediate(0.0), 0.0);
+    assert!((color::davinci_intermediate(0.18) - 0.336).abs() < 0.001);
+    assert!((color::davinci_intermediate(1.0) - 0.5139).abs() < 0.001);
+    assert_eq!(color::davinci_intermediate(0.0), 0.0);
     let t = 0.002_624_09;
-    assert!((cube::davinci_intermediate(t) - cube::davinci_intermediate(t + 1e-6)).abs() < 1e-4);
+    assert!((color::davinci_intermediate(t) - color::davinci_intermediate(t + 1e-6)).abs() < 1e-4);
     for v in [0.0, 0.01, 0.18, 1.0, 4.0] {
-        assert!((cube::davinci_intermediate_to_linear(cube::davinci_intermediate(v)) - v).abs() < 1e-4 * (1.0 + v));
+        assert!((color::davinci_intermediate_to_linear(color::davinci_intermediate(v)) - v).abs() < 1e-4 * (1.0 + v));
     }
 }
 

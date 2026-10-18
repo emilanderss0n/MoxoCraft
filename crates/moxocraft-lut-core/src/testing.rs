@@ -1,7 +1,7 @@
 //! Test helpers, and [`pack_tests!`](crate::pack_tests), the tests every LUT plug-in runs on its
 //! own baked-in LUTs. Not part of the plug-ins themselves.
 
-use crate::cube;
+use crate::lut::quantize;
 
 /// A LUT of `size` points per axis that maps every colour to itself, as stored bytes.
 pub fn identity(size: usize) -> Vec<u8> {
@@ -10,7 +10,7 @@ pub fn identity(size: usize) -> Vec<u8> {
         for g in 0..size {
             for r in 0..size {
                 for v in [r, g, b] {
-                    let q = cube::quantize(v as f32 / (size - 1) as f32);
+                    let q = quantize(v as f32 / (size - 1) as f32);
                     bytes.extend_from_slice(&q.to_le_bytes());
                 }
             }

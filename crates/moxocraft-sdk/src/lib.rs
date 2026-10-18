@@ -7,14 +7,28 @@
 //!
 //! A filter implements [`Filter`] and calls [`export_filter!`]; that macro writes the four
 //! functions PhotoCraft looks for (`pc_abi_version`, `pc_manifest`, `pc_alloc`, `pc_filter`).
-//! The [`host`] module copies how PhotoCraft feeds bands to a filter, so filters can be tested and
-//! previewed natively without PhotoCraft.
+//! Everything a filter needs is re-exported here: [`Image`] and [`Format`] describe the band,
+//! [`Params`] reads the settings, [`Error`] is what it returns when it can't run.
+//!
+//! The other modules sit around that API, not inside it:
+//! - [`abi`] turns PhotoCraft's raw pointers and numbers into an [`Image`] and [`Params`]. It is
+//!   the only `unsafe` code in MoxoCraft; filters never call it directly.
+//! - [`host`] copies how PhotoCraft feeds bands to a filter, so filters can be tested, previewed
+//!   and benchmarked without PhotoCraft.
+//! - `json` is a small JSON reader and writer ([`Json`]). Plug-ins can't pull in much (no file
+//!   system, no imports), the settings are small and flat, and the same code writes the settings
+//!   `host` sends and the manifests the LUT plug-ins generate, so a dependency would add size
+//!   to every `.wasm` for nothing.
 
 pub mod abi;
 pub mod host;
-pub mod json;
+mod image;
+mod json;
+mod params;
 
+pub use image::{ColorMode, Format, Geometry, Image};
 pub use json::Json;
+pub use params::Params;
 
 /// What a filter returns when it can't run. The number is the code PhotoCraft shows in its error.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -25,159 +39,6 @@ pub enum Error {
     UnsupportedMode = 2,
     /// The filter couldn't get the scratch memory it needs.
     OutOfMemory = 3,
-}
-
-/// A colour mode, numbered as in the PSD file format (which is how PhotoCraft sends it).
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum ColorMode {
-    Bitmap,
-    Grayscale,
-    /// Indexed documents reach plug-ins as plain RGB.
-    Indexed,
-    Rgb,
-    Cmyk,
-    Multichannel,
-    /// Duotone documents reach plug-ins as grayscale.
-    Duotone,
-    Lab,
-    Unknown(u8),
-}
-
-impl ColorMode {
-    pub fn from_code(code: u8) -> Self {
-        match code {
-            0 => Self::Bitmap,
-            1 => Self::Grayscale,
-            2 => Self::Indexed,
-            3 => Self::Rgb,
-            4 => Self::Cmyk,
-            7 => Self::Multichannel,
-            8 => Self::Duotone,
-            9 => Self::Lab,
-            other => Self::Unknown(other),
-        }
-    }
-
-    pub fn code(self) -> u8 {
-        match self {
-            Self::Bitmap => 0,
-            Self::Grayscale => 1,
-            Self::Indexed => 2,
-            Self::Rgb => 3,
-            Self::Cmyk => 4,
-            Self::Multichannel => 7,
-            Self::Duotone => 8,
-            Self::Lab => 9,
-            Self::Unknown(c) => c,
-        }
-    }
-
-    /// True for modes whose pixels arrive as red, green and blue.
-    pub fn is_rgb(self) -> bool {
-        matches!(self, Self::Rgb | Self::Indexed)
-    }
-}
-
-/// The `format` argument of `pc_filter`: `depth | alpha << 8 | mode << 16`.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub struct Format {
-    /// The document's bit depth: 8, 16 or 32. Samples are always `f32`; 32-bit documents hold
-    /// linear light and may go above 1, 8- and 16-bit ones are gamma-encoded.
-    pub depth: u8,
-    /// The last channel is straight (not premultiplied) alpha.
-    pub alpha: bool,
-    pub mode: ColorMode,
-}
-
-impl Format {
-    pub const RGB8: Format = Format { depth: 8, alpha: false, mode: ColorMode::Rgb };
-    pub const RGBA8: Format = Format { depth: 8, alpha: true, mode: ColorMode::Rgb };
-
-    pub fn from_code(code: u32) -> Self {
-        Format { depth: (code & 0xff) as u8, alpha: code & (1 << 8) != 0, mode: ColorMode::from_code(((code >> 16) & 0xff) as u8) }
-    }
-
-    pub fn code(self) -> u32 {
-        u32::from(self.depth) | (u32::from(self.alpha) << 8) | (u32::from(self.mode.code()) << 16)
-    }
-
-    /// Samples per pixel, alpha included (multichannel documents are counted as one channel).
-    pub fn channels(self) -> usize {
-        let colour = match self.mode {
-            ColorMode::Rgb | ColorMode::Indexed | ColorMode::Lab => 3,
-            ColorMode::Cmyk => 4,
-            _ => 1,
-        };
-        colour + usize::from(self.alpha)
-    }
-}
-
-/// Where a band sits in the document. PhotoCraft sends it as `_image` in the settings JSON.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub struct Geometry {
-    /// Document position of the buffer's top-left sample, margins included.
-    pub x: i64,
-    pub y: i64,
-    /// Extra pixels around the band on every side. They are there to be read; only the inner
-    /// rectangle of the result is kept.
-    pub overlap: usize,
-    pub canvas_width: usize,
-    pub canvas_height: usize,
-}
-
-/// One band of pixels, filtered in place.
-pub struct Image<'a> {
-    /// `width × height × channels` interleaved samples, row by row.
-    pub data: &'a mut [f32],
-    pub width: usize,
-    pub height: usize,
-    pub channels: usize,
-    pub format: Format,
-    pub geometry: Geometry,
-}
-
-/// The settings the user picked, already checked and clamped by PhotoCraft against the manifest.
-pub struct Params {
-    root: Json,
-}
-
-impl Params {
-    pub fn new(root: Json) -> Self {
-        Params { root }
-    }
-
-    pub fn parse(text: &str) -> Result<Self, Error> {
-        Json::parse(text).filter(|j| matches!(j, Json::Object(_))).map(Params::new).ok_or(Error::BadInput)
-    }
-
-    /// A number setting, or `default` when it's missing or not a number.
-    pub fn number(&self, key: &str, default: f64) -> f64 {
-        self.root.get(key).and_then(Json::as_f64).unwrap_or(default)
-    }
-
-    /// A choice or text setting.
-    pub fn text(&self, key: &str) -> Option<&str> {
-        self.root.get(key).and_then(Json::as_str)
-    }
-
-    /// A checkbox setting.
-    pub fn flag(&self, key: &str, default: bool) -> bool {
-        self.root.get(key).and_then(Json::as_bool).unwrap_or(default)
-    }
-
-    /// The band's geometry from `_image`, if PhotoCraft sent it.
-    pub fn geometry(&self) -> Option<Geometry> {
-        let g = self.root.get("_image")?;
-        let int = |k: &str| g.get(k).and_then(Json::as_f64).filter(|v| v.is_finite());
-        let size = |k: &str| int(k).map(|v| v.clamp(0.0, 1e9) as usize);
-        Some(Geometry {
-            x: int("x")? as i64,
-            y: int("y")? as i64,
-            overlap: size("overlap").unwrap_or(0),
-            canvas_width: size("canvasWidth")?,
-            canvas_height: size("canvasHeight")?,
-        })
-    }
 }
 
 /// A PhotoCraft filter plug-in.

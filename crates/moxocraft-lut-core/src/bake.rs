@@ -1,4 +1,5 @@
-//! Bakes a folder of `.cube` files into a LUT plug-in. Called from each LUT plug-in's build script.
+//! Bakes a folder of `.cube` files into a LUT plug-in. Called from each LUT plug-in's build script
+//! with that plug-in's [`Pack`]; only built for native code.
 //!
 //! A plug-in can't read files at run time (PhotoCraft gives it no file access), so the LUTs travel
 //! inside the `.wasm`. Each one is stored as 16-bit values (red changing fastest, as in the
@@ -6,13 +7,14 @@
 //! 8- or 16-bit image can show. The manifest is written here too, so the dialog's LUT list always
 //! matches what is baked in.
 //!
-//! A plug-in's folder (`luts/film-luts`, ...) holds category folders (`Film`, `Negative`, ...),
-//! listed in the order of its `categories.txt`. Add a LUT by dropping a `.cube` file into a
-//! category folder and rebuilding. Its menu name is "Category - File name", with underscores shown
-//! as spaces; `default.txt` (optional) names the one the dialog opens on, and `CREDITS.txt`
-//! (optional; lines starting with `#` are skipped) is added to the plug-in's description, so the
-//! LUTs' attribution travels inside the `.wasm`. PhotoCraft lists at most 64 choices in a
-//! dropdown and loads modules up to 32 MiB; the build stops if a folder goes over either.
+//! A plug-in's folder (`luts/film-luts`, ...) is the one place its LUTs are configured (see
+//! `docs/luts.md`). It holds category folders (`Film`, `Negative`, ...), listed in the order of
+//! its `categories.txt`. Add a LUT by dropping a `.cube` file into a category folder and
+//! rebuilding. Its menu name is "Category - File name", with underscores shown as spaces;
+//! `default.txt` (optional) names the one the dialog opens on, and `CREDITS.txt` (optional; lines
+//! starting with `#` are skipped) is added to the plug-in's description, so the LUTs' attribution
+//! travels inside the `.wasm`. PhotoCraft lists at most 64 choices in a dropdown and loads modules
+//! up to 32 MiB; the build stops if a folder goes over either.
 //!
 //! LUTs made for DaVinci Resolve's DaVinci Wide Gamut / Intermediate working space (rather than
 //! normal images) are listed in the folder's `davinci-intermediate.txt`, as
@@ -23,7 +25,14 @@
 use std::fmt::Write as _;
 use std::path::{Path, PathBuf};
 
+use moxocraft_sdk::Json;
+
 use crate::cube::{self, CubeData};
+use crate::lut::quantize;
+
+/// The repository's `luts/` folder, found from this crate's own place in the workspace so the LUT
+/// plug-ins don't each work it out.
+const LUTS_DIR: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/../../luts");
 
 /// PhotoCraft refuses modules over 32 MiB; leave room for the code.
 const MAX_TOTAL_BYTES: usize = 30 << 20;
@@ -31,16 +40,15 @@ const MAX_TOTAL_BYTES: usize = 30 << 20;
 /// PhotoCraft refuses a dropdown with more choices than this.
 const MAX_CHOICES: usize = 64;
 
-/// One LUT plug-in.
+/// What makes one LUT plug-in itself. Everything else about it (its LUTs, their order, the
+/// default, the credits) comes from its folder, and its version is the workspace's.
 pub struct Pack<'a> {
-    /// Its LUT folder.
-    pub folder: PathBuf,
+    /// Its folder under `luts/`, such as `"film-luts"`.
+    pub folder: &'a str,
     /// The manifest id (installing a module with the same id replaces the old one).
     pub id: &'a str,
     /// The menu label.
     pub name: &'a str,
-    /// The plug-in's version (the workspace version).
-    pub version: &'a str,
     /// The start of the plug-in's description; `CREDITS.txt` follows it.
     pub description: &'a str,
 }
@@ -56,7 +64,7 @@ struct Cube {
 
 /// Bakes `pack`'s folder into `luts.bin`, `luts.rs` and `manifest.json` in `OUT_DIR`.
 pub fn bake(pack: &Pack) {
-    let dir = &pack.folder;
+    let dir = &Path::new(LUTS_DIR).join(pack.folder);
     println!("cargo:rerun-if-changed={}", dir.display());
 
     // Menu order: categories as listed in categories.txt, then LUTs by name within each, with
@@ -92,7 +100,7 @@ pub fn bake(pack: &Pack) {
     assert!(files.len() <= MAX_CHOICES, "{} holds {} LUTs; PhotoCraft lists at most {MAX_CHOICES} in a dropdown", dir.display(), files.len());
 
     let davinci_list = dir.join("davinci-intermediate.txt");
-    println!("cargo:rerun-if-changed={}", davinci_list.display());
+    watch_optional(&davinci_list);
     let davinci_input = list_file(&davinci_list);
     // "Category/File name.cube", as davinci-intermediate.txt lists them.
     let rel = |category: &str, f: &Path| format!("{category}/{}", f.file_name().unwrap_or_default().to_string_lossy());
@@ -116,10 +124,10 @@ pub fn bake(pack: &Pack) {
     let mut table = String::from("/// The LUTs baked in, in menu order.\npub static LUTS: &[LutInfo] = &[\n");
     for c in &cubes {
         let offset = bytes.len();
-        // 16 bits per value (see `cube::quantize`): steps far finer than an 8- or 16-bit image
+        // 16 bits per value (see `lut::quantize`): steps far finer than an 8- or 16-bit image
         // can show.
         for v in &c.lut.values {
-            bytes.extend_from_slice(&cube::quantize(*v).to_le_bytes());
+            bytes.extend_from_slice(&quantize(*v).to_le_bytes());
         }
         writeln!(table, "    LutInfo {{ name: {:?}, file: {:?}, size: {}, davinci: {}, offset: {offset}, len: {} }},", c.name, c.file, c.lut.size, c.davinci, bytes.len() - offset).unwrap();
     }
@@ -129,16 +137,18 @@ pub fn bake(pack: &Pack) {
     std::fs::write(out.join("luts.rs"), table).expect("write luts.rs");
     // The LUTs' credits travel inside the plug-in, in the description PhotoCraft shows for it.
     let credits_file = dir.join("CREDITS.txt");
-    println!("cargo:rerun-if-changed={}", credits_file.display());
+    watch_optional(&credits_file);
     let credits = std::fs::read_to_string(&credits_file).unwrap_or_default();
     let credits = credits.lines().filter(|l| !l.trim_start().starts_with('#')).collect::<Vec<_>>().join(" ");
     let credits = credits.split_whitespace().collect::<Vec<_>>().join(" ");
     // The LUT the dialog opens on: named in `default.txt`, or else the first one.
     let default_file = dir.join("default.txt");
-    println!("cargo:rerun-if-changed={}", default_file.display());
+    watch_optional(&default_file);
     let default = list_file(&default_file).into_iter().next().unwrap_or_else(|| cubes[0].name.clone());
     assert!(cubes.iter().any(|c| c.name == default), "default.txt names {default:?}, but no LUT is called that");
-    std::fs::write(out.join("manifest.json"), manifest(pack, &cubes, &credits, &default)).expect("write manifest.json");
+    // Cargo gives the build script the version of the crate it builds: the workspace's.
+    let version = std::env::var("CARGO_PKG_VERSION").expect("cargo sets CARGO_PKG_VERSION");
+    std::fs::write(out.join("manifest.json"), manifest(pack, &version, &cubes, &credits, &default)).expect("write manifest.json");
 }
 
 /// A menu-safe name, "Category - File name": underscores become spaces, and the characters
@@ -149,6 +159,15 @@ fn display_name(category: &str, path: &Path) -> String {
     let name = name.split_whitespace().collect::<Vec<_>>().join(" ");
     assert!(name.chars().count() <= 64, "{name:?} is too long for PhotoCraft's menu (64 characters at most)");
     name
+}
+
+/// Rebuilds when an optional file changes. Only files that exist are named: Cargo treats a missing
+/// one as changed on every build, which would re-bake every LUT each time. Creating the file later
+/// is still noticed, because it changes the plug-in's folder, which is watched too.
+fn watch_optional(path: &Path) {
+    if path.exists() {
+        println!("cargo:rerun-if-changed={}", path.display());
+    }
 }
 
 fn is_cube(path: &Path) -> bool {
@@ -183,7 +202,7 @@ fn natural_key(name: &str) -> Vec<(u64, String)> {
     key
 }
 
-fn manifest(pack: &Pack, cubes: &[Cube], credits: &str, default: &str) -> String {
+fn manifest(pack: &Pack, version: &str, cubes: &[Cube], credits: &str, default: &str) -> String {
     let options: Vec<String> = cubes.iter().map(|c| json_string(&c.name)).collect();
     let mut description = pack.description.to_owned();
     if !credits.is_empty() {
@@ -209,7 +228,7 @@ fn manifest(pack: &Pack, cubes: &[Cube], credits: &str, default: &str) -> String
 }}"#,
         json_string(pack.id),
         json_string(pack.name),
-        json_string(pack.version),
+        json_string(version),
         json_string(&description),
         options.join(", "),
         json_string(default)
@@ -218,15 +237,5 @@ fn manifest(pack: &Pack, cubes: &[Cube], credits: &str, default: &str) -> String
 
 /// `s` as a JSON string literal.
 fn json_string(s: &str) -> String {
-    let mut out = String::from("\"");
-    for c in s.chars() {
-        match c {
-            '"' => out.push_str("\\\""),
-            '\\' => out.push_str("\\\\"),
-            c if (c as u32) < 0x20 => write!(out, "\\u{:04x}", c as u32).unwrap(),
-            c => out.push(c),
-        }
-    }
-    out.push('"');
-    out
+    Json::String(s.to_owned()).to_text()
 }

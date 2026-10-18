@@ -18,6 +18,8 @@ Add-Type -AssemblyName System.IO.Compression, System.IO.Compression.FileSystem
 # The git blob hash of spektrafilm's licence as published upstream. Its CC BY-SA 4.0 terms need the
 # licence to travel unchanged with the LUTs, so the copy in the zip must still have this hash.
 $LicenseBlobHash = '303ba46793ae40c11442d6b94609165325570a91'
+# The plug-ins that ship. build.ps1 builds every crate in filters/; the release stops if what it
+# built and this list don't match, so a new filter is shipped (or left out) on purpose.
 $Plugins = 'moxocraft_chromatic_aberration.wasm', 'moxocraft_lut.wasm', 'moxocraft_lut_cinematic.wasm', 'moxocraft_lut_creative.wasm'
 # The LUTs' licences, sources and changelog (every .txt file directly in luts/), which their
 # licences require to travel with the plug-ins.
@@ -113,13 +115,12 @@ try {
     if ($head -ne $remoteHead) { Fail "main ($head) and origin/main ($remoteHead) differ; push or pull first" }
     Write-Host "  main is clean and matches origin/main at $head"
 
-    # 2. Every place that carries the version must agree with the one asked for.
-    Step "Checking the version is $Version everywhere"
+    # 2. The version must be the one asked for. It is set once, in the root Cargo.toml; every
+    # plug-in's manifest takes it from there when it is built.
+    Step "Checking the version is $Version"
     $versionSources = @(
-        @{ File = 'Cargo.toml'; Pattern = '(?m)^version\s*=\s*"([^"]+)"' },
-        @{ File = 'filters/chromatic-aberration/src/lib.rs'; Pattern = '"version":\s*"([^"]+)"' }
+        @{ File = 'Cargo.toml'; Pattern = '(?m)^version\s*=\s*"([^"]+)"' }
     )
-    # (The LUT plug-ins take theirs from Cargo.toml.)
     foreach ($source in $versionSources) {
         $found = [regex]::Matches([IO.File]::ReadAllText((Join-Path $Root $source.File)), $source.Pattern)
         if ($found.Count -ne 1) { Fail "expected one version in $($source.File), found $($found.Count)" }
@@ -173,6 +174,8 @@ try {
     foreach ($file in $Plugins) {
         if (-not (Test-Path "dist/$file")) { Fail "build.ps1 didn't produce dist/$file" }
     }
+    $unlisted = Get-ChildItem dist -Filter '*.wasm' | ForEach-Object Name | Where-Object { $Plugins -notcontains $_ }
+    if ($unlisted) { Fail "build.ps1 built $($unlisted -join ', '), which `$Plugins at the top of this script doesn't list; add it there to ship it" }
     $after = (Invoke-Git @('status', '--porcelain')) -split "`n" | Where-Object { $_ -and $_ -ne '?? .idea/' }
     if ($after) { Fail "the build changed files in the repo, so the release wouldn't match the commit:`n$($after -join "`n")" }
 

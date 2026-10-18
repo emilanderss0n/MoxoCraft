@@ -1,4 +1,5 @@
-//! The code behind the exports [`export_filter!`](crate::export_filter) writes.
+//! The code behind the exports [`export_filter!`](crate::export_filter) writes: it checks the raw
+//! arguments PhotoCraft passes and turns them into an [`Image`] and [`Params`] for the filter.
 //!
 //! Every band runs in a fresh WebAssembly instance, so nothing here is ever freed: the instance's
 //! whole memory is thrown away after the call.
@@ -60,7 +61,8 @@ pub fn run<F: Filter>(data: &mut [f32], width: usize, height: usize, channels: u
     }
 }
 
-fn try_run<F: Filter>(data: &mut [f32], width: usize, height: usize, channels: usize, format: u32, params: &[u8]) -> Result<(), Error> {
+/// [`run`], returning the error itself rather than its code.
+pub(crate) fn try_run<F: Filter>(data: &mut [f32], width: usize, height: usize, channels: usize, format: u32, params: &[u8]) -> Result<(), Error> {
     let expected = width.checked_mul(height).and_then(|p| p.checked_mul(channels)).ok_or(Error::BadInput)?;
     if channels == 0 || expected != data.len() {
         return Err(Error::BadInput);

@@ -11,7 +11,6 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 moxocraft-lut-core.workspace = true
-moxocraft-sdk.workspace = true
 
 [build-dependencies]
 moxocraft-lut-core.workspace = true

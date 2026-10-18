@@ -8,7 +8,7 @@
 
 use std::time::Instant;
 
-use moxocraft_sdk::{Format, Json};
+use moxocraft_sdk::{Format, Json, host};
 use wasmi::{Config, Engine, Linker, Memory, Module, Store, TypedFunc};
 
 type FilterFn = TypedFunc<(i32, i32, i32, i32, i32, i32, i32, i32), i32>;
@@ -33,7 +33,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         let packed = instance.get_typed_func::<(), i64>(&store, "pc_manifest")?.call(&mut store, ())? as u64;
         let mut text = vec![0u8; (packed >> 32) as usize];
         memory.read(&store, (packed & 0xffff_ffff) as usize, &mut text)?;
-        moxocraft_sdk::host::manifest_overlap(std::str::from_utf8(&text)?)
+        host::manifest_overlap(std::str::from_utf8(&text)?)
     };
 
     // PhotoCraft's bands: one 256-pixel tile row, as many tiles across as fit in 4 MiB of f32.
@@ -66,21 +66,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 data.extend_from_slice(&[v, 1.0 - v, (v * 2.0).fract()]);
             }
         }
-        let mut with_image = fields.clone();
-        let num = |v: f64| Json::Number(v);
-        with_image.push((
-            "_image".into(),
-            Json::Object(vec![
-                ("x".into(), num(x0 as f64)),
-                ("y".into(), num(y0 as f64)),
-                ("width".into(), num(iw as f64)),
-                ("height".into(), num(ih as f64)),
-                ("overlap".into(), num(overlap as f64)),
-                ("canvasWidth".into(), num(cw as f64)),
-                ("canvasHeight".into(), num(ch as f64)),
-            ]),
-        ));
-        let text = Json::Object(with_image).to_text();
+        let text = host::band_params(&fields, (x0, y0), (iw, ih), overlap, (cw, ch), format);
 
         let (mut store, instance, memory) = instantiate(&engine, &module)?;
         let alloc = instance.get_typed_func::<i32, i32>(&store, "pc_alloc")?;

@@ -57,7 +57,7 @@ Tips:
 - For a glitch look, use *Directional*, *RGB Split* and **Softness** 0.
 - The effect shows most on bright edges against dark backgrounds. Fringes around highlights glow
   rather than turning muddy.
-- The largest possible shift is about 60–125 px, depending on Softness.
+- The largest possible shift is about 65–125 px, depending on Softness.
 
 ## LUT filters
 
@@ -174,5 +174,6 @@ Run the tests with:
 cargo test
 ```
 
-[`docs/development.md`](docs/development.md) covers the project layout, previews and benchmarks,
-adding filters and LUTs, and re-making the LUTs from their sources.
+[`docs/development.md`](docs/development.md) covers how the code is organised, previews and
+benchmarks, adding a filter and releasing. [`docs/luts.md`](docs/luts.md) covers the LUT files:
+adding and removing LUTs, re-making them from their sources, and their licences.
