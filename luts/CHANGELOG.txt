@@ -1,7 +1,7 @@
 MoxoCraft LUTs: changes from spektrafilm
 ========================================
 
-The .cube files in this folder are derived from spektrafilm by Andrea Volpato
+The .cube files in film-luts/Film are derived from spektrafilm by Andrea Volpato
 (https://github.com/andreavolpato/spektrafilm) and licensed CC BY-SA 4.0; see
 SPEKTRAFILM_LICENSE.txt. Modified by MoxoCraft, as described below.
 
@@ -17,7 +17,7 @@ Settings (spektrafilm's defaults unless noted):
 
 Other changes:
   - Files renamed from spektrafilm's bundle names to the film names below.
-  - The MoxoCraft - LUT plug-in stores each LUT inside its .wasm at 16-bit precision
+  - The MoxoCraft - Film LUTs plug-in stores each LUT inside its .wasm at 16-bit precision
     (steps of about 0.00003); the values are otherwise unchanged.
 
 LUTs (menu name: film profile -> print profile):

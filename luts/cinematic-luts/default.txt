@@ -1,0 +1,2 @@
+# The LUT the dialog opens on (its menu name). Lines starting with # are skipped.
+Cinematic - Teal & Orange

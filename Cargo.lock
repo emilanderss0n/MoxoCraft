@@ -138,6 +138,41 @@ dependencies = [
 name = "moxocraft-lut"
 version = "0.1.0"
 dependencies = [
+ "moxocraft-lut-core",
+ "moxocraft-sdk",
+]
+
+[[package]]
+name = "moxocraft-lut-cinematic"
+version = "0.1.0"
+dependencies = [
+ "moxocraft-lut-core",
+ "moxocraft-sdk",
+]
+
+[[package]]
+name = "moxocraft-lut-core"
+version = "0.1.0"
+dependencies = [
+ "moxocraft-sdk",
+]
+
+[[package]]
+name = "moxocraft-lut-creative"
+version = "0.1.0"
+dependencies = [
+ "moxocraft-lut-core",
+ "moxocraft-sdk",
+]
+
+[[package]]
+name = "moxocraft-lut-preview"
+version = "0.1.0"
+dependencies = [
+ "moxocraft-lut",
+ "moxocraft-lut-cinematic",
+ "moxocraft-lut-core",
+ "moxocraft-lut-creative",
  "moxocraft-sdk",
  "png",
 ]

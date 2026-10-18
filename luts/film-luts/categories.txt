@@ -1,0 +1,6 @@
+# Category folders in menu order. Each LUT appears as "Category - Name".
+Film
+Negative
+Slide
+Instant
+Fujifilm Style

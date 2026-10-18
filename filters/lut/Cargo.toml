@@ -1,16 +1,17 @@
 [package]
 name = "moxocraft-lut"
-description = "LUT: a PhotoCraft filter plug-in by MoxoCraft that applies the LUTs in the repository's luts folder"
+description = "Film LUTs: a PhotoCraft filter plug-in by MoxoCraft with the LUTs in luts/film-luts"
 version.workspace = true
 edition.workspace = true
 publish = false
 
 [lib]
-# cdylib is the .wasm PhotoCraft loads; rlib lets the tests and the preview example call it natively.
+# cdylib is the .wasm PhotoCraft loads; rlib lets the tests and the LUT preview tool call it natively.
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
+moxocraft-lut-core.workspace = true
 moxocraft-sdk.workspace = true
 
-[dev-dependencies]
-png = "0.17"
+[build-dependencies]
+moxocraft-lut-core.workspace = true

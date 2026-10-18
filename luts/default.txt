@@ -1,2 +1,0 @@
-# The LUT the MoxoCraft - LUT dialog opens on (its menu name). Lines starting with # are skipped.
-Kodak Portra 400

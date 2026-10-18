@@ -1,0 +1,9 @@
+[package]
+name = "moxocraft-lut-core"
+description = "The LUT engine shared by MoxoCraft's LUT plug-ins: lookups, baking .cube files at build time, and shared tests"
+version.workspace = true
+edition.workspace = true
+publish = false
+
+[dependencies]
+moxocraft-sdk.workspace = true

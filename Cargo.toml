@@ -1,6 +1,15 @@
 [workspace]
 resolver = "3"
-members = ["crates/moxocraft-sdk", "filters/chromatic-aberration", "filters/lut", "tools/bench"]
+members = [
+    "crates/moxocraft-sdk",
+    "crates/moxocraft-lut-core",
+    "filters/chromatic-aberration",
+    "filters/lut",
+    "filters/lut-cinematic",
+    "filters/lut-creative",
+    "tools/bench",
+    "tools/lut-preview",
+]
 
 [workspace.package]
 version = "0.1.0"
@@ -8,6 +17,7 @@ edition = "2024"
 
 [workspace.dependencies]
 moxocraft-sdk = { path = "crates/moxocraft-sdk" }
+moxocraft-lut-core = { path = "crates/moxocraft-lut-core" }
 
 # Plug-ins run inside PhotoCraft's WebAssembly interpreter, where every instruction counts, so we
 # optimise for speed rather than file size (the host allows modules up to 32 MiB).

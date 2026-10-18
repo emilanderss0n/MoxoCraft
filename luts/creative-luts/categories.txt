@@ -1,0 +1,4 @@
+# Category folders in menu order. Each LUT appears as "Category - Name".
+Colorful
+Scenic
+Creative

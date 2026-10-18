@@ -19,7 +19,7 @@ Then, from the MoxoCraft folder:
 
     python tools/bake-luts/bake_spektrafilm.py --tool <venv>/Scripts/spektrafilm-lut.exe --source <spektrafilm clone>
 
-and rebuild the plug-in (./build.ps1).
+and rebuild the plug-ins (./build.ps1).
 """
 
 import argparse
@@ -89,7 +89,9 @@ def main() -> int:
     commit = "unknown"
     if args.source:
         commit = subprocess.run(["git", "-C", str(args.source), "rev-parse", "HEAD"], capture_output=True, text=True, check=True).stdout.strip()
-    args.out.mkdir(parents=True, exist_ok=True)
+    # The film stocks are the Film category of the Film LUTs plug-in.
+    film_dir = args.out / "film-luts" / "Film"
+    film_dir.mkdir(parents=True, exist_ok=True)
     version = None
     written = []
     with tempfile.TemporaryDirectory() as tmp:
@@ -112,7 +114,7 @@ def main() -> int:
                 if line.startswith("# spektrafilm:"):
                     version = version or line.split(":", 1)[1].strip()
             # The .cube keeps spektrafilm's own header, which carries the credit and licence.
-            shutil.copyfile(cubes[0], args.out / f"{name}.cube")
+            shutil.copyfile(cubes[0], film_dir / f"{name}.cube")
             written.append((name, film, print_))
             print(f"baked {name}")
 
@@ -121,7 +123,7 @@ def main() -> int:
         "MoxoCraft LUTs: changes from spektrafilm",
         "=" * 40,
         "",
-        "The .cube files in this folder are derived from spektrafilm by Andrea Volpato",
+        "The .cube files in film-luts/Film are derived from spektrafilm by Andrea Volpato",
         "(https://github.com/andreavolpato/spektrafilm) and licensed CC BY-SA 4.0; see",
         "SPEKTRAFILM_LICENSE.txt. Modified by MoxoCraft, as described below.",
         "",
@@ -137,14 +139,16 @@ def main() -> int:
         "",
         "Other changes:",
         "  - Files renamed from spektrafilm's bundle names to the film names below.",
-        "  - The MoxoCraft - LUT plug-in stores each LUT inside its .wasm at 16-bit precision",
+        "  - The MoxoCraft - Film LUTs plug-in stores each LUT inside its .wasm at 16-bit precision",
         "    (steps of about 0.00003); the values are otherwise unchanged.",
         "",
         "LUTs (menu name: film profile -> print profile):",
     ]
     lines += [f"  - {name}: {film} -> {print_}" for name, film, print_ in written]
-    (args.out / "CHANGELOG.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
-    print(f"wrote {len(written)} LUTs and CHANGELOG.txt to {args.out}")
+    # LF line endings on every system, like the rest of luts/ (luts/.gitattributes stops Git
+    # changing them).
+    (args.out / "CHANGELOG.txt").write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
+    print(f"wrote {len(written)} LUTs to {film_dir} and CHANGELOG.txt to {args.out}")
     return 0
 
 

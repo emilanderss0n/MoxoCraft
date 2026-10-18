@@ -1,0 +1,17 @@
+[package]
+name = "moxocraft-lut-creative"
+description = "Creative LUTs: a PhotoCraft filter plug-in by MoxoCraft with the LUTs in luts/creative-luts"
+version.workspace = true
+edition.workspace = true
+publish = false
+
+[lib]
+# cdylib is the .wasm PhotoCraft loads; rlib lets the tests and the LUT preview tool call it natively.
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+moxocraft-lut-core.workspace = true
+moxocraft-sdk.workspace = true
+
+[build-dependencies]
+moxocraft-lut-core.workspace = true

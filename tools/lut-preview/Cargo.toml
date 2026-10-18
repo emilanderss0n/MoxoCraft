@@ -1,0 +1,14 @@
+[package]
+name = "moxocraft-lut-preview"
+description = "Renders every LUT of MoxoCraft's LUT plug-ins on a photo or test card, as PNGs"
+version.workspace = true
+edition.workspace = true
+publish = false
+
+[dependencies]
+moxocraft-sdk.workspace = true
+moxocraft-lut-core.workspace = true
+moxocraft-lut = { path = "../../filters/lut" }
+moxocraft-lut-cinematic = { path = "../../filters/lut-cinematic" }
+moxocraft-lut-creative = { path = "../../filters/lut-creative" }
+png = "0.17"

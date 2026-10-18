@@ -1,0 +1,5 @@
+# Category folders in menu order. Each LUT appears as "Category - Name".
+Cinematic
+Moody
+Vintage
+Black & White

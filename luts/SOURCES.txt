@@ -1,0 +1,586 @@
+MoxoCraft LUTs: sources, credits and changes
+============================================
+
+The LUTs in film-luts/Film are derived from spektrafilm; see CHANGELOG.txt and
+SPEKTRAFILM_LICENSE.txt. Every other LUT comes from one of the collections below. Kodak,
+Fujifilm, Ilford, Agfa, Polaroid, Lomography, Rollei and the film names are trademarks
+of their owners, used only to describe the looks simulated; they don't endorse MoxoCraft.
+
+Changes made to all of them by MoxoCraft (tools/import-luts/import_luts.py): HaldCLUT
+images converted to .cube files; LUTs over 33 points per axis resampled to 33 with
+tetrahedral interpolation; .cube values rounded to 5 decimal places; files renamed; a
+header naming the source added. The MoxoCraft LUT plug-ins store each LUT inside their
+.wasm at 16-bit precision.
+
+Collections
+-----------
+
+HaldCLUT film emulation presets by Pat David
+  https://github.com/NatronGitHub/clut (commit af7b50d4caf6244fb6895a647f5b6a84efe7931a)
+  Author: Pat David
+  Licence: CC BY-SA 4.0
+  Licence text: CC-BY-SA-4.0.txt
+  From the bw, colorslide, instant_consumer, instant_pro and negative_* folders, which the repository's README credits to Pat David (https://patdavid.net/2013/08/film-emulation-presets-in-gmic-gimp/).
+
+FilmSim by Sébastien Guyader
+  https://github.com/sguyader/FilmSim (commit 1453b2b55c48d99a889b1e455f91f6898ba2db41)
+  Author: Sébastien Guyader (sguyader)
+  Licence: CC0 1.0 (public domain dedication)
+  Community-made simulations of Fujifilm camera looks; not made or endorsed by Fujifilm.
+
+haldclut by Christoph Wurst
+  https://github.com/ChristophWurst/haldclut (commit 310aec52794c1d0080164c1cb87e5b6003a44d37)
+  Author: Christoph Wurst
+  Licence: CC BY-SA 4.0
+  Licence text: CC-BY-SA-4.0.txt
+
+slay LUTs
+  https://github.com/slaycamera/luts (commit a1709044efe115640dde1dee17d4185fc059af0d)
+  Author: slay (https://www.slaycamera.com/)
+  Licence: CC BY 4.0
+  Licence text: CC-BY-4.0.txt
+  Credit as the author asks: LUTs: slay (https://www.slaycamera.com/) (CC BY 4.0).
+
+color-grading-luts by Striped Purple (Austin Barrett)
+  https://github.com/stripedpurple/color-grading-luts (commit 9757e8b5147693cab49c3fd674bf23dbe28d6c8e)
+  Author: Austin Barrett - Striped Purple (GitHub: stripedpurple / Nixua)
+  Licence: MIT
+  Licence text: STRIPED_PURPLE_LICENSE.txt
+  The author asks that you spread the word about their work: https://www.instagram.com/stripedpurple/.
+
+freshLUTs community LUTs, as selected and renamed by OpenShot
+  https://github.com/OpenShot/openshot-qt (commit c58ce6e7f11d59872dffcabe9a09bf9dec16cf53)
+  Author: the freshLUTs creators listed per LUT (via OpenShot's src/colors/AUTHORS.md)
+  Licence: CC0 1.0 (public domain dedication), as stated on each LUT's freshluts.com page
+
+LUTs
+----
+
+Negative - Agfa Ultra Color 100
+  from HaldCLUT film emulation presets by Pat David: negative_color/agfa_ultra_color_100.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Negative - Agfa Vista 200
+  from HaldCLUT film emulation presets by Pat David: negative_color/agfa_vista_200.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Negative - Fujifilm Pro 160C
+  from HaldCLUT film emulation presets by Pat David: negative_new/fuji_160c.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Negative - Fujifilm Pro 800Z
+  from HaldCLUT film emulation presets by Pat David: negative_new/fuji_800z.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Negative - Fujifilm Superia 100
+  from HaldCLUT film emulation presets by Pat David: negative_old/fuji_superia_100.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Negative - Fujifilm Superia 400
+  from HaldCLUT film emulation presets by Pat David: negative_old/fuji_superia_400.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Negative - Fujifilm Superia 800
+  from HaldCLUT film emulation presets by Pat David: negative_old/fuji_superia_800.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Negative - Fujifilm Superia 1600
+  from HaldCLUT film emulation presets by Pat David: negative_old/fuji_superia_1600.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Negative - Fujifilm Superia Reala 100
+  from HaldCLUT film emulation presets by Pat David: negative_color/fuji_superia_reala_100.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Negative - Kodak Elite Color 200
+  from HaldCLUT film emulation presets by Pat David: negative_color/kodak_elite_color_200.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Negative - Kodak Elite 100 (Cross-Processed)
+  from HaldCLUT film emulation presets by Pat David: negative_color/kodak_elite_100_xpro.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Negative - Kodak Portra 160 NC
+  from HaldCLUT film emulation presets by Pat David: negative_color/kodak_portra_160_nc.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Negative - Kodak Portra 160 VC
+  from HaldCLUT film emulation presets by Pat David: negative_color/kodak_portra_160_vc.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Negative - Kodak Portra 400 UC
+  from HaldCLUT film emulation presets by Pat David: negative_old/kodak_portra_400_uc.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Negative - Kodak Portra 400 VC
+  from HaldCLUT film emulation presets by Pat David: negative_old/kodak_portra_400_vc.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Negative - Lomography Redscale 100
+  from HaldCLUT film emulation presets by Pat David: negative_color/lomography_redscale_100.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Slide - Agfa Precisa 100
+  from HaldCLUT film emulation presets by Pat David: colorslide/agfa_precisa_100.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Slide - Fujifilm Astia 100F
+  from HaldCLUT film emulation presets by Pat David: colorslide/fuji_astia_100f.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Slide - Fujifilm Provia 100F
+  from HaldCLUT film emulation presets by Pat David: colorslide/fuji_provia_100f.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Slide - Fujifilm Provia 400X
+  from HaldCLUT film emulation presets by Pat David: colorslide/fuji_provia_400x.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Slide - Fujifilm Sensia 100
+  from HaldCLUT film emulation presets by Pat David: colorslide/fuji_sensia_100.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Slide - Fujifilm Velvia 50
+  from HaldCLUT film emulation presets by Pat David: colorslide/fuji_velvia_50.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Slide - Kodak Ektachrome 100 VS
+  from HaldCLUT film emulation presets by Pat David: colorslide/kodak_ektachrome_100_vs.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Slide - Kodak Elite Chrome 200
+  from HaldCLUT film emulation presets by Pat David: colorslide/kodak_elite_chrome_200.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Slide - Kodak Elite ExtraColor 100
+  from HaldCLUT film emulation presets by Pat David: colorslide/kodak_elite_extracolor_100.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Slide - Kodak Kodachrome 64
+  from HaldCLUT film emulation presets by Pat David: colorslide/kodak_kodachrome_64.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Slide - Lomography X-Pro Slide 200
+  from HaldCLUT film emulation presets by Pat David: colorslide/lomography_x-pro_slide_200.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Slide - Polaroid Polachrome
+  from HaldCLUT film emulation presets by Pat David: colorslide/polaroid_polachrome.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Instant - Polaroid PX-100UV+ Warm
+  from HaldCLUT film emulation presets by Pat David: instant_consumer/polaroid_px-100uv+_warm.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Instant - Polaroid PX-680
+  from HaldCLUT film emulation presets by Pat David: instant_consumer/polaroid_px-680.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Instant - Polaroid PX-680 Cold
+  from HaldCLUT film emulation presets by Pat David: instant_consumer/polaroid_px-680_cold.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Instant - Polaroid PX-70
+  from HaldCLUT film emulation presets by Pat David: instant_consumer/polaroid_px-70.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Instant - Polaroid PX-70 Warm
+  from HaldCLUT film emulation presets by Pat David: instant_consumer/polaroid_px-70_warm.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Instant - Polaroid Time Zero (Expired)
+  from HaldCLUT film emulation presets by Pat David: instant_consumer/polaroid_time_zero_(expired).png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Instant - Fujifilm FP-100C
+  from HaldCLUT film emulation presets by Pat David: instant_pro/fuji_fp-100c.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Instant - Fujifilm FP-100C Negative
+  from HaldCLUT film emulation presets by Pat David: instant_pro/fuji_fp-100c_negative.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Instant - Fujifilm FP-3000B
+  from HaldCLUT film emulation presets by Pat David: instant_pro/fuji_fp-3000b.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Instant - Polaroid 665
+  from HaldCLUT film emulation presets by Pat David: instant_pro/polaroid_665.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Instant - Polaroid 669
+  from HaldCLUT film emulation presets by Pat David: instant_pro/polaroid_669.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Instant - Polaroid 690
+  from HaldCLUT film emulation presets by Pat David: instant_pro/polaroid_690.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Black & White - Agfa APX 100
+  from HaldCLUT film emulation presets by Pat David: bw/agfa_apx_100.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Black & White - Fujifilm Neopan 1600
+  from HaldCLUT film emulation presets by Pat David: bw/fuji_neopan_1600.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Black & White - Ilford Delta 3200
+  from HaldCLUT film emulation presets by Pat David: bw/ilford_delta_3200.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Black & White - Ilford FP4 Plus 125
+  from HaldCLUT film emulation presets by Pat David: bw/ilford_fp4_plus_125.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Black & White - Ilford HP5 Plus 400
+  from HaldCLUT film emulation presets by Pat David: bw/ilford_hp5_plus_400.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Black & White - Ilford Pan F Plus 50
+  from HaldCLUT film emulation presets by Pat David: bw/ilford_pan_f_plus_50.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Black & White - Kodak HIE Infrared
+  from HaldCLUT film emulation presets by Pat David: bw/kodak_hie_(hs_infra).png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Black & White - Kodak T-Max 400
+  from HaldCLUT film emulation presets by Pat David: bw/kodak_t-max_400.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Black & White - Kodak Tri-X 400
+  from HaldCLUT film emulation presets by Pat David: bw/kodak_tri-x_400.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Black & White - Rollei Retro 80S
+  from HaldCLUT film emulation presets by Pat David: bw/rollei_retro_80s.png
+  by Pat David
+  CC BY-SA 4.0; converted from a HaldCLUT image (64 points per axis) to a 33-point .cube
+Fujifilm Style - Acros
+  from FilmSim by Sébastien Guyader: Acros.tif
+  by Sébastien Guyader (sguyader)
+  CC0 1.0; converted from a HaldCLUT image (144 points per axis) to a 33-point .cube
+Fujifilm Style - Classic Chrome
+  from FilmSim by Sébastien Guyader: Classic_Chrome.tif
+  by Sébastien Guyader (sguyader)
+  CC0 1.0; converted from a HaldCLUT image (144 points per axis) to a 33-point .cube
+Fujifilm Style - Provia Standard
+  from FilmSim by Sébastien Guyader: Provia_Std.tif
+  by Sébastien Guyader (sguyader)
+  CC0 1.0; converted from a HaldCLUT image (144 points per axis) to a 33-point .cube
+Fujifilm Style - Velvia Vivid
+  from FilmSim by Sébastien Guyader: Velvia_Vivid_v2.tif
+  by Sébastien Guyader (sguyader)
+  CC0 1.0; converted from a HaldCLUT image (144 points per axis) to a 33-point .cube
+Cinematic - City Neon
+  from freshLUTs community LUTs, as selected and renamed by OpenShot: cinematic_&_blockbuster/city_neon_cinema.cube
+  by Gina (freshLUTs); originally "Hong Kong 1", https://freshluts.com/luts/2426
+  CC0 1.0; values rounded to 5 decimal places
+Cinematic - Cool
+  from freshLUTs community LUTs, as selected and renamed by OpenShot: cinematic_&_blockbuster/cool_cinema.cube
+  by Andy (freshLUTs); originally "CINEMA 2", https://freshluts.com/luts/218
+  CC0 1.0; values rounded to 5 decimal places
+Cinematic - Dreamy
+  from freshLUTs community LUTs, as selected and renamed by OpenShot: cinematic_&_blockbuster/dreamy_cinema.cube
+  by Andy (freshLUTs); originally "CINEMA", https://freshluts.com/luts/213
+  CC0 1.0; values rounded to 5 decimal places
+Cinematic - Elegant Dark
+  from freshLUTs community LUTs, as selected and renamed by OpenShot: cinematic_&_blockbuster/elegant_dark_cinema.cube
+  by SHAAM WORX (freshLUTs); originally "ELEGANCE SONY ALPHA SER..", https://freshluts.com/luts/159
+  CC0 1.0; values rounded to 5 decimal places
+Cinematic - Heroic
+  from freshLUTs community LUTs, as selected and renamed by OpenShot: cinematic_&_blockbuster/heroic_cinema.cube
+  by tjtop (freshLUTs); originally "Wonder Woman Look (New ..", https://freshluts.com/luts/282
+  CC0 1.0; values rounded to 5 decimal places
+Cinematic - Romantic
+  from freshLUTs community LUTs, as selected and renamed by OpenShot: cinematic_&_blockbuster/romantic_cinema.cube
+  by SHAAM WORX (freshLUTs); originally "FIRST DATE", https://freshluts.com/luts/169
+  CC0 1.0; values rounded to 5 decimal places
+Cinematic - Sunlit
+  from freshLUTs community LUTs, as selected and renamed by OpenShot: cinematic_&_blockbuster/sunlit_cinema.cube
+  by Crizo (freshLUTs); originally "@crizomzeyahke", https://freshluts.com/luts/539
+  CC0 1.0; values rounded to 5 decimal places
+Cinematic - Teal & Orange
+  from freshLUTs community LUTs, as selected and renamed by OpenShot: cinematic_&_blockbuster/teal_&_orange_cinema.cube
+  by Andy (freshLUTs); originally "TEAL-ORANGE for Flog", https://freshluts.com/luts/212
+  CC0 1.0; values rounded to 5 decimal places
+Cinematic - Teal
+  from freshLUTs community LUTs, as selected and renamed by OpenShot: cinematic_&_blockbuster/teal_cinema.cube
+  by Andy (freshLUTs); originally "Cinematic for Flog", https://freshluts.com/luts/269
+  CC0 1.0; values rounded to 5 decimal places
+Cinematic - Moonlight Orange
+  from freshLUTs community LUTs, as selected and renamed by OpenShot: teal_&_orange_vibes/moonlight_orange.cube
+  by Antony Eliezer (freshLUTs); originally "LUNA COLOR RD", https://freshluts.com/luts/1247
+  CC0 1.0; values rounded to 5 decimal places
+Cinematic - Teal & Orange Signature
+  from freshLUTs community LUTs, as selected and renamed by OpenShot: teal_&_orange_vibes/signature_teal_&_orange.cube
+  by vannoeun (freshLUTs); originally "Teal-orange(Lut)", https://freshluts.com/luts/682
+  CC0 1.0; values rounded to 5 decimal places
+Cinematic - Sunset Orange
+  from freshLUTs community LUTs, as selected and renamed by OpenShot: teal_&_orange_vibes/sunset_orange.cube
+  by Alexander Barrels (freshLUTs); originally "Relatives", https://freshluts.com/luts/274
+  CC0 1.0; values rounded to 5 decimal places
+Cinematic - Teal Punch
+  from freshLUTs community LUTs, as selected and renamed by OpenShot: teal_&_orange_vibes/teal_punch.cube
+  by tjtop (freshLUTs); originally "TEAL LOOK FOR REC 709 V2", https://freshluts.com/luts/285
+  CC0 1.0; values rounded to 5 decimal places
+Cinematic - Western Sunset
+  from freshLUTs community LUTs, as selected and renamed by OpenShot: teal_&_orange_vibes/western_sunset.cube
+  by Andy (freshLUTs); originally "OLD WEST", https://freshluts.com/luts/227
+  CC0 1.0; values rounded to 5 decimal places
+Cinematic - slay Amber
+  from slay LUTs: luts/slay-01-amber.cube
+  by slay (https://www.slaycamera.com/)
+  CC BY 4.0; values rounded to 5 decimal places
+Cinematic - slay Neon
+  from slay LUTs: luts/slay-03-neon.cube
+  by slay (https://www.slaycamera.com/)
+  CC BY 4.0; values rounded to 5 decimal places
+Cinematic - slay Film
+  from slay LUTs: luts/slay-04-film.cube
+  by slay (https://www.slaycamera.com/)
+  CC BY 4.0; values rounded to 5 decimal places
+Cinematic - slay Portrait
+  from slay LUTs: luts/slay-05-portrait.cube
+  by slay (https://www.slaycamera.com/)
+  CC BY 4.0; values rounded to 5 decimal places
+Moody - Dramatic Warmth
+  from freshLUTs community LUTs, as selected and renamed by OpenShot: dark_&_moody/dramatic_warmth.cube
+  by InAvision (freshLUTs); originally "BC Darkum", https://freshluts.com/luts/706
+  CC0 1.0; values rounded to 5 decimal places
+Moody - Icy Drama
+  from freshLUTs community LUTs, as selected and renamed by OpenShot: dark_&_moody/icy_drama.cube
+  by sagi hershkovich (freshLUTs); originally "powerful cold", https://freshluts.com/luts/107
+  CC0 1.0; values rounded to 5 decimal places
+Moody - Emerald Drama
+  from freshLUTs community LUTs, as selected and renamed by OpenShot: dark_&_moody/mystic_emerald_drama.cube
+  by SHAAM WORX (freshLUTs); originally "ROYALS", https://freshluts.com/luts/596
+  CC0 1.0; values rounded to 5 decimal places
+Moody - Night Glow
+  from freshLUTs community LUTs, as selected and renamed by OpenShot: dark_&_moody/night_glow.cube
+  by maisayantan (freshLUTs); originally "Night Glow (Enhanced Bl..)", https://freshluts.com/luts/357
+  CC0 1.0; values rounded to 5 decimal places
+Moody - Noir Era
+  from freshLUTs community LUTs, as selected and renamed by OpenShot: dark_&_moody/noir_era.cube
+  by jackofalltrades (freshLUTs); originally ""Era" - Inspired by the..", https://freshluts.com/luts/1053
+  CC0 1.0; values rounded to 5 decimal places
+Moody - Spy Night
+  from freshLUTs community LUTs, as selected and renamed by OpenShot: dark_&_moody/spy_night.cube
+  by SHAAM WORX (freshLUTs); originally "SPY IN THE NIGHT", https://freshluts.com/luts/165
+  CC0 1.0; values rounded to 5 decimal places
+Moody - Teal Horror
+  from freshLUTs community LUTs, as selected and renamed by OpenShot: dark_&_moody/teal_horror.cube
+  by tjtop (freshLUTs); originally "TEAL HORROR REC709 V1 (..", https://freshluts.com/luts/297
+  CC0 1.0; values rounded to 5 decimal places
+Moody - Woodland Drama
+  from freshLUTs community LUTs, as selected and renamed by OpenShot: dark_&_moody/woodland_drama.cube
+  by SHAAM WORX (freshLUTs); originally "DIRECTIONS", https://freshluts.com/luts/166
+  CC0 1.0; values rounded to 5 decimal places
+Vintage - Classic Film
+  from freshLUTs community LUTs, as selected and renamed by OpenShot: film_stock_&_vintage/classic_film.cube
+  by Alex Jordan (freshLUTs); originally "Film 0987", https://freshluts.com/luts/31
+  CC0 1.0; values rounded to 5 decimal places
+Vintage - Emerald Film
+  from freshLUTs community LUTs, as selected and renamed by OpenShot: film_stock_&_vintage/emerald_film.cube
+  by pushpak dsilva (freshLUTs); originally "cinematic green", https://freshluts.com/luts/276
+  CC0 1.0; values rounded to 5 decimal places
+Vintage - Faded Memories
+  from freshLUTs community LUTs, as selected and renamed by OpenShot: film_stock_&_vintage/faded_memories.cube
+  by Alex Jordan (freshLUTs); originally "Memories", https://freshluts.com/luts/52
+  CC0 1.0; values rounded to 5 decimal places
+Vintage - Golden Years
+  from freshLUTs community LUTs, as selected and renamed by OpenShot: film_stock_&_vintage/golden_years_film.cube
+  by jackofalltrades (freshLUTs); originally "Golden Years", https://freshluts.com/luts/1015
+  CC0 1.0; values rounded to 5 decimal places
+Vintage - Green Film Pop
+  from freshLUTs community LUTs, as selected and renamed by OpenShot: film_stock_&_vintage/green_film_pop.cube
+  by SHAAM WORX (freshLUTs); originally "DROP GREEN ON IT", https://freshluts.com/luts/155
+  CC0 1.0; values rounded to 5 decimal places
+Vintage - Low Key Film
+  from freshLUTs community LUTs, as selected and renamed by OpenShot: film_stock_&_vintage/low_key_film.cube
+  by Alex Jordan (freshLUTs); originally "Low key 01", https://freshluts.com/luts/75
+  CC0 1.0; values rounded to 5 decimal places
+Vintage - Red Film
+  from freshLUTs community LUTs, as selected and renamed by OpenShot: film_stock_&_vintage/red_film.cube
+  by Alex Jordan (freshLUTs); originally "Red Day 01", https://freshluts.com/luts/66
+  CC0 1.0; values rounded to 5 decimal places
+Vintage - Standard Film
+  from freshLUTs community LUTs, as selected and renamed by OpenShot: film_stock_&_vintage/standard_film.cube
+  by Revirssab (freshLUTs); originally "Rec.709 Film Look", https://freshluts.com/luts/1440
+  CC0 1.0; values rounded to 5 decimal places
+Vintage - Vintage 400
+  from freshLUTs community LUTs, as selected and renamed by OpenShot: film_stock_&_vintage/vintage_400_film.cube
+  by M.Fahri (freshLUTs); originally "M.Fahri Photo - 400h", https://freshluts.com/luts/1660
+  CC0 1.0; values rounded to 5 decimal places
+Vintage - Vintage Green
+  from freshLUTs community LUTs, as selected and renamed by OpenShot: film_stock_&_vintage/vintage_green_film.cube
+  by SHAAM WORX (freshLUTs); originally "GREEN VINTAGE", https://freshluts.com/luts/153
+  CC0 1.0; values rounded to 5 decimal places
+Vintage - 1920s
+  from color-grading-luts by Striped Purple (Austin Barrett): Cinema Through The Ages/Striped Purple - 1920s.cube
+  by Austin Barrett - Striped Purple (GitHub: stripedpurple / Nixua)
+  MIT; resampled from 64 to 33 points per axis
+Vintage - 1930s
+  from color-grading-luts by Striped Purple (Austin Barrett): Cinema Through The Ages/Striped Purple - 1930s.cube
+  by Austin Barrett - Striped Purple (GitHub: stripedpurple / Nixua)
+  MIT; resampled from 64 to 33 points per axis
+Vintage - 1960s
+  from color-grading-luts by Striped Purple (Austin Barrett): Cinema Through The Ages/Striped Purple - 1960s.cube
+  by Austin Barrett - Striped Purple (GitHub: stripedpurple / Nixua)
+  MIT; resampled from 64 to 33 points per axis
+Vintage - 1970s
+  from color-grading-luts by Striped Purple (Austin Barrett): Cinema Through The Ages/Striped Purple - 1970s.cube
+  by Austin Barrett - Striped Purple (GitHub: stripedpurple / Nixua)
+  MIT; resampled from 64 to 33 points per axis
+Vintage - 1980s
+  from color-grading-luts by Striped Purple (Austin Barrett): Cinema Through The Ages/Striped Purple - 1980_s.cube
+  by Austin Barrett - Striped Purple (GitHub: stripedpurple / Nixua)
+  MIT; resampled from 64 to 33 points per axis
+Vintage - slay Fade
+  from slay LUTs: luts/slay-02-fade.cube
+  by slay (https://www.slaycamera.com/)
+  CC BY 4.0; values rounded to 5 decimal places
+Colorful - Color Pop
+  from freshLUTs community LUTs, as selected and renamed by OpenShot: vibrant_&_colorful/color_pop.cube
+  by Alex Jordan (freshLUTs); originally "Colorful 0209", https://freshluts.com/luts/11
+  CC0 1.0; values rounded to 5 decimal places
+Colorful - Photo Contrast
+  from freshLUTs community LUTs, as selected and renamed by OpenShot: vibrant_&_colorful/photo_contrast.cube
+  by Joas Fickenscher (freshLUTs); originally "Nikon Z6 contrast based..", https://freshluts.com/luts/359
+  CC0 1.0; values rounded to 5 decimal places
+Colorful - Valentine Pop
+  from freshLUTs community LUTs, as selected and renamed by OpenShot: vibrant_&_colorful/valentine_pop.cube
+  by vannoeun (freshLUTs); originally "cute color valentine's ..", https://freshluts.com/luts/1349
+  CC0 1.0; values rounded to 5 decimal places
+Colorful - Warm Pop
+  from freshLUTs community LUTs, as selected and renamed by OpenShot: vibrant_&_colorful/warm_pop.cube
+  by Crizo (freshLUTs); originally "@crizomzeyahke", https://freshluts.com/luts/715
+  CC0 1.0; values rounded to 5 decimal places
+Colorful - Warm to Cool
+  from freshLUTs community LUTs, as selected and renamed by OpenShot: vibrant_&_colorful/warm_to_cool.cube
+  by vannoeun (freshLUTs); originally "warm to cool", https://freshluts.com/luts/2046
+  CC0 1.0; values rounded to 5 decimal places
+Colorful - Amber Haze
+  from color-grading-luts by Striped Purple (Austin Barrett): Avant Garde/Striped Purple - Amber Haze.cube
+  by Austin Barrett - Striped Purple (GitHub: stripedpurple / Nixua)
+  MIT; values rounded to 5 decimal places
+Colorful - Arcade Dayz
+  from color-grading-luts by Striped Purple (Austin Barrett): Avant Garde/Striped Purple - Arcade Dayz.cube
+  by Austin Barrett - Striped Purple (GitHub: stripedpurple / Nixua)
+  MIT; values rounded to 5 decimal places
+Colorful - Cherry Champagne
+  from color-grading-luts by Striped Purple (Austin Barrett): Avant Garde/Striped Purple - Cherry Champagne.cube
+  by Austin Barrett - Striped Purple (GitHub: stripedpurple / Nixua)
+  MIT; values rounded to 5 decimal places
+Colorful - Pendleton
+  from color-grading-luts by Striped Purple (Austin Barrett): Avant Garde/Striped Purple - Pendleton.cube
+  by Austin Barrett - Striped Purple (GitHub: stripedpurple / Nixua)
+  MIT; values rounded to 5 decimal places
+Colorful - Mint Cream
+  from color-grading-luts by Striped Purple (Austin Barrett): Avant Garde/Striped Purple - Polaroid Mint Cream.cube
+  by Austin Barrett - Striped Purple (GitHub: stripedpurple / Nixua)
+  MIT; values rounded to 5 decimal places
+Colorful - Sugar Plums
+  from color-grading-luts by Striped Purple (Austin Barrett): Avant Garde/Striped Purple - Sugar Plums.cube
+  by Austin Barrett - Striped Purple (GitHub: stripedpurple / Nixua)
+  MIT; values rounded to 5 decimal places
+Colorful - Turquoise
+  from color-grading-luts by Striped Purple (Austin Barrett): Avant Garde/Striped Purple - Turquoise.cube
+  by Austin Barrett - Striped Purple (GitHub: stripedpurple / Nixua)
+  MIT; values rounded to 5 decimal places
+Colorful - Veggie Crisps
+  from color-grading-luts by Striped Purple (Austin Barrett): Avant Garde/Striped Purple - Veggie Crisps.cube
+  by Austin Barrett - Striped Purple (GitHub: stripedpurple / Nixua)
+  MIT; values rounded to 5 decimal places
+Colorful - Woelfelly Neon
+  from color-grading-luts by Striped Purple (Austin Barrett): Avant Garde/Striped Purple - Woelfelly Neon.cube
+  by Austin Barrett - Striped Purple (GitHub: stripedpurple / Nixua)
+  MIT; values rounded to 5 decimal places
+Scenic - December Greens
+  from color-grading-luts by Striped Purple (Austin Barrett): Scenic Moods/Striped Purple - December Greens.cube
+  by Austin Barrett - Striped Purple (GitHub: stripedpurple / Nixua)
+  MIT; resampled from 64 to 33 points per axis
+Scenic - Emerald Malaise
+  from color-grading-luts by Striped Purple (Austin Barrett): Scenic Moods/Striped Purple - Emerald Malaise.cube
+  by Austin Barrett - Striped Purple (GitHub: stripedpurple / Nixua)
+  MIT; values rounded to 5 decimal places
+Scenic - Irish Uprising
+  from color-grading-luts by Striped Purple (Austin Barrett): Scenic Moods/Striped Purple - Irish Uprising.cube
+  by Austin Barrett - Striped Purple (GitHub: stripedpurple / Nixua)
+  MIT; values rounded to 5 decimal places
+Scenic - Philly Fog
+  from color-grading-luts by Striped Purple (Austin Barrett): Scenic Moods/Striped Purple - Philly Fog.cube
+  by Austin Barrett - Striped Purple (GitHub: stripedpurple / Nixua)
+  MIT; values rounded to 5 decimal places
+Scenic - Sea Turtle
+  from color-grading-luts by Striped Purple (Austin Barrett): Scenic Moods/Striped Purple - Sea Turtle.cube
+  by Austin Barrett - Striped Purple (GitHub: stripedpurple / Nixua)
+  MIT; resampled from 64 to 33 points per axis
+Scenic - Seagull Cove
+  from color-grading-luts by Striped Purple (Austin Barrett): Scenic Moods/Striped Purple - Seagull Cove.cube
+  by Austin Barrett - Striped Purple (GitHub: stripedpurple / Nixua)
+  MIT; resampled from 64 to 33 points per axis
+Scenic - Snowy Blues
+  from color-grading-luts by Striped Purple (Austin Barrett): Scenic Moods/Striped Purple - Snowy Blues.cube
+  by Austin Barrett - Striped Purple (GitHub: stripedpurple / Nixua)
+  MIT; values rounded to 5 decimal places
+Scenic - Spring Water
+  from color-grading-luts by Striped Purple (Austin Barrett): Scenic Moods/Striped Purple - Spring Water.cube
+  by Austin Barrett - Striped Purple (GitHub: stripedpurple / Nixua)
+  MIT; values rounded to 5 decimal places
+Scenic - Tension Warm
+  from haldclut by Christoph Wurst: Tension 1 warm.tif
+  by Christoph Wurst
+  CC BY-SA 4.0; converted from a HaldCLUT image (144 points per axis) to a 33-point .cube
+Scenic - Tension Cold
+  from haldclut by Christoph Wurst: Tension 2 cold.tif
+  by Christoph Wurst
+  CC BY-SA 4.0; converted from a HaldCLUT image (144 points per axis) to a 33-point .cube
+Scenic - Krakow
+  from haldclut by Christoph Wurst: v1/Krakow.tif
+  by Christoph Wurst
+  CC BY-SA 4.0; converted from a HaldCLUT image (144 points per axis) to a 33-point .cube
+Creative - Ara
+  from color-grading-luts by Striped Purple (Austin Barrett): Zoology/Striped Purple - Ara.cube
+  by Austin Barrett - Striped Purple (GitHub: stripedpurple / Nixua)
+  MIT; resampled from 64 to 33 points per axis
+Creative - Dodo
+  from color-grading-luts by Striped Purple (Austin Barrett): Zoology/Striped Purple - Dodo.cube
+  by Austin Barrett - Striped Purple (GitHub: stripedpurple / Nixua)
+  MIT; resampled from 64 to 33 points per axis
+Creative - Kraken
+  from color-grading-luts by Striped Purple (Austin Barrett): Zoology/Striped Purple - Kraken.cube
+  by Austin Barrett - Striped Purple (GitHub: stripedpurple / Nixua)
+  MIT; resampled from 64 to 33 points per axis
+Creative - Lobster
+  from color-grading-luts by Striped Purple (Austin Barrett): Zoology/Striped Purple - Lobster.cube
+  by Austin Barrett - Striped Purple (GitHub: stripedpurple / Nixua)
+  MIT; values rounded to 5 decimal places
+Creative - Tiger
+  from color-grading-luts by Striped Purple (Austin Barrett): Zoology/Striped Purple - Tiger.cube
+  by Austin Barrett - Striped Purple (GitHub: stripedpurple / Nixua)
+  MIT; resampled from 64 to 33 points per axis
+Creative - Aricha Blend
+  from color-grading-luts by Striped Purple (Austin Barrett): Drink it in!/Striped Purple - Aricha Blend.cube
+  by Austin Barrett - Striped Purple (GitHub: stripedpurple / Nixua)
+  MIT; values rounded to 5 decimal places
+Creative - Blue Lagoon
+  from color-grading-luts by Striped Purple (Austin Barrett): Drink it in!/Striped Purple - Blue Lagoon.cube
+  by Austin Barrett - Striped Purple (GitHub: stripedpurple / Nixua)
+  MIT; resampled from 64 to 33 points per axis
+Creative - Horchata
+  from color-grading-luts by Striped Purple (Austin Barrett): Drink it in!/Striped Purple - Horchata.cube
+  by Austin Barrett - Striped Purple (GitHub: stripedpurple / Nixua)
+  MIT; values rounded to 5 decimal places
+Creative - Vanilla Bean
+  from color-grading-luts by Striped Purple (Austin Barrett): Drink it in!/Striped Purple - Vanilla Bean.cube
+  by Austin Barrett - Striped Purple (GitHub: stripedpurple / Nixua)
+  MIT; values rounded to 5 decimal places
+Creative - Infrared
+  from color-grading-luts by Striped Purple (Austin Barrett): Film Simulations/Infrared/Striped Purple - Infrared.cube
+  by Austin Barrett - Striped Purple (GitHub: stripedpurple / Nixua)
+  MIT; values rounded to 5 decimal places
+Creative - Lomochrome Purple
+  from color-grading-luts by Striped Purple (Austin Barrett): Film Simulations/Lomography/Lomochrome Purple 4.cube
+  by Austin Barrett - Striped Purple (GitHub: stripedpurple / Nixua)
+  MIT; resampled from 64 to 33 points per axis

@@ -1,0 +1,6 @@
+# Added to the plug-in's description at build time (lines starting with # are skipped).
+# PhotoCraft allows 1024 bytes for the whole description.
+LUT credits. Striped Purple by Austin Barrett (MIT), freshLUTs creators via OpenShot (CC0) and
+Christoph Wurst (CC BY-SA 4.0). Changed by MoxoCraft (resampled to 33 points or converted to
+.cube, renamed); the licences, links and a record of changes are in SOURCES.txt in the luts folder
+that comes with this plug-in.

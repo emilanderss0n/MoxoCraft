@@ -1,7 +1,0 @@
-# Added to the MoxoCraft - LUT plug-in's description at build time (lines starting with # are
-# skipped). PhotoCraft allows 1024 bytes for the whole description.
-LUTs derived from spektrafilm by Andrea Volpato (https://github.com/andreavolpato/spektrafilm),
-licensed CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/). Modified by MoxoCraft:
-baked to sRGB LUTs and stored at 16 bits; see CHANGELOG.txt and SPEKTRAFILM_LICENSE.txt in the
-luts folder. Film names describe the stocks simulated; Kodak and Fujifilm are trademarks of their
-owners and do not endorse this plug-in.

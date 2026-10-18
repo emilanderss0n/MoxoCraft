@@ -1,0 +1,8 @@
+# Added to the plug-in's description at build time (lines starting with # are skipped).
+# PhotoCraft allows 1024 bytes for the whole description.
+LUT credits. Film: derived from spektrafilm by Andrea Volpato (CC BY-SA 4.0). Negative, Slide and
+Instant: Pat David's film emulations (CC BY-SA 4.0). Fujifilm Style: FilmSim by Sebastien Guyader
+(CC0). Changed by MoxoCraft (converted to .cube, resampled to 33 points, renamed); the licences,
+links and a record of changes are in SOURCES.txt and CHANGELOG.txt in the luts folder that comes
+with this plug-in. Kodak, Fujifilm, Agfa, Polaroid, Lomography and the film names are trademarks
+of their owners, used only to describe the looks simulated; they don't endorse this plug-in.
