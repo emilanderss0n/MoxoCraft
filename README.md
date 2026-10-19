@@ -31,14 +31,6 @@
 
 <br>
 
-<p align="center">
-  <img src="docs/images/readme/snow.jpg" alt="The MoxoCraft - Snow dialog in PhotoCraft over a snowy forest, with the falling snow previewing on the photo" width="100%">
-  <br>
-  <sub>MoxoCraft - Snow, previewing live in PhotoCraft.</sub>
-</p>
-
-<br>
-
 <table>
   <tr>
     <td width="25%" valign="top">
@@ -86,17 +78,14 @@
     </td>
   </tr>
   <tr>
-    <td width="50%" valign="top">
+    <td colspan="2" valign="top">
+      <img src="docs/images/readme/snow.jpg" alt="The MoxoCraft - Snow dialog in PhotoCraft over a snowy forest, with the falling snow previewing on the photo" width="100%">
+      <br>
+      <sub>MoxoCraft - Snow, previewing live in PhotoCraft.</sub>
       <h3>Snow with depth</h3>
-      <b>MoxoCraft - Snow</b> draws snow the way it looks in a real photo: far flakes small, sharp and many; near flakes few, large and out of focus. Sharp flakes are irregular clumps, blurred ones soft discs, and falling flakes drift and tumble rather than drop like rain.
+      <b>MoxoCraft - Snow</b> draws snow the way it looks in a real photo: far flakes small, sharp and many; near flakes few, large and out of focus. Sharp flakes are irregular clumps, blurred ones soft discs, and falling flakes drift and tumble rather than drop like rain. Sizes follow the picture rather than pixels, so the same settings give the same look on any photo.
       <br><br>
-      Sizes follow the picture rather than pixels, so the same settings give the same look on any photo.
-    </td>
-    <td width="50%" valign="top">
-      <h3>Snow in front, snow behind</h3>
-      Split the snow at your subject's distance into a far layer and a near layer, then mask the far one behind your subject with <b>Select › Subject</b>. Or turn a depth map into snow that hides wherever the scene is nearer than each flake.
-      <br><br>
-      Run Snow on an empty layer to keep it separate, where you can mask, move or fade it. <a href="#snow-behind-your-subject">How it works</a>.
+      <b>Snow in front, snow behind</b>: split the snow at your subject's distance into a far layer and a near layer, then mask the far one behind your subject with <b>Select › Subject</b>. Or turn a depth map into snow that hides wherever the scene is nearer than each flake. Run Snow on an empty layer to keep it separate, where you can mask, move or fade it. <a href="#snow-behind-your-subject">How it works</a>.
     </td>
   </tr>
 </table>
