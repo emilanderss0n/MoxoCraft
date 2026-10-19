@@ -1,4 +1,4 @@
-//! Source LUTs: reading `.cube` files, and the build-time maths on them in full precision.
+//! Source LUTs: reading `.cube` files, and the build-time math on them in full precision.
 //!
 //! Only built for native code (build scripts and tests); nothing here goes into a plug-in.
 

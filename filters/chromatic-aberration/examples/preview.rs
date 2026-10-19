@@ -79,10 +79,10 @@ fn scene(w: usize, h: usize) -> Vec<f32> {
                 let d = ((fx - l[0]).powi(2) + (fy - l[1]).powi(2)).sqrt();
                 add([l[3], l[4], l[5]], (l[2] - d).clamp(0.0, 1.5) / 1.5 * 0.85);
             }
-            // A bright ring around the centre.
+            // A bright ring around the center.
             let r = ((fx - cx).powi(2) + (fy - cy).powi(2)).sqrt();
             add([1.0, 1.0, 1.0], 1.0 - ((r - 300.0 * k).abs() - 6.0 * k).clamp(0.0, 1.0));
-            // Thin spokes out from the centre.
+            // Thin spokes out from the center.
             let a = (fy - cy).atan2(fx - cx);
             let spoke = ((a * 8.0).sin().abs() * r).clamp(0.0, 2.0);
             if r > 60.0 * k {

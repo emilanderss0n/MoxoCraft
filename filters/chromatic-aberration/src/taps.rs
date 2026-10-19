@@ -32,7 +32,7 @@ pub struct Taps {
     /// Position along the displacement, as a fraction of Amount.
     pub offset: Vec<f32>,
     pub weight: Vec<[f32; 3]>,
-    /// The distance between neighbouring taps inside a color's smear, as a fraction of Amount
+    /// The distance between neighboring taps inside a color's smear, as a fraction of Amount
     /// (0 for a hard split).
     pub gap: f32,
 }
@@ -119,7 +119,7 @@ pub(crate) struct Plan {
     pub taps: Vec<(f32, [f32; 3])>,
     /// True when taps read segments (smeared colors), false for a hard split.
     pub segmented: bool,
-    /// Segment half-length as a fraction of Amount: the gap between neighbouring taps.
+    /// Segment half-length as a fraction of Amount: the gap between neighboring taps.
     pub segment: f32,
     /// Most samples per segment.
     pub segment_taps: usize,

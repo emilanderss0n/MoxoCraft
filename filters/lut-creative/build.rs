@@ -8,6 +8,6 @@ fn main() {
         folder: "creative-luts",
         id: "moxocraft.lut-creative",
         name: "MoxoCraft - Creative LUTs",
-        description: "Gives the image a creative grade: colourful, scenic and experimental looks. Pick a LUT and set how strongly it applies.",
+        description: "Gives the image a creative grade: colorful, scenic and experimental looks. Pick a LUT and set how strongly it applies.",
     });
 }

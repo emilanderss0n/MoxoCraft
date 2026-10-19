@@ -7,7 +7,7 @@
 //! [`bake::Pack`], and its `lib.rs` is one [`lut_pack!`] call. Everything else lives here.
 //!
 //! At build time (native code, in the plug-in's build script):
-//! - [`cube`] reads `.cube` files and does the full-precision maths on them.
+//! - [`cube`] reads `.cube` files and does the full-precision math on them.
 //! - [`bake`] turns a plug-in's folder into the baked tables, their index and the manifest.
 //!
 //! At run time (inside the `.wasm`):

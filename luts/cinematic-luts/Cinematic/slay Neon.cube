@@ -2,7 +2,7 @@
 # Source: slay LUTs, https://github.com/slaycamera/luts
 #         commit a1709044efe115640dde1dee17d4185fc059af0d, file luts/slay-03-neon.cube
 # Author: slay (https://www.slaycamera.com/)
-# Licence: CC BY 4.0; full text in CC-BY-4.0.txt
+# License: CC BY 4.0; full text in CC-BY-4.0.txt
 # Changes by MoxoCraft: values rounded to 5 decimal places; renamed; this header added.
 TITLE "slay Neon"
 LUT_3D_SIZE 33

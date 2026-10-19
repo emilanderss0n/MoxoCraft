@@ -45,9 +45,9 @@ pub trait Population {
     fn full(&self) -> f32;
     /// How many particles sit at `depth`, compared with other depths.
     fn weight(&self, depth: f32) -> f32;
-    /// The furthest a particle at `depth` can reach from its centre. For any range of depths it
+    /// The furthest a particle at `depth` can reach from its center. For any range of depths it
     /// must be largest at one end of the range. That holds for anything that shrinks with
-    /// distance plus [`Lens::blur`](crate::Lens::blur), which falls towards the subject's distance
+    /// distance plus [`Lens::blur`](crate::Lens::blur), which falls toward the subject's distance
     /// from both sides.
     fn reach(&self, depth: f32) -> f32;
     /// Roughly how much drawing an average particle at `depth` takes: the area it goes over,
@@ -64,11 +64,11 @@ struct Slice {
     cell: f32,
     /// Particles per cell at the chosen Amount (a fraction gives some cells one more).
     per_cell: f32,
-    /// The furthest any particle of this slice reaches from its centre.
+    /// The furthest any particle of this slice reaches from its center.
     reach: f32,
 }
 
-/// One particle's place: its centre (in units of the picture's longer side, from the document's
+/// One particle's place: its center (in units of the picture's longer side, from the document's
 /// top-left corner), its depth (0 at the lens, 1 the farthest) and its own random numbers for
 /// whatever else the plug-in decides about it.
 #[derive(Clone, Copy, Debug)]

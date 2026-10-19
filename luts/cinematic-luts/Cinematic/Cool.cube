@@ -2,7 +2,7 @@
 # Source: freshLUTs community LUTs, as selected and renamed by OpenShot, https://github.com/OpenShot/openshot-qt
 #         commit c58ce6e7f11d59872dffcabe9a09bf9dec16cf53, file cinematic_&_blockbuster/cool_cinema.cube
 # Author: Andy (freshLUTs); originally "CINEMA 2", https://freshluts.com/luts/218
-# Licence: CC0 1.0 (public domain dedication), as stated on each LUT's freshluts.com page
+# License: CC0 1.0 (public domain dedication), as stated on each LUT's freshluts.com page
 # Changes by MoxoCraft: values rounded to 5 decimal places; renamed; this header added.
 TITLE "Cool"
 LUT_3D_SIZE 16

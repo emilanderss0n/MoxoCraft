@@ -40,7 +40,7 @@ pub const PATH_POINTS: usize = 4;
 /// and how its brightness flickers along the way, as a tumbling flake catches the light.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Motion {
-    /// The path, relative to the particle's centre, in pixels; only the first `count` are used.
+    /// The path, relative to the particle's center, in pixels; only the first `count` are used.
     points: [[f32; 2]; PATH_POINTS],
     count: usize,
     /// How far the brightness dips (0–1), in how many waves along the path, starting how far
@@ -54,7 +54,7 @@ impl Motion {
     /// Not moving: a disc.
     pub const STILL: Motion = Motion { points: [[0.0; 2]; PATH_POINTS], count: 1, flicker: 0.0, cycles: 0.0, phase: 0.0 };
 
-    /// A straight streak along (`dx`, `dy`) pixels, centred on the particle.
+    /// A straight streak along (`dx`, `dy`) pixels, centered on the particle.
     pub fn straight(dx: f32, dy: f32) -> Self {
         let mut points = [[0.0; 2]; PATH_POINTS];
         points[0] = [-0.5 * dx, -0.5 * dy];
@@ -92,14 +92,14 @@ impl Motion {
 /// along a path).
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Dab {
-    /// Its centre, in document pixels.
+    /// Its center, in document pixels.
     x: f32,
     y: f32,
     motion: Motion,
     /// Its radius in pixels.
     radius: f32,
     /// How much of the radius is at full strength before it fades (0 for a rounded dome that fades
-    /// from the centre; near 1 for a flat disc with a soft rim).
+    /// from the center; near 1 for a flat disc with a soft rim).
     core: f32,
     /// How much dimmer the core's middle is than its edge (see [`RING`]).
     ring: f32,
@@ -114,7 +114,7 @@ pub struct Dab {
 }
 
 impl Dab {
-    /// A particle centred on (`x`, `y`), `sharp` pixels in radius when in focus, spread by a blur
+    /// A particle centered on (`x`, `y`), `sharp` pixels in radius when in focus, spread by a blur
     /// disc of radius `blur` and moving along `motion`, at most `alpha` opaque when sharp and
     /// still. Blur and motion spread its light over more pixels, so they also make it fainter.
     pub fn new(x: f32, y: f32, sharp: f32, blur: f32, motion: Motion, alpha: f32, depth: f32) -> Self {
@@ -220,7 +220,7 @@ impl Coverage {
     fn draw<const PATH: bool, const SCENE: bool>(&mut self, d: &Dab) {
         let r = d.radius;
         let [ox, oy] = self.origin;
-        // The pixels whose centres fall between `lo` and `hi`, as band columns or rows (and a few
+        // The pixels whose centers fall between `lo` and `hi`, as band columns or rows (and a few
         // more: they're only skipped if the shape doesn't reach them).
         let span = |lo: f32, hi: f32, origin: i64, size: usize| {
             let first = (lo.floor() as i64 - origin).clamp(0, size as i64) as usize;
@@ -238,7 +238,7 @@ impl Coverage {
         let inv_edge = 1.0 / EDGE;
         let w = self.width;
         for row in r0..r1 {
-            // Pixel centres in document coordinates, relative to the dab's centre.
+            // Pixel centers in document coordinates, relative to the dab's center.
             let py = (oy + row as i64) as f32 + 0.5 - d.y;
             // Only the columns the shape can reach on this row: within `r` of the stretches of
             // the path that come within `r` of the row (or inside the disc).
@@ -350,13 +350,13 @@ impl Shape {
     }
 
     /// The parts of a still dab's oval that stay the same along a row of pixels `py` from its
-    /// centre, so the pixel loop doesn't work them out again for every pixel.
+    /// center, so the pixel loop doesn't work them out again for every pixel.
     #[inline(always)]
     fn row(&self, py: f32) -> [f32; 2] {
         [self.oval[1] * py, self.oval[2] * py * py]
     }
 
-    /// How opaque the dab is at (`px`, `py`) pixels from its centre (`row` from [`row`](Self::row)):
+    /// How opaque the dab is at (`px`, `py`) pixels from its center (`row` from [`row`](Self::row)):
     /// full strength inside the core (a little less in the middle when out of focus), then a
     /// smooth fall to 0 at the rim, dipping where a moving dab flickers.
     #[inline(always)]

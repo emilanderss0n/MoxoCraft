@@ -2,7 +2,7 @@
 # Source: FilmSim by Sébastien Guyader, https://github.com/sguyader/FilmSim
 #         commit 1453b2b55c48d99a889b1e455f91f6898ba2db41, file Velvia_Vivid_v2.tif
 # Author: Sébastien Guyader (sguyader)
-# Licence: CC0 1.0 (public domain dedication)
+# License: CC0 1.0 (public domain dedication)
 # Changes by MoxoCraft: converted from a HaldCLUT image (144 points per axis) to a 33-point .cube; renamed; this header added.
 TITLE "Velvia Vivid"
 LUT_3D_SIZE 33

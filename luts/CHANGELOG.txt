@@ -12,8 +12,8 @@ Settings (spektrafilm's defaults unless noted):
   - 1-LUT bundle, sRGB in and sRGB out, 33 points per axis.
   - Each film printed on its own target print (listed below).
   - stops_above_midgray = 2.47 (changed; spektrafilm's default for sRGB
-    input is 4.0). Keeps mid-grey where it was instead of brightening every photo by
-    over a stop, so the LUT changes colour and contrast, not exposure.
+    input is 4.0). Keeps mid-gray where it was instead of brightening every photo by
+    over a stop, so the LUT changes color and contrast, not exposure.
 
 Other changes:
   - Files renamed from spektrafilm's bundle names to the film names below.

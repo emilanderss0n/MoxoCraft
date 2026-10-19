@@ -1,4 +1,9 @@
-# MoxoCraft
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/brand/moxocraft-logo-white.webp">
+    <img alt="MoxoCraft" src="docs/brand/moxocraft-logo.webp" width="480">
+  </picture>
+</p>
 
 Creative filters for [PhotoCraft](https://github.com/storytold/photocraft), the free open-source
 photo editor. Once installed, they appear under **Filter › Plug-ins**:
@@ -21,7 +26,8 @@ Together the three LUT filters hold 147 looks.
    [release](https://github.com/emilanderss0n/MoxoCraft/releases/latest) and unzip it somewhere
    you'll keep it. It holds the plug-in files (`moxocraft_chromatic_aberration.wasm`,
    `moxocraft_lut.wasm`, `moxocraft_lut_cinematic.wasm`, `moxocraft_lut_creative.wasm` and
-   `moxocraft_snow.wasm`), plus a `luts` folder with the LUTs' licences, credits and sources.
+   `moxocraft_snow.wasm`), a `luts` folder with the LUTs' licenses, credits and sources, and a
+   `docs` folder with the Chromatic Aberration guide.
 2. In PhotoCraft, either:
    - go to **Filter › Plug-ins › Install Plug-in…** and pick each `.wasm` file, or
    - go to **Edit › Preferences › Plug-ins**, turn on **Use Additional Plug-ins Folder** and point
@@ -60,14 +66,14 @@ The dialog always shows every setting, whichever **Mode** you pick. **Clear Cent
 
 | Setting | Mode | What it does |
 |---|---|---|
-| **Mode** | Both | *Lens*: colors spread outward from a centre point, strongest towards the corners, like a real lens. *Directional*: colors shift the same way across the whole image. |
+| **Mode** | Both | *Lens*: colors spread outward from a center point, strongest toward the corners, like a real lens. *Directional*: colors shift the same way across the whole image. |
 | **Fringe** | Both | Which colors separate. *Spectral* gives a smooth rainbow, *RGB Split* sends red and blue opposite ways, and *Red/Cyan*, *Green/Magenta* (purple fringing) and *Blue/Yellow* give two-color fringes. |
 | **Amount** | Both | How far the colors move, in pixels (at the corners, in Lens mode). Negative values swap which color lands on which side. |
 | **Softness** | Both | 0 gives crisp separate copies of each color; higher values blend them into smooth gradients. |
 | **Strength** | Both | How strongly the effect shows over your original, from 0 (unchanged) to 100 (the full effect). It fades the fringes without moving them. |
 | **Clear Center** | Lens | How much of the middle stays untouched. |
-| **Falloff** | Lens | How quickly the effect builds towards the edges. 1 is even; higher keeps it near the corners, lower spreads it inward. |
-| **Center X / Y** | Lens | Where the lens centre sits, as a percentage of the image width and height. |
+| **Falloff** | Lens | How quickly the effect builds toward the edges. 1 is even; higher keeps it near the corners, lower spreads it inward. |
+| **Center X / Y** | Lens | Where the lens center sits, as a percentage of the image width and height. |
 | **Angle** | Directional | The direction of the shift in degrees, counter-clockwise from pointing right. |
 
 Tips:
@@ -175,7 +181,7 @@ of everything. There are two ways to put some of it behind your subject.
 
 Together, the two layers hold the same snow as *None*.
 
-**A depth map.** This handles any scene, but you need a depth map: a greyscale picture of how far
+**A depth map.** This handles any scene, but you need a depth map: a grayscale picture of how far
 away each part of your photo is. Depth-estimation tools such as Depth Anything make one from a
 photo.
 
@@ -211,17 +217,23 @@ to 4 cores running one thread each:
 | Snow, default settings | under 0.1 s | 0.2 s |
 | Snow, heavy (Amount 100, Flake Size 60, Defocus 50, Motion 40) | 1 s | 4 s |
 | Snow, every setting at its largest | 5 s | 22 s |
-| Chromatic Aberration, heaviest settings (*Spectral*, Amount 128, Softness 100, Clear Center 0, Falloff 0.5) | 13 s | 50 s |
+| Chromatic Aberration, default settings | 9 s | 41 s |
+| Chromatic Aberration, heaviest settings (*Spectral*, Amount 128, Softness 100, Clear Center 0, Falloff 0.5) | 12–15 s | 48–55 s |
 
-With 4 cores running two threads each, Chromatic Aberration's heaviest settings took 20 seconds.
-**Strength** between 0 and 100 adds up to about 20% to its time. The LUT filters take about 1–4
-seconds.
+With 4 cores running two threads each, Chromatic Aberration's heaviest settings took 19–22
+seconds. **Strength** between 0 and 100 adds about 20% at light settings, but only 1–2 seconds at
+the heaviest. The LUT filters take about 1–4 seconds.
+
+Chromatic Aberration's smooth fringes are the slow part. On a computer slower than this one with
+only 4 threads, they can go past the 60-second limit; PhotoCraft then stops the filter and leaves
+the image as it was. Crisp fringes (**Softness** 0) are much quicker: the RGB Glitch recipe took 2
+seconds on 16 threads and 10 on 4 cores.
 
 ## Credits
 
-The LUTs come from these collections, each under a licence that allows sharing them. MoxoCraft
+The LUTs come from these collections, each under a license that allows sharing them. MoxoCraft
 converted them to the same format and size and renamed them; [`luts/SOURCES.txt`](luts/SOURCES.txt)
-lists every LUT with its author, source and licence.
+lists every LUT with its author, source and license.
 
 - **Film**: derived from [spektrafilm](https://github.com/andreavolpato/spektrafilm) by Andrea
   Volpato, which simulates film from measured film data. Licensed
@@ -239,12 +251,12 @@ lists every LUT with its author, source and licence.
   [CC BY 4.0](luts/CC-BY-4.0.txt)); and Striped Purple.
 - **Striped Purple** (in Vintage, Colorful, Scenic and Creative): by Austin Barrett,
   [color-grading-luts](https://github.com/stripedpurple/color-grading-luts), under the
-  [MIT licence](luts/STRIPED_PURPLE_LICENSE.txt).
+  [MIT license](luts/STRIPED_PURPLE_LICENSE.txt).
 - **Scenic**: also Tension Warm, Tension Cold and Krakow by
   [Christoph Wurst](https://github.com/ChristophWurst/haldclut) ([CC BY-SA 4.0](luts/CC-BY-SA-4.0.txt)).
 
-The licences cover the LUTs themselves, not the photos you make with them. If you share the
-MoxoCraft plug-ins, keep the `luts` folder (licences, sources and changelog) with them.
+The licenses cover the LUTs themselves, not the photos you make with them. If you share the
+MoxoCraft plug-ins, keep the `luts` folder (licenses, sources and changelog) with them.
 
 Kodak, Fujifilm, Ilford, Agfa, Polaroid, Lomography, Rollei and the film names are trademarks of
 their owners. They are used only to describe the looks simulated; their owners don't endorse
@@ -260,6 +272,7 @@ MoxoCraft is written in Rust. Install [Rust](https://rustup.rs), then build the 
 cargo test
 ```
 
-[`docs/development.md`](docs/development.md) covers how the code is organised, previews,
-benchmarks, adding a filter and releasing. [`docs/luts.md`](docs/luts.md) covers the LUT files:
-adding and removing LUTs, re-making them from their sources, and their licences.
+[`docs/development.md`](https://github.com/emilanderss0n/MoxoCraft/blob/main/docs/development.md)
+covers how the code is organized, previews, benchmarks, adding a filter and releasing.
+[`docs/luts.md`](https://github.com/emilanderss0n/MoxoCraft/blob/main/docs/luts.md) covers the LUT
+files: adding and removing LUTs, re-making them from their sources, and their licenses.

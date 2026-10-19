@@ -26,9 +26,9 @@ Each fact is kept in one place, and the build works out the rest from it.
 | The LUT the dialog opens on | `luts/<pack>/default.txt` (optional; else the first LUT) |
 | Credits shown in PhotoCraft's description of the plug-in | `luts/<pack>/CREDITS.txt` (optional) |
 | LUTs made for DaVinci Resolve's working space | `luts/<pack>/davinci-intermediate.txt` (optional) |
-| Where a LUT came from, its author, licence and changes | `luts/SOURCES.txt`, written by `tools/import-luts/import_luts.py` |
+| Where a LUT came from, its author, license and changes | `luts/SOURCES.txt`, written by `tools/import-luts/import_luts.py` |
 | How the Film category was made | `luts/CHANGELOG.txt`, written by `tools/bake-luts/bake_spektrafilm.py` |
-| The licence texts | `luts/*.txt` (shipped with the plug-ins) |
+| The license texts | `luts/*.txt` (shipped with the plug-ins) |
 | The plug-ins' version | the root `Cargo.toml` |
 
 In these `.txt` files, blank lines and lines starting with `#` are ignored.
@@ -49,8 +49,8 @@ replaces the old "MoxoCraft - LUT".
 ## Adding or removing LUTs
 
 **Adding a LUT.** To try one, drop a 3D `.cube` file into a category folder and run
-`./build.ps1`. Before committing it, check its licence allows redistribution, add it to the recipe
-in `tools/import-luts/import_luts.py` (so its source, licence and changes land in
+`./build.ps1`. Before committing it, check its license allows redistribution, add it to the recipe
+in `tools/import-luts/import_luts.py` (so its source, license and changes land in
 `luts/SOURCES.txt`) and re-run the import (below), and add its credit to the plug-in's
 `CREDITS.txt` if its source isn't credited there yet.
 
@@ -77,7 +77,7 @@ conversion into that space and back into the LUT, so it works on normal photos a
 ## Re-making the LUTs from their sources
 
 Two scripts record exactly where every LUT came from and what was done to it, which the CC BY and
-CC BY-SA licences ask for. They are kept separate on purpose: each source's licence was checked by
+CC BY-SA licenses ask for. They are kept separate on purpose: each source's license was checked by
 hand, and the notes in each script say what was taken and what was left out.
 
 - [`tools/bake-luts/bake_spektrafilm.py`](../tools/bake-luts/bake_spektrafilm.py) bakes the Film
@@ -89,17 +89,17 @@ hand, and the notes in each script say what was taken and what was left out.
 - [`tools/import-luts/import_luts.py`](../tools/import-luts/import_luts.py) imports the other 132
   LUTs from their collections at pinned commits (the setup is at the top of the script). It
   converts HaldCLUT images to `.cube` and resamples anything over 33 points per axis down to 33
-  (both in `lutconv.py`), writes a header into each file naming its source, author and licence,
-  copies the licence texts byte for byte, and rewrites `luts/SOURCES.txt`.
+  (both in `lutconv.py`), writes a header into each file naming its source, author and license,
+  copies the license texts byte for byte, and rewrites `luts/SOURCES.txt`.
 
 Then run `./build.ps1`.
 
-## Licence conditions to keep
+## License conditions to keep
 
 - `luts/SPEKTRAFILM_LICENSE.txt` must stay byte-identical to upstream (`luts/.gitattributes`
   stops Git changing its line endings, and `tools/release.ps1` checks it).
 - Every change to the spektrafilm LUTs goes in `luts/CHANGELOG.txt`.
 - spektrafilm's name mustn't be used in product branding, and the LUTs mustn't be sold as a LUT
   pack (spektrafilm and slay both ask this).
-- The licence texts, `SOURCES.txt` and `CHANGELOG.txt` must ship with the plug-ins; `build.ps1`
+- The license texts, `SOURCES.txt` and `CHANGELOG.txt` must ship with the plug-ins; `build.ps1`
   copies them to `dist/luts/` and `tools/release.ps1` puts them in the release zip.

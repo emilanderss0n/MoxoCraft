@@ -24,7 +24,7 @@ moxocraft-lut-core = { path = "crates/moxocraft-lut-core" }
 moxocraft-particles = { path = "crates/moxocraft-particles" }
 
 # Plug-ins run inside PhotoCraft's WebAssembly interpreter, where every instruction counts, so we
-# optimise for speed rather than file size (the host allows modules up to 32 MiB).
+# optimize for speed rather than file size (the host allows modules up to 32 MiB).
 [profile.release]
 opt-level = 3
 lto = true

@@ -2,7 +2,7 @@
 
 spektrafilm (https://github.com/andreavolpato/spektrafilm, by Andrea Volpato) simulates film
 stocks from measured data. Its profiles and every LUT made from them are licensed CC BY-SA 4.0
-(luts/SPEKTRAFILM_LICENSE.txt), which requires credit, the licence notice, and a record of
+(luts/SPEKTRAFILM_LICENSE.txt), which requires credit, the license notice, and a record of
 changes to travel with the LUTs. This script is that record: it bakes each LUT with the settings
 below, renames it, and writes the changes into luts/CHANGELOG.txt.
 
@@ -52,9 +52,9 @@ STOCKS = [
     ("kodak_vision3_500t", "kodak_2383", "Kodak Vision3 500T (2383 print)"),
 ]
 
-# Where sRGB white sits on the film, in stops above mid-grey. spektrafilm's default for sRGB
-# input is 4.0, which brightens every photo by over a stop (mid-grey 0.46 comes out at 0.73).
-# 2.47 is sRGB's own headroom (log2(1 / 0.18)): mid-grey stays put, so the LUT changes color
+# Where sRGB white sits on the film, in stops above mid-gray. spektrafilm's default for sRGB
+# input is 4.0, which brightens every photo by over a stop (mid-gray 0.46 comes out at 0.73).
+# 2.47 is sRGB's own headroom (log2(1 / 0.18)): mid-gray stays put, so the LUT changes color
 # and contrast, not exposure. (Film Lab, https://github.com/thedevmark/film-lab, made the same
 # choice for its Kodak Gold 200 LUT.)
 STOPS_ABOVE_MIDGRAY = 2.47
@@ -105,7 +105,7 @@ def main() -> int:
             meta = json.loads((bundle / "bundle.json").read_text(encoding="utf-8"))
             stops = meta["input_exposure"]["stops_above_midgray"]
             if abs(stops - STOPS_ABOVE_MIDGRAY) > 1e-6:
-                sys.exit(f"{film}: the bake used {stops} stops above mid-grey, not {STOPS_ABOVE_MIDGRAY}")
+                sys.exit(f"{film}: the bake used {stops} stops above mid-gray, not {STOPS_ABOVE_MIDGRAY}")
             cubes = list(bundle.glob("*.cube"))
             if len(cubes) != 1:
                 sys.exit(f"{film}: expected one .cube in the bundle, found {len(cubes)}")
@@ -113,7 +113,7 @@ def main() -> int:
             for line in cubes[0].read_text(encoding="utf-8").splitlines()[:40]:
                 if line.startswith("# spektrafilm:"):
                     version = version or line.split(":", 1)[1].strip()
-            # The .cube keeps spektrafilm's own header, which carries the credit and licence.
+            # The .cube keeps spektrafilm's own header, which carries the credit and license.
             shutil.copyfile(cubes[0], film_dir / f"{name}.cube")
             written.append((name, film, print_))
             print(f"baked {name}")
@@ -134,8 +134,8 @@ def main() -> int:
         "  - 1-LUT bundle, sRGB in and sRGB out, " + f"{RESOLUTION} points per axis.",
         "  - Each film printed on its own target print (listed below).",
         f"  - stops_above_midgray = {STOPS_ABOVE_MIDGRAY} (changed; spektrafilm's default for sRGB",
-        "    input is 4.0). Keeps mid-grey where it was instead of brightening every photo by",
-        "    over a stop, so the LUT changes colour and contrast, not exposure.",
+        "    input is 4.0). Keeps mid-gray where it was instead of brightening every photo by",
+        "    over a stop, so the LUT changes color and contrast, not exposure.",
         "",
         "Other changes:",
         "  - Files renamed from spektrafilm's bundle names to the film names below.",

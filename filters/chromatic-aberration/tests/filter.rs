@@ -1,4 +1,4 @@
-//! Behaviour tests, run through `moxocraft_sdk::host`, which feeds bands exactly as PhotoCraft does.
+//! Behavior tests, run through `moxocraft_sdk::host`, which feeds bands exactly as PhotoCraft does.
 
 use moxocraft_chromatic_aberration::{ChromaticAberration, Fringe, MANIFEST, MAX_TAPS, Taps};
 use moxocraft_sdk::host::{self, Bands};
@@ -225,7 +225,7 @@ fn long_smears_are_smooth_not_stepped() {
     let lit: Vec<f32> = row[150..250].to_vec();
     let peak = lit.iter().fold(0.0f32, |a, &b| a.max(b));
     assert!(peak > 0.05, "the smear is visible");
-    // Steps show up as big jumps between neighbouring pixels.
+    // Steps show up as big jumps between neighboring pixels.
     let jump = lit.windows(2).fold(0.0f32, |a, p| a.max((p[1] - p[0]).abs()));
     assert!(jump < peak * 0.12, "jump {jump} against peak {peak}");
 }
@@ -279,7 +279,7 @@ fn lens_mode_leaves_the_centre_and_fringes_the_corners() {
         }
         d
     };
-    assert_eq!(region(118, 118, 20), 0.0, "the clear centre is untouched");
+    assert_eq!(region(118, 118, 20), 0.0, "the clear center is untouched");
     assert!(region(0, 0, 30) > 0.2, "the corners carry fringes");
 }
 

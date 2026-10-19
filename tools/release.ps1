@@ -15,15 +15,35 @@ param(
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.IO.Compression, System.IO.Compression.FileSystem
 
-# The git blob hash of spektrafilm's licence as published upstream. Its CC BY-SA 4.0 terms need the
-# licence to travel unchanged with the LUTs, so the copy in the zip must still have this hash.
+# The git blob hash of spektrafilm's license as published upstream. Its CC BY-SA 4.0 terms need the
+# license to travel unchanged with the LUTs, so the copy in the zip must still have this hash.
 $LicenseBlobHash = '303ba46793ae40c11442d6b94609165325570a91'
 # The plug-ins that ship. build.ps1 builds every crate in filters/; the release stops if what it
 # built and this list don't match, so a new filter is shipped (or left out) on purpose.
 $Plugins = 'moxocraft_chromatic_aberration.wasm', 'moxocraft_lut.wasm', 'moxocraft_lut_cinematic.wasm', 'moxocraft_lut_creative.wasm', 'moxocraft_snow.wasm'
-# The LUTs' licences, sources and changelog (every .txt file directly in luts/), which their
-# licences require to travel with the plug-ins.
+# The LUTs' licenses, sources and changelog (every .txt file directly in luts/), which their
+# licenses require to travel with the plug-ins.
 $LutNotices = 'SPEKTRAFILM_LICENSE.txt', 'CC-BY-SA-4.0.txt', 'CC-BY-4.0.txt', 'STRIPED_PURPLE_LICENSE.txt', 'SOURCES.txt', 'CHANGELOG.txt'
+# The logo the README shows, the guide it links to and the guide's pictures, shipped at the same
+# paths so they work from an unzipped copy. The release stops if the README or the guide links to
+# a file that isn't in the zip.
+$Docs = 'docs/brand/moxocraft-logo.webp', 'docs/brand/moxocraft-logo-white.webp', 'docs/chromatic-aberration.md', 'docs/images/chromatic-aberration/subtle-lens.jpg', 'docs/images/chromatic-aberration/purple-fringing.jpg', 'docs/images/chromatic-aberration/dreamy-spectral.jpg', 'docs/images/chromatic-aberration/rgb-glitch.jpg'
+
+# Where a relative link in the zipped file $From leads, as a path inside the zip, or $null if it
+# leads out of it.
+function Resolve-ZipLink([string]$From, [string]$Link) {
+    $parts = New-Object System.Collections.Generic.List[string]
+    foreach ($part in ((Split-Path $From -Parent).Replace('\', '/') + '/' + $Link).Split('/')) {
+        if ($part -eq '' -or $part -eq '.') { continue }
+        if ($part -eq '..') {
+            if ($parts.Count -eq 0) { return $null }
+            $parts.RemoveAt($parts.Count - 1)
+            continue
+        }
+        $parts.Add($part)
+    }
+    $parts -join '/'
+}
 
 function Fail([string]$Message) {
     Write-Host ''
@@ -146,7 +166,7 @@ try {
     $notes = [IO.File]::ReadAllText($NotesFile).Replace("`r`n", "`n").Trim()
     if (-not $notes) { Fail "the notes file '$NotesFile' is empty" }
     foreach ($required in 'spektrafilm', 'CC BY-SA 4.0') {
-        if ($notes -notmatch [regex]::Escape($required)) { Fail "the notes don't mention '$required'; the film LUTs' licence needs their credit (see v0.1.0's notes)" }
+        if ($notes -notmatch [regex]::Escape($required)) { Fail "the notes don't mention '$required'; the film LUTs' license needs their credit (see v0.1.0's notes)" }
     }
     # Windows PowerShell's > misreads gh's output, so a character like the menu arrow comes out as
     # several wrong ones. These are the tell-tale starts of that (Unicode escapes keep this file
@@ -157,6 +177,26 @@ try {
     $otherZips =[regex]::Matches($notes, 'MoxoCraft-v\d+\.\d+\.\d+\.zip') | ForEach-Object Value | Where-Object { $_ -ne "$Name.zip" }
     if ($otherZips) { Fail "the notes mention $(($otherZips | Select-Object -Unique) -join ', ') instead of $Name.zip" }
     Write-Host "  $NotesFile looks right"
+
+    # Checked early too. The README and the guide ship in the zip, so their relative links and
+    # pictures (Markdown, or HTML src, srcset and href) must point at files that ship with them
+    # (links to websites are fine).
+    Step 'Checking the documentation links'
+    $shipped = @('README.md') + $Docs + ($LutNotices | ForEach-Object { "luts/$_" })
+    foreach ($file in $Docs) {
+        if (-not (Test-Path -LiteralPath (Join-Path $Root $file) -PathType Leaf)) { Fail "$file, listed in `$Docs, doesn't exist" }
+    }
+    foreach ($page in @('README.md') + @($Docs | Where-Object { $_ -like '*.md' })) {
+        $text = [regex]::Replace([IO.File]::ReadAllText((Join-Path $Root $page)), '(?s)```.*?```', '')
+        $targets = @([regex]::Matches($text, '!?\[[^\]]*\]\(([^)\s]+)\)') | ForEach-Object { $_.Groups[1].Value })
+        $targets += @([regex]::Matches($text, '(?:src|srcset|href)="([^"\s,]+)') | ForEach-Object { $_.Groups[1].Value })
+        foreach ($target in $targets) {
+            if ($target -match '^(https?:|mailto:|#)') { continue }
+            $inZip = Resolve-ZipLink $page ($target -split '#')[0]
+            if ($shipped -notcontains $inZip) { Fail "$page links to $target, which isn't in the zip; add it to `$Docs or link to it on GitHub" }
+        }
+    }
+    Write-Host "  README.md and $(@($Docs | Where-Object { $_ -like '*.md' }).Count) guide(s) only link to files in the zip"
 
     # 3. Test, then build from scratch so nothing stale ends up in the release. --locked stops if
     # Cargo.lock still has the old version, which would otherwise change during the build.
@@ -179,8 +219,8 @@ try {
     $after = (Invoke-Git @('status', '--porcelain')) -split "`n" | Where-Object { $_ -and $_ -ne '?? .idea/' }
     if ($after) { Fail "the build changed files in the repo, so the release wouldn't match the commit:`n$($after -join "`n")" }
 
-    # 4. Package. The zip holds one folder with the plug-ins, the README and the LUT notices; the
-    # plug-ins are also uploaded on their own.
+    # 4. Package. The zip holds one folder with the plug-ins, the README, the guide and its
+    # pictures, and the LUT notices; the plug-ins are also uploaded on their own.
     Step 'Packaging'
     $work = Join-Path ([IO.Path]::GetTempPath()) ("$Name-" + [IO.Path]::GetRandomFileName().Replace('.', ''))
     $upload = Join-Path $work 'upload'
@@ -193,10 +233,11 @@ try {
     foreach ($file in $Plugins) { $contents["$Name/$file"] = Join-Path $Root "dist/$file" }
     foreach ($file in $LutNotices) { $contents["$Name/luts/$file"] = Join-Path $Root "luts/$file" }
     $contents["$Name/README.md"] = Join-Path $Root 'README.md'
+    foreach ($file in $Docs) { $contents["$Name/$file"] = Join-Path $Root $file }
 
     $licenseSource = Join-Path $Root 'luts/SPEKTRAFILM_LICENSE.txt'
     if ((Get-GitBlobHash ([IO.File]::ReadAllBytes($licenseSource))) -ne $LicenseBlobHash) {
-        Fail 'luts/SPEKTRAFILM_LICENSE.txt is no longer identical to the upstream licence'
+        Fail 'luts/SPEKTRAFILM_LICENSE.txt is no longer identical to the upstream license'
     }
 
     $zipPath = Join-Path $upload "$Name.zip"
@@ -221,7 +262,7 @@ try {
             $sourceBytes = [IO.File]::ReadAllBytes($contents[$entry.FullName])
             if ((Get-GitBlobHash $bytes) -ne (Get-GitBlobHash $sourceBytes)) { Fail "$($entry.FullName) changed on its way into the zip" }
             if ($entry.FullName -eq "$Name/luts/SPEKTRAFILM_LICENSE.txt" -and (Get-GitBlobHash $bytes) -ne $LicenseBlobHash) {
-                Fail 'the licence in the zip is not byte-identical to upstream'
+                Fail 'the license in the zip is not byte-identical to upstream'
             }
             Write-Host ("  {0}  ({1} KB)" -f $entry.FullName, [math]::Round($entry.Length / 1KB))
         }

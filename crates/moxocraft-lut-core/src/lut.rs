@@ -79,7 +79,7 @@ pub struct Lut {
     /// cheaper in the interpreter than decoding per read.
     texels: Vec<[f32; 3]>,
     size: usize,
-    /// How far apart neighbouring grid points are in `texels` along green and blue (red's are
+    /// How far apart neighboring grid points are in `texels` along green and blue (red's are
     /// next to each other), so a lookup finds a cell's corners by adding these.
     green_step: usize,
     blue_step: usize,

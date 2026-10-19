@@ -7,7 +7,7 @@
 //!
 //! The manifest asks for the whole canvas (`"area": "canvas"`), so the plug-in also runs on an
 //! empty layer and gives the snow on its own there, and for no overlap: every flake is worked out
-//! from its place in the document, so a band never needs to see its neighbours.
+//! from its place in the document, so a band never needs to see its neighbors.
 
 mod flake;
 mod settings;

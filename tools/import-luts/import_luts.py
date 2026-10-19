@@ -1,11 +1,11 @@
 """Imports MoxoCraft's third-party LUTs into luts/ and writes luts/SOURCES.txt.
 
-Every LUT below comes from a collection whose licence allows redistribution (checked by hand;
+Every LUT below comes from a collection whose license allows redistribution (checked by hand;
 see the notes on each source). This script is the record of what was taken, from which exact
 commit, and what was changed: HaldCLUT images are converted to .cube files, and LUTs larger than
 33 points per axis are resampled down to 33 (lutconv.py). Each .cube file gets a header naming
-its source, author and licence, and luts/SOURCES.txt lists them all, which the CC BY and
-CC BY-SA licences ask for. The licence texts are copied byte for byte from the source
+its source, author and license, and luts/SOURCES.txt lists them all, which the CC BY and
+CC BY-SA licenses ask for. The license texts are copied byte for byte from the source
 repositories.
 
 Setup (once): clone the sources outside this repository, at the commits in SOURCES below:
@@ -302,7 +302,7 @@ def main() -> int:
         roots[key] = root
     authors = openshot_authors(roots["openshot"])
 
-    # Licence texts, byte for byte from each repository's history (a Windows checkout may have
+    # License texts, byte for byte from each repository's history (a Windows checkout may have
     # changed their line endings).
     for key, src in SOURCES.items():
         if "licence_file" in src:
@@ -343,7 +343,7 @@ def main() -> int:
                 f"Source: {src['title']}, {src['repo']}",
                 f"        commit {src['commit']}, file {rel}",
                 f"Author: {author}" + (f"; {extra}" if extra else ""),
-                f"Licence: {licence_note}",
+                f"License: {licence_note}",
                 f"Changes by MoxoCraft: {change}; renamed; this header added.",
             ]
             lutconv.write_cube(folder / f"{name}.cube", table, name, header)
@@ -375,9 +375,9 @@ def write_sources(out: Path, report) -> None:
         "-----------",
     ]
     for key, src in SOURCES.items():
-        lines += ["", src["title"], f"  {src['repo']} (commit {src['commit']})", f"  Author: {src['author']}", f"  Licence: {src['licence']}"]
+        lines += ["", src["title"], f"  {src['repo']} (commit {src['commit']})", f"  Author: {src['author']}", f"  License: {src['licence']}"]
         if "licence_copy" in src:
-            lines.append(f"  Licence text: {src['licence_copy']}")
+            lines.append(f"  License text: {src['licence_copy']}")
         if "notes" in src:
             lines.append(f"  {src['notes']}")
     lines += ["", "LUTs", "----", ""]

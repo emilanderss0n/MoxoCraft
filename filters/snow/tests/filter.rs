@@ -1,4 +1,4 @@
-//! Behaviour tests, run through `moxocraft_sdk::host`, which feeds bands exactly as PhotoCraft does.
+//! Behavior tests, run through `moxocraft_sdk::host`, which feeds bands exactly as PhotoCraft does.
 
 use moxocraft_particles::Depth;
 use moxocraft_sdk::host::{self, Bands};
@@ -30,7 +30,7 @@ fn empty(w: usize, h: usize) -> Vec<f32> {
     vec![0.0; w * h * 4]
 }
 
-/// A depth map as an opaque RGBA layer, from one grey value per pixel.
+/// A depth map as an opaque RGBA layer, from one gray value per pixel.
 fn map(w: usize, h: usize, grey: impl Fn(usize, usize) -> f32) -> Vec<f32> {
     (0..w * h)
         .flat_map(|i| {
@@ -272,7 +272,7 @@ fn works_in_every_rgb_format() {
             let out = run_in(&px, w, h, format, r#"{"amount":80,"tint":"Cool"}"#, Bands::PHOTOCRAFT).unwrap();
             assert!(out.iter().all(|v| (0.0..=1.0).contains(v)), "{format:?}");
             assert!(max_diff(&px, &out) > 0.3, "{format:?}: no flakes");
-            // Where flakes cover the most, the picture has moved towards the flake color:
+            // Where flakes cover the most, the picture has moved toward the flake color:
             // gamma-encoded, or linear light in 32-bit.
             let colour = if depth == 32 { [0.86 * 0.86, 0.93 * 0.93, 1.0] } else { [0.86, 0.93, 1.0] };
             let p = out.chunks_exact(n).max_by(|a, b| a[2].total_cmp(&b[2])).unwrap();

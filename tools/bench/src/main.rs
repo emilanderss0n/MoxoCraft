@@ -48,7 +48,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             bands.push((x, y, across.min(cw - x), 256.min(ch - y)));
         }
     }
-    // A spread of about eight bands, corners and centre included.
+    // A spread of about eight bands, corners and center included.
     // A stride that doesn't divide the number of bands across, so the sample moves across columns too.
     let stride = (bands.len() / 8).max(1) | 1;
     let sample: Vec<_> = bands.iter().copied().enumerate().filter(|(i, _)| i % stride == 0 || *i == bands.len() - 1).map(|(_, b)| b).collect();

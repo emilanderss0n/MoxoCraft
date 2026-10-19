@@ -2,7 +2,7 @@
 # Source: color-grading-luts by Striped Purple (Austin Barrett), https://github.com/stripedpurple/color-grading-luts
 #         commit 9757e8b5147693cab49c3fd674bf23dbe28d6c8e, file Cinema Through The Ages/Striped Purple - 1980_s.cube
 # Author: Austin Barrett - Striped Purple (GitHub: stripedpurple / Nixua)
-# Licence: MIT; full text in STRIPED_PURPLE_LICENSE.txt
+# License: MIT; full text in STRIPED_PURPLE_LICENSE.txt
 # Changes by MoxoCraft: resampled from 64 to 33 points per axis; renamed; this header added.
 TITLE "1980s"
 LUT_3D_SIZE 33

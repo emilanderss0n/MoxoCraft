@@ -5,7 +5,7 @@ use moxocraft_sdk::Params;
 /// Which way the colors are pushed.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum Mode {
-    /// Away from a centre point, growing towards the corners, like a real lens.
+    /// Away from a center point, growing toward the corners, like a real lens.
     Lens,
     /// The same direction and distance everywhere.
     Directional,
@@ -39,8 +39,8 @@ impl Fringe {
         })
     }
 
-    /// Where red, green and blue are centred, as a fraction of Amount, and how far each color is
-    /// smeared either side of its centre at zero softness.
+    /// Where red, green and blue are centered, as a fraction of Amount, and how far each color is
+    /// smeared either side of its center at zero softness.
     pub(crate) fn centres(self) -> ([f32; 3], f32) {
         match self {
             // Overlapping smears are what turn three colors into a continuous rainbow.
@@ -64,12 +64,12 @@ pub(crate) struct Settings {
     pub softness: f32,
     /// How much of the effect is mixed over the original picture, 0–1.
     pub strength: f32,
-    /// Fraction of the centre-to-corner distance left untouched in Lens mode, 0–1.
+    /// Fraction of the center-to-corner distance left untouched in Lens mode, 0–1.
     pub clear_center: f32,
-    /// How quickly the effect builds from the clear centre to the corners: 1 is even, higher
+    /// How quickly the effect builds from the clear center to the corners: 1 is even, higher
     /// keeps it near the corners.
     pub falloff: f32,
-    /// Lens centre as a fraction of the canvas width and height.
+    /// Lens center as a fraction of the canvas width and height.
     pub center: [f32; 2],
     /// Directional mode's direction in degrees, counter-clockwise from pointing right.
     pub angle: f32,

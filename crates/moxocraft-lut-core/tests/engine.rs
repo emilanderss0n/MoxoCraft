@@ -50,7 +50,7 @@ fn davinci_round_trip_with_a_neutral_lut_changes_nothing() {
 
 #[test]
 fn davinci_intermediate_hits_the_reference_points() {
-    // Blackmagic's published values: 18% grey at 0.336, linear 1 at about 0.514, black at 0, and
+    // Blackmagic's published values: 18% gray at 0.336, linear 1 at about 0.514, black at 0, and
     // the toe and log parts meet without a jump.
     assert!((color::davinci_intermediate(0.18) - 0.336).abs() < 0.001);
     assert!((color::davinci_intermediate(1.0) - 0.5139).abs() < 0.001);

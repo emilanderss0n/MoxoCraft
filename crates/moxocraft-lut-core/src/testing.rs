@@ -55,7 +55,7 @@ pub fn cube_rows(path: &std::path::Path) -> Vec<[f32; 3]> {
         .collect()
 }
 
-/// The behaviour tests every LUT plug-in runs, through `moxocraft_sdk::host`, which feeds bands
+/// The behavior tests every LUT plug-in runs, through `moxocraft_sdk::host`, which feeds bands
 /// exactly as PhotoCraft does. Call from the plug-in's `tests/` with its crate name, manifest id
 /// and LUT folder (relative to the crate):
 ///
@@ -95,7 +95,7 @@ macro_rules! pack_tests {
 
         #[test]
         fn lookups_are_continuous_across_cell_edges() {
-            // Neighbouring colors must give neighbouring results, whichever tetrahedron each
+            // Neighboring colors must give neighboring results, whichever tetrahedron each
             // lands in.
             for info in LUTS {
                 let lut = Lut::new(DATA, info).unwrap();
@@ -160,8 +160,8 @@ macro_rules! pack_tests {
                 let average = errors.iter().sum::<f32>() / errors.len() as f32;
                 let worst = errors.iter().fold(0.0f32, |a, &b| a.max(b));
                 assert!(average < 0.5, "{}: average error {average} / 255", info.name);
-                assert!(share_over(2.0) < 0.01, "{}: {:.2}% of colours more than 2/255 off", info.name, share_over(2.0) * 100.0);
-                assert!(share_over(4.0) < 0.005, "{}: {:.2}% of colours more than 4/255 off", info.name, share_over(4.0) * 100.0);
+                assert!(share_over(2.0) < 0.01, "{}: {:.2}% of colors more than 2/255 off", info.name, share_over(2.0) * 100.0);
+                assert!(share_over(4.0) < 0.005, "{}: {:.2}% of colors more than 4/255 off", info.name, share_over(4.0) * 100.0);
                 assert!(worst < 20.0, "{}: worst error {worst} / 255", info.name);
             }
         }

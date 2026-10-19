@@ -10,6 +10,6 @@ fn main() {
         // so installing it replaces the old one instead of leaving both in the menu.
         id: "moxocraft.lut",
         name: "MoxoCraft - Film LUTs",
-        description: "Gives the image the colour and contrast of a film stock: colour negative, slide and instant films, and Fujifilm-style camera looks. Pick a LUT and set how strongly it applies.",
+        description: "Gives the image the color and contrast of a film stock: color negative, slide and instant films, and Fujifilm-style camera looks. Pick a LUT and set how strongly it applies.",
     });
 }

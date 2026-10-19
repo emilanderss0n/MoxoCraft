@@ -31,9 +31,9 @@ foreach ($package in $packages) {
     Write-Host ("dist/{0}  ({1} KB)" -f $wasm.Name, [math]::Round($wasm.Length / 1KB))
 }
 
-# The LUT plug-ins carry third-party LUTs whose licences require their notices to travel with
-# every copy, so the licences, sources and changelog go next to the plug-ins. (PhotoCraft only
+# The LUT plug-ins carry third-party LUTs whose licenses require their notices to travel with
+# every copy, so the licenses, sources and changelog go next to the plug-ins. (PhotoCraft only
 # loads *.wasm files directly in its plug-ins folder, so the subfolder is ignored there.)
 New-Item -ItemType Directory -Force dist/luts | Out-Null
 Get-ChildItem luts/*.txt | ForEach-Object { Copy-Item $_.FullName dist/luts/ -Force }
-Write-Host "dist/luts/  (LUT licences, sources and changelog)"
+Write-Host "dist/luts/  (LUT licenses, sources and changelog)"

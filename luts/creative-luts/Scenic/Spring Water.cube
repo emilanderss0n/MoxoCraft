@@ -2,7 +2,7 @@
 # Source: color-grading-luts by Striped Purple (Austin Barrett), https://github.com/stripedpurple/color-grading-luts
 #         commit 9757e8b5147693cab49c3fd674bf23dbe28d6c8e, file Scenic Moods/Striped Purple - Spring Water.cube
 # Author: Austin Barrett - Striped Purple (GitHub: stripedpurple / Nixua)
-# Licence: MIT; full text in STRIPED_PURPLE_LICENSE.txt
+# License: MIT; full text in STRIPED_PURPLE_LICENSE.txt
 # Changes by MoxoCraft: values rounded to 5 decimal places; renamed; this header added.
 TITLE "Spring Water"
 LUT_3D_SIZE 16

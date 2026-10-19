@@ -2,7 +2,7 @@
 # Source: HaldCLUT film emulation presets by Pat David, https://github.com/NatronGitHub/clut
 #         commit af7b50d4caf6244fb6895a647f5b6a84efe7931a, file negative_new/fuji_160c.png
 # Author: Pat David
-# Licence: CC BY-SA 4.0; full text in CC-BY-SA-4.0.txt
+# License: CC BY-SA 4.0; full text in CC-BY-SA-4.0.txt
 # Changes by MoxoCraft: converted from a HaldCLUT image (64 points per axis) to a 33-point .cube; renamed; this header added.
 TITLE "Fujifilm Pro 160C"
 LUT_3D_SIZE 33

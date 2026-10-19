@@ -14,7 +14,7 @@ corner at 100%, before on the left and after on the right.
 
 *Lens*, *Red/Cyan*, **Amount** 4, **Softness** 30, **Clear Center** 10, **Falloff** 1.
 
-Thin red and cyan edges like a real lens leaves towards the corners, without softening much
+Thin red and cyan edges like a real lens leaves toward the corners, without softening much
 detail. Best on sharp, high-contrast subjects: architecture, window frames, branches. At
 fit-to-screen size you'll hardly see it, which is the point.
 
@@ -37,7 +37,7 @@ on the example photo, the purple came out about 30% stronger than the green, whe
 
 *Lens*, *Spectral*, **Amount** 30, **Softness** 80, **Clear Center** 30, **Falloff** 1.2.
 
-Soft rainbow glows that grow towards the edges while the middle stays sharp. Best on soft,
+Soft rainbow glows that grow toward the edges while the middle stays sharp. Best on soft,
 backlit or night photos with bright highlights: sun on water, out-of-focus lights, a portrait
 with the subject in the middle. It smears fine detail near the edges, so it doesn't suit sharp
 architecture.

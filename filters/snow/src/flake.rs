@@ -26,7 +26,7 @@ const SMALLEST: f32 = 0.35;
 const LARGEST: f32 = 2.0;
 /// The average of those sizes (the cube of an even spread averages ¼).
 const MEAN_SIZE: f32 = SMALLEST + (LARGEST - SMALLEST) / 4.0;
-/// How far a clump's extra blobs reach from its centre, as a multiple of its main blob's radius:
+/// How far a clump's extra blobs reach from its center, as a multiple of its main blob's radius:
 /// set up to 0.85 of it away, and up to 0.65 of it in radius.
 const CLUMP_REACH: f32 = 1.5;
 /// A clump's blobs show while the flake is at least this sharp (the in-focus radius as a fraction

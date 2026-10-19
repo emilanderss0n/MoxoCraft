@@ -4,7 +4,7 @@
 //! land a little apart and bright edges pick up colored fringes. This filter recreates that.
 //!
 //! How it works, per output pixel:
-//! 1. Work out a displacement: in Lens mode it points away from the centre and grows towards the
+//! 1. Work out a displacement: in Lens mode it points away from the center and grows toward the
 //!    corners; in Directional mode it's the same everywhere (`field.rs`).
 //! 2. Read the picture at several points ("taps") along that displacement. Each tap adds to red,
 //!    green and blue with its own weights, so each color ends up shifted by a different amount.
@@ -51,7 +51,7 @@ pub const MANIFEST: &str = concat!(
     r#"",
   "kind": "filter",
   "author": "MoxoCraft",
-  "description": "Splits red, green and blue apart like a real lens. Lens pushes colours outward from a centre point, strongest at the corners; Directional shifts them one way. Amount is the shift in pixels (at the corners in Lens mode); negative values swap the fringe colours. Softness and Spectral blend the colours into smooth rainbow fringes. Strength fades the whole effect over your original without changing how far the colours move. Clear Center, Falloff and Center X/Y only affect Lens mode; Angle only affects Directional mode. Very large amounts are capped at what PhotoCraft lets a plug-in read around each pixel: about 65 to 125 px, less with more softness.",
+  "description": "Splits red, green and blue apart like a real lens. Lens pushes colors outward from a center point, strongest at the corners; Directional shifts them one way. Amount is the shift in pixels (at the corners in Lens mode); negative values swap the fringe colors. Softness and Spectral blend the colors into smooth rainbow fringes. Strength fades the whole effect over your original without changing how far the colors move. Clear Center, Falloff and Center X/Y only affect Lens mode; Angle only affects Directional mode. Very large amounts are capped at what PhotoCraft lets a plug-in read around each pixel: about 65 to 125 px, less with more softness.",
   "params": {
     "mode": {"type": "choice", "options": ["Lens", "Directional"], "default": "Lens"},
     "fringe": {"type": "choice", "options": ["Spectral", "RGB Split", "Red/Cyan", "Green/Magenta", "Blue/Yellow"], "default": "Spectral"},

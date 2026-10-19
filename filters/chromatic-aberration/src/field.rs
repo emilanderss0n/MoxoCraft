@@ -4,7 +4,7 @@ use moxocraft_sdk::{Error, Geometry, try_vec};
 
 use crate::settings::{Mode, Settings};
 
-/// Entries in Lens mode's table of displacement against distance from the centre.
+/// Entries in Lens mode's table of displacement against distance from the center.
 const LENS_TABLE: usize = 4096;
 
 /// Where each pixel's colors get pushed.
@@ -13,7 +13,7 @@ pub(crate) struct Field {
     /// Directional mode's displacement, already capped.
     dir: [f32; 2],
     centre: [f32; 2],
-    /// Lens mode: signed displacement in pixels at evenly spaced distances from the centre, so the
+    /// Lens mode: signed displacement in pixels at evenly spaced distances from the center, so the
     /// pixel loop looks it up instead of calling `powf` (slow in an interpreter) for every pixel.
     lens: Vec<f32>,
     /// Table entries per pixel of distance.
@@ -31,10 +31,10 @@ impl Field {
         let mut lens = Vec::new();
         let mut lens_scale = 0.0;
         if s.mode == Mode::Lens {
-            // Amount is reached at the corners of a centred lens: half the canvas diagonal away.
+            // Amount is reached at the corners of a centered lens: half the canvas diagonal away.
             let reference = 0.5 * (cw * cw + ch * ch).sqrt();
             let inner = s.clear_center.min(0.99);
-            // Far enough for every canvas corner from wherever the centre is; pixels beyond
+            // Far enough for every canvas corner from wherever the center is; pixels beyond
             // (layer content off the canvas) use the last entry.
             let far = (centre[0].max(cw - centre[0]).powi(2) + centre[1].max(ch - centre[1]).powi(2)).sqrt() + 2.0;
             lens_scale = (LENS_TABLE - 2) as f32 / far;

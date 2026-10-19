@@ -3,8 +3,8 @@
 //!
 //! Smeared colors are done in two passes so they stay smooth without costing a tap every pixel
 //! or two: first every pixel gets a short weighted average along its own displacement direction
-//! (a "segment", reaching one tap gap either side and fading out towards its ends), then the main
-//! taps read those segments instead of single pixels. Neighbouring segments overlap and add up
+//! (a "segment", reaching one tap gap either side and fading out toward its ends), then the main
+//! taps read those segments instead of single pixels. Neighboring segments overlap and add up
 //! evenly, so together they cover the whole smear with no holes or steps.
 
 use moxocraft_sdk::{Error, Image, try_vec};
@@ -181,8 +181,8 @@ struct Job<'a> {
 
 impl Job<'_> {
     /// First pass: every pixel the main taps can land on gets a weighted average of the picture
-    /// along its own displacement direction, out to one tap gap either side and fading towards
-    /// the ends (a "tent"). Neighbouring taps' tents overlap and add up to an even, smooth
+    /// along its own displacement direction, out to one tap gap either side and fading toward
+    /// the ends (a "tent"). Neighboring taps' tents overlap and add up to an even, smooth
     /// coverage, so the smear has no steps.
     fn segments<const N: usize, const M: usize>(&self, src: &Plane<'_>, out: &mut [f32], width: usize, corner: usize) {
         // In Directional mode every pixel has the same displacement, so the same segment.

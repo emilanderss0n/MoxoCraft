@@ -2,7 +2,7 @@
 # Source: freshLUTs community LUTs, as selected and renamed by OpenShot, https://github.com/OpenShot/openshot-qt
 #         commit c58ce6e7f11d59872dffcabe9a09bf9dec16cf53, file teal_&_orange_vibes/teal_punch.cube
 # Author: tjtop (freshLUTs); originally "TEAL LOOK FOR REC 709 V2", https://freshluts.com/luts/285
-# Licence: CC0 1.0 (public domain dedication), as stated on each LUT's freshluts.com page
+# License: CC0 1.0 (public domain dedication), as stated on each LUT's freshluts.com page
 # Changes by MoxoCraft: values rounded to 5 decimal places; renamed; this header added.
 TITLE "Teal Punch"
 LUT_3D_SIZE 33

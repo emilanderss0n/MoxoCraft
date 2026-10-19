@@ -29,7 +29,7 @@ impl Lens {
     }
 
     /// The radius of the blur disc at `depth`, in units of the picture's longer side. It's 0 at
-    /// the subject's distance, levels off towards `aperture` behind it and keeps growing in front
+    /// the subject's distance, levels off toward `aperture` behind it and keeps growing in front
     /// of it, the way a real lens's blur does.
     #[inline]
     pub fn blur(&self, depth: f32) -> f32 {

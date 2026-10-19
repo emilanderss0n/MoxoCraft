@@ -2,7 +2,7 @@
 # Source: haldclut by Christoph Wurst, https://github.com/ChristophWurst/haldclut
 #         commit 310aec52794c1d0080164c1cb87e5b6003a44d37, file Tension 1 warm.tif
 # Author: Christoph Wurst
-# Licence: CC BY-SA 4.0; full text in CC-BY-SA-4.0.txt
+# License: CC BY-SA 4.0; full text in CC-BY-SA-4.0.txt
 # Changes by MoxoCraft: converted from a HaldCLUT image (144 points per axis) to a 33-point .cube; renamed; this header added.
 TITLE "Tension Warm"
 LUT_3D_SIZE 33

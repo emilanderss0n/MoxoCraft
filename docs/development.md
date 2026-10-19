@@ -25,7 +25,7 @@ cargo run --release -p moxocraft-bench -- dist/<plugin>.wasm '<settings JSON>'  
 ## Building
 
 You need Rust; `build.ps1` adds the WebAssembly target itself. It builds every crate in
-`filters/` into a `.wasm` in `dist/` and copies the LUTs' licences, sources and changelog into
+`filters/` into a `.wasm` in `dist/` and copies the LUTs' licenses, sources and changelog into
 `dist/luts/`, which must travel with the plug-ins. `dist/` and `target/` are output only: the
 build replaces what is in them.
 
@@ -57,7 +57,7 @@ bands from a 24-megapixel RGBA canvas (PhotoCraft always sends an alpha channel)
 whole-image run on 1, 4 and 16 threads. Check it after changing a pixel loop.
 
 It also reports instructions per pixel (PhotoCraft's "fuel"). That count is the same on every run,
-but it doesn't reliably track time: wasmi charges for instructions it later optimises away, so a
+but it doesn't reliably track time: wasmi charges for instructions it later optimizes away, so a
 change can use fewer instructions and still run slower. Confirm speed changes with timings,
 comparing against an unchanged build in the same session.
 
@@ -72,7 +72,7 @@ filters/lut/                   MoxoCraft - Film LUTs      (its LUTs are in luts/
 filters/lut-cinematic/         MoxoCraft - Cinematic LUTs (luts/cinematic-luts)
 filters/lut-creative/          MoxoCraft - Creative LUTs  (luts/creative-luts)
 filters/snow/                  MoxoCraft - Snow
-luts/                          the LUT files, licences, sources and changelog (see luts.md)
+luts/                          the LUT files, licenses, sources and changelog (see luts.md)
 tools/import-luts/             Python: imports the third-party LUTs into luts/ (see luts.md)
 tools/bake-luts/               Python: makes the Film category from spektrafilm (see luts.md)
 tools/lut-preview/             renders every LUT on a photo, as PNGs
@@ -116,7 +116,7 @@ build time (the plug-in's build.rs, native code)       run time (inside the .was
 |---|---|---|
 | `bake.rs` | build | reads a pack's folder, orders and names the LUTs, writes the tables, their index and the manifest |
 | `cube.rs` | build | reads `.cube` files and bakes in the DaVinci conversion where asked |
-| `color.rs` | both | sRGB and DaVinci Wide Gamut / Intermediate color maths |
+| `color.rs` | both | sRGB and DaVinci Wide Gamut / Intermediate color math |
 | `lut.rs` | both | the baked table format and `Lut::lookup` |
 | `render.rs` | run | applies the chosen LUT to a band, blended by Intensity |
 | `lib.rs` | run | `lut_pack!`, which puts a plug-in together from its baked files |
@@ -145,7 +145,7 @@ PhotoCraft's reduced live preview, which tells plug-ins the reduced size.
 A plug-in implements `Population` (how many particles there are at each depth, how far they
 reach and roughly how much drawing they take) and calls `render` with a function that turns each
 `Spot` from `Scatter::for_each` into a `Dab`. Particle manifests ask for `"area": "canvas"`, so
-the plug-ins also run on an empty layer, and for no overlap, since no band needs its neighbours'
+the plug-ins also run on an empty layer, and for no overlap, since no band needs its neighbors'
 pixels.
 
 Two rules keep bands seamless: every position is worked out in document pixels the same way in
@@ -201,15 +201,17 @@ In both, `lib.rs` holds the manifest and the `Filter` entry point.
    ./tools/release.ps1 -Version <x.y.z> -NotesFile ../notes.md
    ```
 
-The script stops with a message if main has changes, isn't pushed, the version doesn't match, the
-release already exists, or the notes are missing the spektrafilm credit or still name an older
-zip. Otherwise it runs the tests, rebuilds the plug-ins from scratch and packs
-`MoxoCraft-v<x.y.z>.zip` (the plug-ins, the README and the LUTs' licences, sources and changelog).
-It writes `SHA256SUMS.txt` with Unix line endings, since `sha256sum -c` rejects Windows ones,
-uploads the zip, the `.wasm` files and the checksums as a release of the commit it built, then
-downloads them again and checks each one. `-DryRun` stops before uploading and prints the folder
-holding the files.
+The script stops with a message if main has changes or isn't pushed, the version doesn't match,
+the release already exists, the notes are missing the spektrafilm credit or still name an older
+zip, or the README or the Chromatic Aberration guide links to a file that won't be in the zip.
+Otherwise it runs the tests, rebuilds the plug-ins from scratch and packs `MoxoCraft-v<x.y.z>.zip`
+(the plug-ins, the README, the guide and its pictures, and the LUTs' licenses, sources and
+changelog). It writes `SHA256SUMS.txt` with Unix line endings, since `sha256sum -c` rejects
+Windows ones, uploads the zip, the `.wasm` files and the checksums as a release of the commit it
+built, then downloads them again and checks each one. `-DryRun` stops before uploading and prints
+the folder holding the files.
 
-Two lists at the top of the script say what ships, and it stops until each matches what is on
-disk: `$Plugins` (the `.wasm` files `build.ps1` built) and `$LutNotices` (the `.txt` files in
-`luts/`).
+Three lists at the top of the script say what ships: `$Plugins` (the `.wasm` files `build.ps1`
+built) and `$LutNotices` (the `.txt` files in `luts/`), which must match what is on disk, and
+`$Docs` (the README's logo, the guide and its pictures), which must hold everything the README
+and the guide link to. Links to the developer docs go to GitHub instead, as those docs aren't in the zip.

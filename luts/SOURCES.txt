@@ -18,40 +18,40 @@ Collections
 HaldCLUT film emulation presets by Pat David
   https://github.com/NatronGitHub/clut (commit af7b50d4caf6244fb6895a647f5b6a84efe7931a)
   Author: Pat David
-  Licence: CC BY-SA 4.0
-  Licence text: CC-BY-SA-4.0.txt
+  License: CC BY-SA 4.0
+  License text: CC-BY-SA-4.0.txt
   From the bw, colorslide, instant_consumer, instant_pro and negative_* folders, which the repository's README credits to Pat David (https://patdavid.net/2013/08/film-emulation-presets-in-gmic-gimp/).
 
 FilmSim by Sébastien Guyader
   https://github.com/sguyader/FilmSim (commit 1453b2b55c48d99a889b1e455f91f6898ba2db41)
   Author: Sébastien Guyader (sguyader)
-  Licence: CC0 1.0 (public domain dedication)
+  License: CC0 1.0 (public domain dedication)
   Community-made simulations of Fujifilm camera looks; not made or endorsed by Fujifilm.
 
 haldclut by Christoph Wurst
   https://github.com/ChristophWurst/haldclut (commit 310aec52794c1d0080164c1cb87e5b6003a44d37)
   Author: Christoph Wurst
-  Licence: CC BY-SA 4.0
-  Licence text: CC-BY-SA-4.0.txt
+  License: CC BY-SA 4.0
+  License text: CC-BY-SA-4.0.txt
 
 slay LUTs
   https://github.com/slaycamera/luts (commit a1709044efe115640dde1dee17d4185fc059af0d)
   Author: slay (https://www.slaycamera.com/)
-  Licence: CC BY 4.0
-  Licence text: CC-BY-4.0.txt
+  License: CC BY 4.0
+  License text: CC-BY-4.0.txt
   Credit as the author asks: LUTs: slay (https://www.slaycamera.com/) (CC BY 4.0).
 
 color-grading-luts by Striped Purple (Austin Barrett)
   https://github.com/stripedpurple/color-grading-luts (commit 9757e8b5147693cab49c3fd674bf23dbe28d6c8e)
   Author: Austin Barrett - Striped Purple (GitHub: stripedpurple / Nixua)
-  Licence: MIT
-  Licence text: STRIPED_PURPLE_LICENSE.txt
+  License: MIT
+  License text: STRIPED_PURPLE_LICENSE.txt
   The author asks that you spread the word about their work: https://www.instagram.com/stripedpurple/.
 
 freshLUTs community LUTs, as selected and renamed by OpenShot
   https://github.com/OpenShot/openshot-qt (commit c58ce6e7f11d59872dffcabe9a09bf9dec16cf53)
   Author: the freshLUTs creators listed per LUT (via OpenShot's src/colors/AUTHORS.md)
-  Licence: CC0 1.0 (public domain dedication), as stated on each LUT's freshluts.com page
+  License: CC0 1.0 (public domain dedication), as stated on each LUT's freshluts.com page
 
 LUTs
 ----

@@ -66,7 +66,7 @@ pub(crate) fn read_map(image: &Image<'_>, inverted: bool) -> Result<Vec<f32>, Er
     let mut out = try_vec(image.width * image.height, 0.0f32)?;
     for (d, p) in out.iter_mut().zip(image.data.chunks_exact(n)) {
         let mut v = 0.2126 * p[0] + 0.7152 * p[1] + 0.0722 * p[2];
-        // 32-bit documents hold linear light; the map's greys are meant as they look on screen
+        // 32-bit documents hold linear light; the map's grays are meant as they look on screen
         // (roughly gamma 2, as Chromatic Aberration assumes).
         if linear {
             v = v.max(0.0).sqrt();

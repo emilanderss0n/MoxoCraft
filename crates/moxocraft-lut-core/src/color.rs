@@ -1,4 +1,4 @@
-//! Color-space maths: the sRGB transfer curve (used at run time for 32-bit documents) and
+//! Color-space math: the sRGB transfer curve (used at run time for 32-bit documents) and
 //! DaVinci Wide Gamut / Intermediate (used at build time for LUTs made in that space).
 
 pub fn srgb_encode(l: f32) -> f32 {
@@ -21,7 +21,7 @@ pub fn mat(m: &[[f32; 3]; 3], v: [f32; 3]) -> [f32; 3] {
 }
 
 /// Linear light to DaVinci Intermediate, Resolve's log encoding (Blackmagic's published curve):
-/// 18% grey lands at 0.336, and each stop above the toe adds about 0.073.
+/// 18% gray lands at 0.336, and each stop above the toe adds about 0.073.
 pub fn davinci_intermediate(linear: f32) -> f32 {
     if linear <= 0.002_624_09 { linear * 10.444_268 } else { ((linear + 0.0075).log2() + 7.0) * 0.073_292_48 }
 }

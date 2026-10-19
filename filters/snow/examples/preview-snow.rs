@@ -131,7 +131,7 @@ fn scene(w: usize, h: usize) -> Picture {
         for x in 0..w {
             let (px, py) = (x as f32 + 0.5, y as f32 + 0.5);
             let (u, v) = (px / fw, py / fh);
-            // Dusk sky, then the street fading towards the camera.
+            // Dusk sky, then the street fading toward the camera.
             let mut c = if py < horizon {
                 let t = py / horizon;
                 [0.16 + 0.22 * t, 0.20 + 0.20 * t, 0.34 + 0.12 * t]
@@ -163,7 +163,7 @@ fn scene(w: usize, h: usize) -> Picture {
                     *ch += (lamp - *ch) * glow;
                 }
             }
-            // The figure: a coat and a head, a little left of centre.
+            // The figure: a coat and a head, a little left of center.
             let (cx, top) = (0.46 * fw, horizon - 40.0 * k);
             let head = ((px - cx).powi(2) + (py - top).powi(2)).sqrt() < 34.0 * k;
             let body_w = 70.0 * k * (0.75 + 0.35 * ((py - top) / (fh - top)).clamp(0.0, 1.0));
@@ -186,7 +186,7 @@ fn drop_alpha(px: &[f32]) -> Vec<f32> {
     px.chunks_exact(4).flat_map(|p| [p[0], p[1], p[2]]).collect()
 }
 
-/// A snow layer (RGBA) shown over mid grey, so its flakes and their transparency are visible.
+/// A snow layer (RGBA) shown over mid gray, so its flakes and their transparency are visible.
 fn on_grey(px: &[f32]) -> Vec<f32> {
     px.chunks_exact(4).flat_map(|p| [0, 1, 2].map(|c| p[c] * p[3] + 0.25 * (1.0 - p[3]))).collect()
 }
