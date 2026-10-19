@@ -145,7 +145,7 @@ Renders a test scene and several looks into `target/preview/` (add `out-dir widt
 change the folder or size). These match PhotoCraft's own output to within one level in 255.
 
 ```bash
-cargo run --release -p moxocraft-snow --example preview [out-dir] [photo.png [depth.png] | 6000x4000]
+cargo run --release -p moxocraft-snow --example preview-snow [out-dir] [photo.png [depth.png] | 6000x4000]
 ```
 
 Renders Snow at several settings into `target/preview-snow/`: on a test street scene with its own

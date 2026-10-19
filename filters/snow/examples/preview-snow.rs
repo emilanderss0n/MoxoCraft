@@ -1,6 +1,6 @@
 //! Renders the snow on a picture at a few settings, as PNGs.
 //!
-//!   cargo run --release -p moxocraft-snow --example preview [out-dir] [photo.png [depth.png] | WIDTHxHEIGHT]
+//!   cargo run --release -p moxocraft-snow --example preview-snow [out-dir] [photo.png [depth.png] | WIDTHxHEIGHT]
 //!
 //! Without a photo it draws a test scene (a figure in a snowy street at dusk) with a matching
 //! depth map, 1500 × 1000 unless a size such as `6000x4000` is given (to see flakes at full size). Writes `scene.png` and `depth.png` (the inputs) and one PNG per preset into
