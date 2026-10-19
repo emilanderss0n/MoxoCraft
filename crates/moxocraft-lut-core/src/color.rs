@@ -1,4 +1,4 @@
-//! Colour-space maths: the sRGB transfer curve (used at run time for 32-bit documents) and
+//! Color-space maths: the sRGB transfer curve (used at run time for 32-bit documents) and
 //! DaVinci Wide Gamut / Intermediate (used at build time for LUTs made in that space).
 
 pub fn srgb_encode(l: f32) -> f32 {

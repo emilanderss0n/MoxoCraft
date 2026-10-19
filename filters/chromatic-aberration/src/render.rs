@@ -1,7 +1,7 @@
 //! Filtering one band: copying it out in linear light, the optional segment pass, and the main
 //! pass that reads each pixel's taps.
 //!
-//! Smeared colours are done in two passes so they stay smooth without costing a tap every pixel
+//! Smeared colors are done in two passes so they stay smooth without costing a tap every pixel
 //! or two: first every pixel gets a short weighted average along its own displacement direction
 //! (a "segment", reaching one tap gap either side and fading out towards its ends), then the main
 //! taps read those segments instead of single pixels. Neighbouring segments overlap and add up
@@ -63,7 +63,7 @@ pub(crate) fn render(image: &mut Image<'_>, s: &Settings) -> Result<(), Error> {
     let src_margin = if plan.segmented { (tap_margin + (longest * plan.segment).ceil() as usize + 2).min(ov) } else { tap_margin };
 
     // The band in linear light, premultiplied by alpha, so blending between pixels and taps never
-    // drags in the colour hidden under transparent pixels.
+    // drags in the color hidden under transparent pixels.
     let linear = image.format.depth != 32;
     let src_corner = ov - src_margin;
     let (sw, sh) = (w - 2 * src_corner, h - 2 * src_corner);
@@ -137,9 +137,9 @@ fn decode(v: f32) -> f32 {
     v * v.abs()
 }
 
-/// Linear back to gamma 2, keeping the sign of out-of-range values. The square root of the size
-/// with the sign put back gives exactly what a branch per sign would, but the compiled branch ran
-/// both square roots for every value.
+/// Linear back to gamma 2, keeping the sign of out-of-range values. Written with `copysign`
+/// rather than a branch per sign, which gives the same result but compiled to code that ran both
+/// square roots for every value.
 #[inline(always)]
 fn encode(v: f32) -> f32 {
     v.abs().sqrt().copysign(v)
@@ -254,9 +254,9 @@ impl Job<'_> {
     /// hard split the band itself.
     ///
     /// Written once per layout (`N` channels, last one alpha or not; `M` is always `2 * N`) so the
-    /// compiler can unroll the channel loops and drop bounds checks; the interpreter rewards
-    /// every instruction saved. `MIX` adds the pixel's own value for strengths below full, and is
-    /// its own copy so that full strength runs exactly the code it did before Strength existed.
+    /// compiler can unroll the channel loops and drop bounds checks. `MIX` adds the pixel's own
+    /// value for strengths below full; it is a separate copy so that full strength runs none of
+    /// the mixing code and gives exactly the result it gave before Strength existed.
     fn run<const N: usize, const M: usize, const ALPHA: bool, const MIX: bool>(&self, plane: &Plane<'_>, dst: &mut [f32]) {
         let (w, h, ov) = (self.w, self.h, self.ov);
         let taps = self.plan.taps.as_slice();
@@ -304,8 +304,8 @@ impl Job<'_> {
                 }
                 let finish = |v: f32| if self.linear { encode(v) } else { v };
                 if ALPHA {
-                    // Each colour brings its own coverage; the pixel is as opaque as the most
-                    // opaque one, and colours that didn't reach it are missing from its tint.
+                    // Each color brings its own coverage; the pixel is as opaque as the most
+                    // opaque one, and colors that didn't reach it are missing from its tint.
                     let a = cover[0].max(cover[1]).max(cover[2]);
                     if a <= 1e-6 {
                         out[3] = 0.0;

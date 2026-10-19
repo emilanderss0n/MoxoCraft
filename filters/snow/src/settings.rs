@@ -11,7 +11,7 @@ const MAX_APERTURE: f32 = 0.006;
 /// How long flakes at the subject's distance streak at Motion 100, in units of the longer side.
 const MAX_STREAK: f32 = 0.03;
 
-/// The flakes' colour.
+/// The flakes' color.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Tint {
     White,

@@ -1,6 +1,6 @@
-//! How PhotoCraft describes a band of pixels: its colour mode, bit depth and place in the document.
+//! How PhotoCraft describes a band of pixels: its color mode, bit depth and place in the document.
 
-/// A colour mode, numbered as in the PSD file format (which is how PhotoCraft sends it).
+/// A color mode, numbered as in the PSD file format (which is how PhotoCraft sends it).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum ColorMode {
     Bitmap,

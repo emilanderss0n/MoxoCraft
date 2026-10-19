@@ -63,7 +63,7 @@ def read_lut(path: Path) -> np.ndarray:
 
 
 def apply(table: np.ndarray, rgb: np.ndarray) -> np.ndarray:
-    """Looks up colours (..., 3) in 0..1 with tetrahedral interpolation."""
+    """Looks up colors (..., 3) in 0..1 with tetrahedral interpolation."""
     n = table.shape[0]
     p = np.clip(rgb, 0.0, 1.0) * (n - 1)
     i = np.minimum(np.floor(p).astype(np.int64), n - 2)

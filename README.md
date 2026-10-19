@@ -1,23 +1,19 @@
 # MoxoCraft
 
 Creative filters for [PhotoCraft](https://github.com/storytold/photocraft), the free open-source
-photo editor. MoxoCraft adds these filters under **Filter › Plug-ins**:
+photo editor. Once installed, they appear under **Filter › Plug-ins**:
 
-- **MoxoCraft - Chromatic Aberration**: coloured lens fringes, from a subtle edge fringe to a
+- **MoxoCraft - Chromatic Aberration**: colored lens fringes, from a subtle edge fringe to a
   rainbow smear or an RGB-split glitch.
-- **MoxoCraft - Film LUTs**: the colour and contrast of film stocks: colour negative, slide and
+- **MoxoCraft - Film LUTs**: the color and contrast of film stocks: color negative, slide and
   instant films, and Fujifilm-style camera looks.
 - **MoxoCraft - Cinematic LUTs**: movie-style grades, moody and vintage looks, and black-and-white
   films.
-- **MoxoCraft - Creative LUTs**: colourful, scenic and experimental looks.
+- **MoxoCraft - Creative LUTs**: colorful, scenic and experimental looks.
 - **MoxoCraft - Snow**: falling snow with depth: small sharp flakes far away, large soft ones
   close to the camera, and ways to put the snow behind your subject.
 
 Together the three LUT filters hold 147 looks.
-
-Each filter opens a settings dialog with a live preview on your image. Nothing changes until you
-press **OK**, and every run is a single undo step. The filters work the same on Windows, macOS,
-Linux and PhotoCraft in the browser.
 
 ## Install
 
@@ -36,21 +32,38 @@ The filters appear under **Filter › Plug-ins**. If you installed them from the
 installing the new `.wasm` files the same way; each replaces the old one. (Film LUTs replaces
 the "MoxoCraft - LUT" filter from version 0.1.0.)
 
+## Using the filters
+
+Each filter opens a settings dialog with a live preview on your image. Nothing changes until you
+press **OK**, and every run is a single undo step.
+
+- Make a selection first to filter only part of the image; feathered selections blend smoothly,
+  as with PhotoCraft's own filters.
+- The filters work on RGB images at 8, 16 and 32 bits per channel, with or without transparency.
+  Other color modes (Grayscale, CMYK, Lab) show an error instead.
+- They work the same on Windows, macOS, Linux and PhotoCraft in the browser.
+- You can also run them from PhotoCraft's command line, for example on a batch of photos (run
+  from the unzipped MoxoCraft folder):
+
+  ```bash
+  photocraft-cli run photo.jpg --cmd plugin.install --params '{"path":"moxocraft_lut.wasm"}' --cmd plugin.run --params '{"id":"moxocraft.lut","params":{"lut":"Film - Kodak Portra 400","intensity":80}}' --out photo-graded.jpg
+  ```
+
 ## MoxoCraft - Chromatic Aberration
 
-Real lenses bend red, green and blue light by slightly different amounts, which leaves coloured
+Real lenses bend red, green and blue light by slightly different amounts, which leaves colored
 fringes along high-contrast edges. This filter recreates that, from barely there to bold.
 
 The dialog always shows every setting, whichever **Mode** you pick. **Clear Center**,
 **Falloff** and **Center X / Y** only do anything in *Lens* mode, and **Angle** only in
-*Directional* mode; the other mode ignores them.
+*Directional* mode.
 
 | Setting | Mode | What it does |
 |---|---|---|
-| **Mode** | Both | *Lens*: colours spread outward from a centre point, strongest towards the corners, like a real lens. *Directional*: colours shift the same way across the whole image. |
-| **Fringe** | Both | Which colours separate. *Spectral* gives a smooth rainbow, *RGB Split* sends red and blue opposite ways, and *Red/Cyan*, *Green/Magenta* (purple fringing) and *Blue/Yellow* give two-colour fringes. |
-| **Amount** | Both | How far the colours move, in pixels (at the corners, in Lens mode). Negative values swap which colour lands on which side. |
-| **Softness** | Both | 0 gives crisp separate copies of each colour; higher values blend them into smooth gradients. |
+| **Mode** | Both | *Lens*: colors spread outward from a centre point, strongest towards the corners, like a real lens. *Directional*: colors shift the same way across the whole image. |
+| **Fringe** | Both | Which colors separate. *Spectral* gives a smooth rainbow, *RGB Split* sends red and blue opposite ways, and *Red/Cyan*, *Green/Magenta* (purple fringing) and *Blue/Yellow* give two-color fringes. |
+| **Amount** | Both | How far the colors move, in pixels (at the corners, in Lens mode). Negative values swap which color lands on which side. |
+| **Softness** | Both | 0 gives crisp separate copies of each color; higher values blend them into smooth gradients. |
 | **Strength** | Both | How strongly the effect shows over your original, from 0 (unchanged) to 100 (the full effect). It fades the fringes without moving them. |
 | **Clear Center** | Lens | How much of the middle stays untouched. |
 | **Falloff** | Lens | How quickly the effect builds towards the edges. 1 is even; higher keeps it near the corners, lower spreads it inward. |
@@ -62,67 +75,13 @@ Tips:
 - For a natural lens look, keep **Mode** on *Lens* with a small **Amount** (try 3–10 px on a
   24-megapixel photo).
 - If the fringes are the right shape but too strong, lower **Strength** rather than **Amount**.
-  Amount changes how far the colours move, so lowering it narrows the fringes as well as
-  fading them. Strength only fades them.
-- Strength isn't quite the same as putting the effect on a duplicate layer and lowering its
-  opacity. It blends light the way a lens does, rather than the values you see on screen. At 50%,
-  bright fringes against a dark background stay a little stronger, and dark fringes against a
-  bright sky fade a little more, than they would on a layer at 50% opacity.
+  Amount changes how far the colors move, so lowering it narrows the fringes as well as fading
+  them. Strength only fades them.
 - For a glitch look, use *Directional*, *RGB Split* and **Softness** 0.
-- The effect shows most on bright edges against dark backgrounds. Fringes around highlights glow
-  rather than turning muddy.
-- The largest possible shift is about 65–125 px, depending on Softness.
 
-### Recipes
-
-Four starting points. Settings not listed stay at their defaults. The amounts are for a photo
-about 6000 px wide (24 megapixels). Amount is measured in pixels, so for other sizes scale it with
-the width: half as much on a photo 3000 px wide, for example. Each picture is a 400 px crop near a
-corner at 100%, before on the left and after on the right.
-
-**Subtle Lens**: *Lens*, *Red/Cyan*, **Amount** 4, **Softness** 30, **Clear Center** 10,
-**Falloff** 1.
-
-Thin red and cyan edges like a real lens leaves towards the corners, without softening much
-detail. Best on sharp, high-contrast subjects: architecture, window frames, branches. At
-fit-to-screen size you'll hardly see it, which is the point.
-
-![Subtle Lens before and after: a steel roof with thin red and cyan edges](docs/images/chromatic-aberration/subtle-lens.jpg)
-
-**Purple Fringing**: *Lens*, *Green/Magenta*, **Amount** -4, **Softness** 50,
-**Clear Center** 10, **Falloff** 1, **Strength** 60.
-
-The purple outline cheaper lenses leave on dark edges against a bright sky. Best on backlit
-scenes: branches, wires, window frames or silhouettes against the sky. Green/Magenta also leaves
-a green edge on the other side of each line. Strength 60 fades that green more than the purple:
-on the example photo, the purple came out about 30% stronger than the green, where at Strength
-100 they are about even.
-
-![Purple Fringing before and after: bare branches against a white sky with purple edges](docs/images/chromatic-aberration/purple-fringing.jpg)
-
-**Dreamy Spectral**: *Lens*, *Spectral*, **Amount** 30, **Softness** 80, **Clear Center** 30,
-**Falloff** 1.2.
-
-Soft rainbow glows that grow towards the edges while the middle stays sharp. Best on soft,
-backlit or night photos with bright highlights: sun on water, out-of-focus lights, a portrait
-with the subject in the middle. It smears fine detail near the edges, so it doesn't suit sharp
-architecture.
-
-![Dreamy Spectral before and after: out-of-focus sun reflections with blue and orange glows](docs/images/chromatic-aberration/dreamy-spectral.jpg)
-
-**RGB Glitch**: *Directional*, *RGB Split*, **Amount** 12, **Softness** 0.
-
-Hard red, green and blue copies shifted sideways across the whole picture. Best on bold, graphic
-images: architecture, neon and night scenes, posters. Raise **Amount** to 20–30 for a bigger
-split, or change **Angle** to shift the copies another way.
-
-![RGB Glitch before and after: a steel roof split into red, green and blue copies](docs/images/chromatic-aberration/rgb-glitch.jpg)
-
-The example photos are public domain (CC0), from Wikimedia Commons:
-[steel roof](https://commons.wikimedia.org/wiki/File:King_cross_roof_architecture_%28Unsplash%29.jpg),
-[bare branches](https://commons.wikimedia.org/wiki/File:Bare_branches_against_a_white_sky,_Quebec_City.jpg)
-and [surfer and sea](https://commons.wikimedia.org/wiki/File:Surfer_and_sea_reflecting_the_sun_%28Unsplash%29.jpg).
-They were resized to 6000 px wide before applying the filter.
+The [Chromatic Aberration guide](docs/chromatic-aberration.md) has four recipes with
+before-and-after pictures (Subtle Lens, Purple Fringing, Dreamy Spectral and RGB Glitch), and
+more on how Strength blends and how far the colors can move.
 
 ## LUT filters
 
@@ -141,7 +100,7 @@ strongly it applies.
   Ultramax 400 and Ektar 100 on Portra Endura paper; Fujifilm C200, Pro 400H and X-Tra 400 on
   Crystal Archive paper; and Kodak Vision3 50D, 250D, 200T and 500T on 2383 print film for the
   classic movie look. Simulated from measured film data.
-- **Negative**: more colour negative films, among them Agfa Vista, Fujifilm Superia and Pro
+- **Negative**: more color negative films, among them Agfa Vista, Fujifilm Superia and Pro
   160C/800Z, Kodak Portra NC/VC/UC, a cross-processed Kodak Elite and Lomography Redscale.
 - **Slide**: Fujifilm Velvia, Provia, Astia and Sensia, Kodak Kodachrome 64, Ektachrome and Elite
   Chrome, Agfa Precisa, Polaroid Polachrome and a Lomography cross-process slide film.
@@ -162,13 +121,13 @@ strongly it applies.
 
 **MoxoCraft - Creative LUTs**
 
-- **Colorful**: bright and playful colour grades.
+- **Colorful**: bright and playful color grades.
 - **Scenic**: grades made for landscapes: greens, blues, fog and snow.
-- **Creative**: bold, experimental looks, including false-colour infrared and Lomochrome Purple.
+- **Creative**: bold, experimental looks, including false-color infrared and Lomochrome Purple.
 
 Tips:
 
-- The Film category keeps your photo's overall brightness and changes colour and contrast; whites
+- The Film category keeps your photo's overall brightness and changes color and contrast; whites
   settle at the slightly creamy white of a real photographic print. Many of the other looks are
   bolder. If one is too strong, lower **Intensity**.
 - For more control, apply it to a duplicate layer and lower that layer's opacity or paint a
@@ -184,7 +143,7 @@ than in pixels, so the same settings give the same look on any photo, and the li
 matches the result.
 
 Run it on an empty layer (**Layer › New › Layer…**) to keep the snow on a layer of its own, where
-you can mask, move or fade it. It looks exactly the same as running it on the photo.
+you can mask, move or fade it. The result looks the same as running it on the photo.
 
 | Setting | What it does |
 |---|---|
@@ -194,7 +153,7 @@ you can mask, move or fade it. It looks exactly the same as running it on the ph
 | **Motion** | 0 freezes the flakes. Higher values streak them, as if they fell while the shutter was open; near flakes streak the most, and each streak flickers a little as its flake tumbles. |
 | **Angle** | Which way the snow falls, in degrees from straight down; positive values lean it to the right. Only does anything when Motion is above 0. |
 | **Swirl** | How much falling flakes wander from that direction and curve: 0 for heavy, wet snow falling straight, 100 for light snow swirling in the wind. Only does anything when Motion is above 0. |
-| **Tint** | The flakes' colour: *White*, *Cool* (blue, as in shade or at dusk) or *Warm* (lit by streetlights or a low sun). |
+| **Tint** | The flakes' color: *White*, *Cool* (blue, as in shade or at dusk) or *Warm* (lit by streetlights or a low sun). |
 | **Opacity** | How strongly the snow shows, from 0 to 100. The same as lowering the opacity of a layer holding the snow. |
 | **Depth** | *None* draws all the snow. *Near Only* and *Far Only* draw only the flakes in front of or behind Subject Depth. *Depth Map* and *Depth Map (Inverted)* turn a depth map into snow. Both are explained below. |
 | **Subject Depth** | How far away your subject is, from 0 (at the lens) to 100 (as far as the snow goes). Flakes at that distance are the sharpest, and Near Only and Far Only split the snow there. |
@@ -214,7 +173,7 @@ of everything. There are two ways to put some of it behind your subject.
 4. Add another empty layer on top and run Snow again with the same settings and **Depth** set to
    *Near Only*.
 
-The two layers together hold exactly the snow *None* draws.
+Together, the two layers hold the same snow as *None*.
 
 **A depth map.** This handles any scene, but you need a depth map: a greyscale picture of how far
 away each part of your photo is. Depth-estimation tools such as Depth Anything make one from a
@@ -237,29 +196,26 @@ Tips:
   large, soft discs.
 - **Motion** streaks look best in small amounts (10–40). Real falling snow rarely streaks far.
 - Sharp flakes show their clumpy shapes best at full size. Zoomed out, every flake looks round.
-
-## Good to know
-
-- All the filters work on RGB images at 8, 16 and 32 bits per channel, with or without
-  transparency.
-  Other colour modes (Grayscale, CMYK, Lab) show an error instead.
-- On a 24-megapixel photo, Chromatic Aberration takes roughly 10–15 seconds on a fast 16-thread
-  computer and up to about 35 seconds on a 4-core one; the LUT filters take 1–4 seconds.
-  With **Strength** between 0 and 100, Chromatic Aberration takes up to about 20% longer.
-  Snow takes under a second at its default settings and a couple of seconds for heavy snow; with
-  every setting at its largest, up to about 5 seconds on a fast 16-thread computer and 20 on a
-  4-core one. PhotoCraft runs plug-ins in a safe, sandboxed way that is slower than its built-in
-  filters.
 - With very large, blurred and streaked flakes at a high **Amount**, Snow limits how many flakes
   it draws so it finishes in time. Past that point, raising **Amount** adds nothing more.
-- Make a selection first to apply a filter to part of the image only; feathered selections blend
-  smoothly, as with PhotoCraft's own filters.
-- You can also run the filters from PhotoCraft's command line, for example on a batch of photos
-  (run from the unzipped MoxoCraft folder):
 
-  ```bash
-  photocraft-cli run photo.jpg --cmd plugin.install --params '{"path":"moxocraft_lut.wasm"}' --cmd plugin.run --params '{"id":"moxocraft.lut","params":{"lut":"Film - Kodak Portra 400","intensity":80}}' --out photo-graded.jpg
-  ```
+## Speed
+
+PhotoCraft runs plug-ins in a sandbox that keeps them safe but makes them slower than its
+built-in filters, and it stops any plug-in run that takes longer than 60 seconds. Times measured
+on a 24-megapixel photo with a Ryzen 7 7800X3D, using all 16 threads and with PhotoCraft limited
+to 4 cores running one thread each:
+
+| Filter and settings | 16 threads | 4 cores |
+|---|---|---|
+| Snow, default settings | under 0.1 s | 0.2 s |
+| Snow, heavy (Amount 100, Flake Size 60, Defocus 50, Motion 40) | 1 s | 4 s |
+| Snow, every setting at its largest | 5 s | 22 s |
+| Chromatic Aberration, heaviest settings (*Spectral*, Amount 128, Softness 100, Clear Center 0, Falloff 0.5) | 13 s | 50 s |
+
+With 4 cores running two threads each, Chromatic Aberration's heaviest settings took 20 seconds.
+**Strength** between 0 and 100 adds up to about 20% to its time. The LUT filters take about 1–4
+seconds.
 
 ## Credits
 
@@ -297,18 +253,13 @@ MoxoCraft.
 ## Development
 
 MoxoCraft is written in Rust. Install [Rust](https://rustup.rs), then build the plug-ins into
-`dist/`:
+`dist/` and run the tests:
 
 ```powershell
 ./build.ps1
-```
-
-Run the tests with:
-
-```bash
 cargo test
 ```
 
-[`docs/development.md`](docs/development.md) covers how the code is organised, previews and
+[`docs/development.md`](docs/development.md) covers how the code is organised, previews,
 benchmarks, adding a filter and releasing. [`docs/luts.md`](docs/luts.md) covers the LUT files:
 adding and removing LUTs, re-making them from their sources, and their licences.

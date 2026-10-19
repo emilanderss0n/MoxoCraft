@@ -29,7 +29,7 @@ fn tables_of_the_wrong_size_are_refused() {
 #[test]
 fn davinci_round_trip_with_a_neutral_lut_changes_nothing() {
     // Into DaVinci Wide Gamut / Intermediate and back out must land where it started, or every
-    // DaVinci-space LUT would shift colours on top of its own look.
+    // DaVinci-space LUT would shift colors on top of its own look.
     let size = 65;
     let mut values = Vec::new();
     for b in 0..size {

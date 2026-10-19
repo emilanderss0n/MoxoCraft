@@ -15,10 +15,7 @@
 //!   the only `unsafe` code in MoxoCraft; filters never call it directly.
 //! - [`host`] copies how PhotoCraft feeds bands to a filter, so filters can be tested, previewed
 //!   and benchmarked without PhotoCraft.
-//! - `json` is a small JSON reader and writer ([`Json`]). Plug-ins can't pull in much (no file
-//!   system, no imports), the settings are small and flat, and the same code writes the settings
-//!   `host` sends and the manifests the LUT plug-ins generate, so a dependency would add size
-//!   to every `.wasm` for nothing.
+//! - `json` is a small JSON reader and writer ([`Json`]), so plug-ins need no dependency for it.
 
 pub mod abi;
 pub mod host;
@@ -35,7 +32,7 @@ pub use params::Params;
 pub enum Error {
     /// The buffer or settings PhotoCraft passed don't add up (wrong length, unreadable JSON).
     BadInput = 1,
-    /// The filter doesn't work in this colour mode (for example CMYK, or an alpha channel).
+    /// The filter doesn't work in this color mode (for example CMYK, or an alpha channel).
     UnsupportedMode = 2,
     /// The filter couldn't get the scratch memory it needs.
     OutOfMemory = 3,

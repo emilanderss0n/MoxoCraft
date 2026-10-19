@@ -1,26 +1,14 @@
 //! Bakes a folder of `.cube` files into a LUT plug-in. Called from each LUT plug-in's build script
 //! with that plug-in's [`Pack`]; only built for native code.
 //!
-//! A plug-in can't read files at run time (PhotoCraft gives it no file access), so the LUTs travel
-//! inside the `.wasm`. Each one is stored as 16-bit values (red changing fastest, as in the
-//! `.cube` file), which keeps 33-point LUTs at about 210 KB each with steps far finer than an
-//! 8- or 16-bit image can show. The manifest is written here too, so the dialog's LUT list always
-//! matches what is baked in.
+//! PhotoCraft gives plug-ins no file access, so the LUTs travel inside the `.wasm`, stored as
+//! 16-bit values (about 210 KB for a 33-point LUT). The manifest is written here too, so the
+//! dialog's LUT list always matches what is baked in. How a plug-in's folder is laid out, and
+//! what the build checks, is described in `docs/luts.md`.
 //!
-//! A plug-in's folder (`luts/film-luts`, ...) is the one place its LUTs are configured (see
-//! `docs/luts.md`). It holds category folders (`Film`, `Negative`, ...), listed in the order of
-//! its `categories.txt`. Add a LUT by dropping a `.cube` file into a category folder and
-//! rebuilding. Its menu name is "Category - File name", with underscores shown as spaces;
-//! `default.txt` (optional) names the one the dialog opens on, and `CREDITS.txt` (optional; lines
-//! starting with `#` are skipped) is added to the plug-in's description, so the LUTs' attribution
-//! travels inside the `.wasm`. PhotoCraft lists at most 64 choices in a dropdown and loads modules
-//! up to 32 MiB; the build stops if a folder goes over either.
-//!
-//! LUTs made for DaVinci Resolve's DaVinci Wide Gamut / Intermediate working space (rather than
-//! normal images) are listed in the folder's `davinci-intermediate.txt`, as
-//! `Category/File name.cube`. For those, the trip into that space and back is baked in here: the
-//! stored table takes a normal sRGB colour straight to the graded one, so the plug-in only ever
-//! does one lookup per pixel.
+//! For LUTs listed in `davinci-intermediate.txt`, made for DaVinci Resolve's DaVinci Wide Gamut /
+//! Intermediate working space, the trip into that space and back is baked into the table, so the
+//! plug-in still does one lookup per pixel.
 
 use std::fmt::Write as _;
 use std::path::{Path, PathBuf};
@@ -124,8 +112,7 @@ pub fn bake(pack: &Pack) {
     let mut table = String::from("/// The LUTs baked in, in menu order.\npub static LUTS: &[LutInfo] = &[\n");
     for c in &cubes {
         let offset = bytes.len();
-        // 16 bits per value (see `lut::quantize`): steps far finer than an 8- or 16-bit image
-        // can show.
+        // 16 bits per value; see `lut::quantize`.
         for v in &c.lut.values {
             bytes.extend_from_slice(&quantize(*v).to_le_bytes());
         }

@@ -9,12 +9,13 @@
 //! A particle's place doesn't depend on Amount: Amount only changes how many of a cell's particles
 //! exist, so raising it adds particles without moving the ones already there.
 //!
-//! The work a band does grows with how much particle area it draws: about 125 interpreter
-//! instructions for each pixel a disc goes over (160 with a depth map), twice that for a curved
-//! streak, against about 90 per pixel for everything else. With everything at its largest (big, near, blurred, streaked
-//! particles) that would run past PhotoCraft's 60-second limit, so the number of particles is
-//! capped to keep the drawing within [`BUDGET`]. The cap comes from the settings alone, not the
-//! picture's size, so the preview and the result agree.
+//! The work a band does grows with how much particle area it draws. Measured with
+//! `moxocraft-bench`: about 125 interpreter instructions for each pixel a disc goes over (160 with
+//! a depth map), twice that for a curved streak, against about 90 per pixel for everything else.
+//! With everything at its largest (big, near, blurred, streaked particles) that would run past
+//! PhotoCraft's 60-second limit, so the number of particles is capped to keep the drawing within
+//! [`BUDGET`]. The cap comes from the settings alone, not the picture's size, so the preview and
+//! the result agree.
 
 use crate::hash::Rng;
 
@@ -27,8 +28,9 @@ pub const SLICES: usize = 32;
 const FULL_PER_CELL: f32 = 4.0;
 
 /// The most drawing per pixel, on average, in [`Population::work`]'s units: 9 discs deep. That's
-/// about 1500 instructions per pixel with a depth map, or about 20 seconds for a 24-megapixel
-/// picture on four threads. Beyond it, Amount stops adding particles.
+/// about 1500 instructions per pixel with a depth map; Snow's heaviest settings took about 22
+/// seconds on a 24-megapixel picture with PhotoCraft on four cores. Beyond it, Amount stops adding
+/// particles.
 pub const BUDGET: f32 = 9.0;
 
 /// How much more a pixel of streak costs to draw than a pixel of disc (for a curved streak, three

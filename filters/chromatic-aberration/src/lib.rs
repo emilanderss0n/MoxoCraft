@@ -1,15 +1,15 @@
 //! Chromatic Aberration: a PhotoCraft filter plug-in.
 //!
-//! Real lenses bend red, green and blue light by slightly different amounts, so the three colours
-//! land a little apart and bright edges pick up coloured fringes. This filter recreates that.
+//! Real lenses bend red, green and blue light by slightly different amounts, so the three colors
+//! land a little apart and bright edges pick up colored fringes. This filter recreates that.
 //!
 //! How it works, per output pixel:
 //! 1. Work out a displacement: in Lens mode it points away from the centre and grows towards the
 //!    corners; in Directional mode it's the same everywhere (`field.rs`).
 //! 2. Read the picture at several points ("taps") along that displacement. Each tap adds to red,
-//!    green and blue with its own weights, so each colour ends up shifted by a different amount.
-//!    With Softness at 0 a colour comes from a single tap (a hard split); with more softness, or
-//!    in Spectral mode, each colour is spread along the displacement and the fringes become smooth
+//!    green and blue with its own weights, so each color ends up shifted by a different amount.
+//!    With Softness at 0 a color comes from a single tap (a hard split); with more softness, or
+//!    in Spectral mode, each color is spread along the displacement and the fringes become smooth
 //!    rainbow gradients (`taps.rs`).
 //! 3. Mix in linear light (8- and 16-bit pixels are roughly gamma 2, so we square them first and
 //!    take the square root at the end). Fringes on bright highlights then glow the way real ones
@@ -18,10 +18,10 @@
 //!    fades the fringes without moving them; at 0 the band is left exactly as it came.
 //!
 //! PhotoCraft runs plug-ins in an interpreter (roughly 100× slower than native code) and stops a
-//! run after 60 seconds, so the tap count is budgeted per image and the pixel loops are written to
-//! save every instruction they can. Check changes with `moxocraft-bench`.
+//! run after 60 seconds, so the tap count is budgeted per image and the pixel loops avoid
+//! per-pixel branches and calls. Check changes with `moxocraft-bench` and timings.
 //!
-//! Transparent layers work too: colours are mixed premultiplied by alpha, and fringes may spill
+//! Transparent layers work too: colors are mixed premultiplied by alpha, and fringes may spill
 //! out past the layer's edge into transparent pixels.
 //!
 //! Modules, in the order a band goes through them: `settings` reads the dialog, `field` and
@@ -40,7 +40,7 @@ pub use taps::{MAX_TAPS, Taps};
 /// The manifest PhotoCraft reads at install time. Its settings become the dialog, in this order.
 ///
 /// `overlap` is how many pixels of surrounding picture PhotoCraft hands us around each band; it's
-/// also the furthest any colour can move, so displacements are capped to it. The version is the
+/// also the furthest any color can move, so displacements are capped to it. The version is the
 /// workspace's, from the root `Cargo.toml`.
 pub const MANIFEST: &str = concat!(
     r#"{

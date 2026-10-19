@@ -3,7 +3,7 @@
 
 use crate::lut::quantize;
 
-/// A LUT of `size` points per axis that maps every colour to itself, as stored bytes.
+/// A LUT of `size` points per axis that maps every color to itself, as stored bytes.
 pub fn identity(size: usize) -> Vec<u8> {
     let mut bytes = Vec::new();
     for b in 0..size {
@@ -19,7 +19,7 @@ pub fn identity(size: usize) -> Vec<u8> {
     bytes
 }
 
-/// A smooth spread of colours covering the cube.
+/// A smooth spread of colors covering the cube.
 pub fn colours(n: usize) -> Vec<[f32; 3]> {
     (0..n)
         .map(|i| {
@@ -95,7 +95,7 @@ macro_rules! pack_tests {
 
         #[test]
         fn lookups_are_continuous_across_cell_edges() {
-            // Neighbouring colours must give neighbouring results, whichever tetrahedron each
+            // Neighbouring colors must give neighbouring results, whichever tetrahedron each
             // lands in.
             for info in LUTS {
                 let lut = Lut::new(DATA, info).unwrap();
@@ -138,8 +138,8 @@ macro_rules! pack_tests {
         #[test]
         fn baked_davinci_luts_match_the_exact_conversion() {
             // The baked table must give what converting every pixel into DaVinci space and back
-            // would, across the whole colour cube. A sliver of extreme cyans (red near zero, where
-            // a film LUT compresses colour hardest) comes out a few steps off, because the table
+            // would, across the whole color cube. A sliver of extreme cyans (red near zero, where
+            // a film LUT compresses color hardest) comes out a few steps off, because the table
             // is interpolated twice there; everything else lands within a step or two. Only runs
             // when the folder's davinci-intermediate.txt lists some LUTs.
             for info in LUTS.iter().filter(|l| l.davinci) {

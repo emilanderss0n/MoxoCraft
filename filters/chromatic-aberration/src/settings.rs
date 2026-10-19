@@ -2,7 +2,7 @@
 
 use moxocraft_sdk::Params;
 
-/// Which way the colours are pushed.
+/// Which way the colors are pushed.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum Mode {
     /// Away from a centre point, growing towards the corners, like a real lens.
@@ -11,7 +11,7 @@ pub(crate) enum Mode {
     Directional,
 }
 
-/// Which colours separate.
+/// Which colors separate.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Fringe {
     /// A smooth rainbow: red, yellow, green, cyan, blue.
@@ -39,11 +39,11 @@ impl Fringe {
         })
     }
 
-    /// Where red, green and blue are centred, as a fraction of Amount, and how far each colour is
+    /// Where red, green and blue are centred, as a fraction of Amount, and how far each color is
     /// smeared either side of its centre at zero softness.
     pub(crate) fn centres(self) -> ([f32; 3], f32) {
         match self {
-            // Overlapping smears are what turn three colours into a continuous rainbow.
+            // Overlapping smears are what turn three colors into a continuous rainbow.
             Self::Spectral => ([0.5, 0.0, -0.5], 0.5),
             Self::RgbSplit => ([1.0, 0.0, -1.0], 0.0),
             Self::RedCyan => ([1.0, 0.0, 0.0], 0.0),
@@ -58,7 +58,7 @@ impl Fringe {
 pub(crate) struct Settings {
     pub mode: Mode,
     pub fringe: Fringe,
-    /// Pixels the outermost colour moves (at the corners in Lens mode). Negative swaps sides.
+    /// Pixels the outermost color moves (at the corners in Lens mode). Negative swaps sides.
     pub amount: f32,
     /// 0–1.
     pub softness: f32,

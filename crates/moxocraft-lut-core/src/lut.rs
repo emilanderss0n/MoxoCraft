@@ -1,4 +1,4 @@
-//! The baked table format, and looking colours up in it.
+//! The baked table format, and looking colors up in it.
 //!
 //! This is the one format both sides agree on: [`bake`](crate::bake) writes it at build time and
 //! [`Lut`] reads it inside the plug-in. Each table is `size³ × 3` little-endian `u16` values made
@@ -61,7 +61,7 @@ impl<'a> Stored<'a> {
         Ok(Stored { bytes, size })
     }
 
-    /// The table, ready to look colours up in.
+    /// The table, ready to look colors up in.
     pub(crate) fn decode(self) -> Result<Lut, Error> {
         let Stored { bytes, size } = self;
         let value = |q: &[u8]| dequantize(u16::from_le_bytes([q[0], q[1]]));
@@ -72,11 +72,11 @@ impl<'a> Stored<'a> {
     }
 }
 
-/// A baked-in LUT, ready to look colours up in.
+/// A baked-in LUT, ready to look colors up in.
 pub struct Lut {
-    /// The table's colours, turned from stored `u16`s back into colour values once, when the LUT
-    /// is loaded. Every pixel reads four of them, so converting each one there would cost the
-    /// interpreter far more than converting the whole table (at most about 430 KB) up front.
+    /// The table's colors, decoded from the stored `u16`s once, when the LUT is loaded. Every pixel
+    /// reads four of them, so decoding the whole table (at most about 430 KB) up front is far
+    /// cheaper in the interpreter than decoding per read.
     texels: Vec<[f32; 3]>,
     size: usize,
     /// How far apart neighbouring grid points are in `texels` along green and blue (red's are
@@ -108,15 +108,14 @@ impl Lut {
         self.texels.get(i).copied().unwrap_or([0.0; 3])
     }
 
-    /// The LUT's colour for `rgb` (each 0–1; values outside are clamped), by tetrahedral
-    /// interpolation: the table's cube cell around the colour is split into six tetrahedra and the
-    /// colour is blended from the four corners of the one it falls in. That is what grading
-    /// software uses: smoother than blending all eight corners, and cheaper, which matters in
-    /// PhotoCraft's interpreter.
+    /// The LUT's color for `rgb` (each 0–1; values outside are clamped), by tetrahedral
+    /// interpolation: the table's cube cell around the color is split into six tetrahedra and the
+    /// color is blended from the four corners of the one it falls in. Grading software commonly
+    /// uses it, and it reads four table entries per pixel where trilinear interpolation reads
+    /// eight.
     ///
     /// `cube.rs` has the same interpolation for full-precision tables at build time. This copy is
-    /// written out by hand because it runs for every pixel: sharing one generic version costs 0.5%
-    /// more interpreter instructions per pixel. Change both together.
+    /// written out separately so the per-pixel path stays fully inlined. Change both together.
     #[inline(always)]
     pub fn lookup(&self, rgb: [f32; 3]) -> [f32; 3] {
         let top = (self.size - 1) as f32;
@@ -137,7 +136,7 @@ impl Lut {
         let i = base[0] + base[1] * dg + base[2] * db;
         let c000 = self.texel(i);
         let c111 = self.texel(i + 1 + dg + db);
-        // Which of the cell's six tetrahedra the colour is in decides the two middle corners and
+        // Which of the cell's six tetrahedra the color is in decides the two middle corners and
         // the order the fractions apply in.
         let (c1, c2, w) = if fr >= fg {
             if fg >= fb {
@@ -155,8 +154,8 @@ impl Lut {
             (self.texel(i + dg), self.texel(i + 1 + dg), [fg, fr, fb])
         };
         // Tables may run a little past black and white (see `STORE_MIN`); clamp after
-        // interpolating. Written per channel rather than with `array::map`, which the compiler
-        // doesn't always inline, and a call per pixel is slow in the interpreter.
+        // interpolating. Written per channel because `array::map` isn't always inlined, and a
+        // call per pixel is slow in the interpreter.
         let mix = |c: usize| (c000[c] + w[0] * (c1[c] - c000[c]) + w[1] * (c2[c] - c1[c]) + w[2] * (c111[c] - c2[c])).clamp(0.0, 1.0);
         [mix(0), mix(1), mix(2)]
     }

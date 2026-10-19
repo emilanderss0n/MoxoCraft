@@ -1,6 +1,6 @@
 //! The LUT engine behind MoxoCraft's LUT plug-ins (Film LUTs, Cinematic LUTs, Creative LUTs).
 //!
-//! A LUT (a lookup table that maps every input colour to an output colour, the way grading tools
+//! A LUT (a lookup table that maps every input color to an output color, the way grading tools
 //! store film looks) gives an image its look. PhotoCraft lists at most 64 choices in a dropdown,
 //! so the LUTs are spread over several plug-ins, and each plug-in crate is only configuration:
 //! its `build.rs` names its folder under `luts/` and its id, name and description in a
@@ -15,7 +15,7 @@
 //! - `render` applies the chosen LUT to a band ([`apply`], [`render`]).
 //! - [`lut_pack!`] puts a plug-in together from its baked files.
 //!
-//! [`color`] (sRGB and DaVinci colour spaces) is used on both sides. LUTs made for DaVinci
+//! [`color`] (sRGB and DaVinci color spaces) is used on both sides. LUTs made for DaVinci
 //! Resolve's DaVinci Wide Gamut / Intermediate working space have the trip into that space and back
 //! baked in at build time, so at run time they are used like any other LUT.
 

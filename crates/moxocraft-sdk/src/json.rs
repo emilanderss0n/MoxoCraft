@@ -1,7 +1,8 @@
 //! A small JSON reader and writer: it reads the settings PhotoCraft passes to `pc_filter` (and
 //! manifests, in tests and tools), and writes the settings [`host`](crate::host) sends and the
-//! text in generated manifests. Plug-ins can't pull in much (no file system, no imports), and this
-//! is all we need: it reads standard JSON into a tree and refuses anything malformed.
+//! text in generated manifests. The settings are small and flat, so this is all plug-ins need,
+//! and a JSON dependency would add size to every `.wasm`. It reads standard JSON into a tree and
+//! refuses anything malformed.
 
 /// A parsed JSON value. Objects keep their key order.
 #[derive(Clone, Debug, PartialEq)]

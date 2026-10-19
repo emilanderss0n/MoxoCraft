@@ -64,7 +64,7 @@ pub fn render(image: &mut Image<'_>, lut: &Lut, intensity: f32) -> Result<(), Er
         return Ok(());
     }
     let alpha = image.format.alpha;
-    // 32-bit documents are linear light; LUTs expect display-encoded colour.
+    // 32-bit documents are linear light; LUTs expect display-encoded color.
     let curves = if image.format.depth == 32 { Some((Curve::new(color::srgb_encode)?, Curve::new(color::srgb_decode)?)) } else { None };
     if alpha {
         grade::<4>(image.data, lut, intensity, curves.as_ref());
@@ -75,7 +75,7 @@ pub fn render(image: &mut Image<'_>, lut: &Lut, intensity: f32) -> Result<(), Er
 }
 
 /// The pixel loop of [`render`], written once per layout (`N` channels, the first three red,
-/// green and blue) and once per colour encoding, so the interpreter runs no channel-count or
+/// green and blue) and once per color encoding, so the interpreter runs no channel-count or
 /// bit-depth checks per pixel.
 fn grade<const N: usize>(data: &mut [f32], lut: &Lut, intensity: f32, curves: Option<&(Curve, Curve)>) {
     let (pixels, _) = data.as_chunks_mut::<N>();

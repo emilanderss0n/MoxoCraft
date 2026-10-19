@@ -54,7 +54,7 @@ STOCKS = [
 
 # Where sRGB white sits on the film, in stops above mid-grey. spektrafilm's default for sRGB
 # input is 4.0, which brightens every photo by over a stop (mid-grey 0.46 comes out at 0.73).
-# 2.47 is sRGB's own headroom (log2(1 / 0.18)): mid-grey stays put, so the LUT changes colour
+# 2.47 is sRGB's own headroom (log2(1 / 0.18)): mid-grey stays put, so the LUT changes color
 # and contrast, not exposure. (Film Lab, https://github.com/thedevmark/film-lab, made the same
 # choice for its Kodak Gold 200 LUT.)
 STOPS_ABOVE_MIDGRAY = 2.47

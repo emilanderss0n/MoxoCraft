@@ -230,7 +230,7 @@ fn a_depth_map_hides_snow_behind_nearer_parts_of_the_scene() {
         } else {
             assert!(alphas(&out).iter().all(|&a| a == 0.0), "{mode}: the layer should be empty");
         }
-        // The map is replaced by the snow in its colour, whatever shows.
+        // The map is replaced by the snow in its color, whatever shows.
         assert!(out.chunks_exact(4).all(|p| p[..3] == [1.0, 1.0, 1.0]), "{mode}");
     }
     // The nearer the scene, the more it hides, pixel by pixel.
@@ -272,7 +272,7 @@ fn works_in_every_rgb_format() {
             let out = run_in(&px, w, h, format, r#"{"amount":80,"tint":"Cool"}"#, Bands::PHOTOCRAFT).unwrap();
             assert!(out.iter().all(|v| (0.0..=1.0).contains(v)), "{format:?}");
             assert!(max_diff(&px, &out) > 0.3, "{format:?}: no flakes");
-            // Where flakes cover the most, the picture has moved towards the flake colour:
+            // Where flakes cover the most, the picture has moved towards the flake color:
             // gamma-encoded, or linear light in 32-bit.
             let colour = if depth == 32 { [0.86 * 0.86, 0.93 * 0.93, 1.0] } else { [0.86, 0.93, 1.0] };
             let p = out.chunks_exact(n).max_by(|a, b| a[2].total_cmp(&b[2])).unwrap();

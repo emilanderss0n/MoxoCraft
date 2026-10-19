@@ -1,5 +1,4 @@
-//! The particle engine behind MoxoCraft's overlay plug-ins (Snow, and the rain, dust and ember
-//! plug-ins to come).
+//! The particle engine behind MoxoCraft's overlay plug-ins (currently Snow).
 //!
 //! Each plug-in decides what its particles look like; everything else lives here. A band goes
 //! through it like this:

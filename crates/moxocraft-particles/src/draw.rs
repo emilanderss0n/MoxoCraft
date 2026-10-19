@@ -2,8 +2,8 @@
 //!
 //! The buffer keeps, for each pixel, how much of what's underneath still shows through the
 //! particles drawn so far ("clear": 1 with no particle, 0 fully covered). Every particle of a
-//! plug-in has the same colour, so that's all [`render`](crate::render) needs to lay them over the
-//! band afterwards, and particles can be drawn in any order of colour.
+//! plug-in has the same color, so that's all [`render`](crate::render) needs to lay them over the
+//! band afterwards, and particles can be drawn in any order of color.
 //!
 //! Every position here is in document pixels, worked out the same way in every band, so a pixel's
 //! value never depends on which band it falls in.

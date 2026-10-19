@@ -31,6 +31,8 @@ Each fact is kept in one place, and the build works out the rest from it.
 | The licence texts | `luts/*.txt` (shipped with the plug-ins) |
 | The plug-ins' version | the root `Cargo.toml` |
 
+In these `.txt` files, blank lines and lines starting with `#` are ignored.
+
 The build stops with a message if these disagree: a category folder missing from
 `categories.txt`, a `.cube` file outside a category folder, a default that isn't a LUT, two LUTs
 with the same menu name, more than 64 LUTs, more than PhotoCraft's 32 MB module limit (about 140
@@ -67,7 +69,7 @@ match, add the crate to the workspace `members` in the root `Cargo.toml`, and ad
 `tools/lut-preview` and to `$Plugins` in `tools/release.ps1`.
 
 **DaVinci Resolve LUTs.** LUTs made inside Resolve's *DaVinci Wide Gamut / DaVinci Intermediate*
-colour space, rather than for normal images, come out milky and break saturated colours into flat
+color space, rather than for normal images, come out milky and break saturated colors into flat
 blocks when applied straight to a photo. List those in the plug-in folder's
 `davinci-intermediate.txt` (one `Category/File name.cube` per line): the build then bakes the
 conversion into that space and back into the LUT, so it works on normal photos at full speed.

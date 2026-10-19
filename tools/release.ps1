@@ -1,7 +1,7 @@
-# Turns a version number into a published GitHub release, the same way v0.1.0 was made by hand.
+# Turns a version number into a published GitHub release (see docs/development.md, Releasing).
 #
-#   ./tools/release.ps1 -Version 0.2.0 -NotesFile notes.md -DryRun
-#   ./tools/release.ps1 -Version 0.2.0 -NotesFile notes.md
+#   ./tools/release.ps1 -Version x.y.z -NotesFile ../notes.md -DryRun
+#   ./tools/release.ps1 -Version x.y.z -NotesFile ../notes.md
 #
 # It checks the repo and the version numbers, runs the tests, builds the plug-ins fresh, packages
 # the zip, writes SHA256SUMS.txt, creates the release with gh, then downloads it again and checks

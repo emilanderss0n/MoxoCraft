@@ -1,4 +1,4 @@
-//! The displacement field: how far, and which way, each pixel's colours get pushed.
+//! The displacement field: how far, and which way, each pixel's colors get pushed.
 
 use moxocraft_sdk::{Error, Geometry, try_vec};
 
@@ -7,7 +7,7 @@ use crate::settings::{Mode, Settings};
 /// Entries in Lens mode's table of displacement against distance from the centre.
 const LENS_TABLE: usize = 4096;
 
-/// Where each pixel's colours get pushed.
+/// Where each pixel's colors get pushed.
 pub(crate) struct Field {
     mode: Mode,
     /// Directional mode's displacement, already capped.

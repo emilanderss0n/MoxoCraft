@@ -7,7 +7,7 @@ use moxocraft_sdk::Geometry;
 
 use crate::settings::Fringe;
 
-/// Fewest and most main taps a pixel reads when colours are smeared.
+/// Fewest and most main taps a pixel reads when colors are smeared.
 pub(crate) const MIN_TAPS: usize = 5;
 pub const MAX_TAPS: usize = 16;
 
@@ -26,19 +26,19 @@ const COST_PER_PIXEL: f64 = 600.0;
 const COST_PER_TAP: f64 = 150.0;
 
 /// The points each pixel reads along its displacement, and how much each one adds to red, green
-/// and blue. Each colour's weights add up to 1, so flat areas come out unchanged.
+/// and blue. Each color's weights add up to 1, so flat areas come out unchanged.
 #[derive(Clone, Debug, PartialEq)]
 pub struct Taps {
     /// Position along the displacement, as a fraction of Amount.
     pub offset: Vec<f32>,
     pub weight: Vec<[f32; 3]>,
-    /// The distance between neighbouring taps inside a colour's smear, as a fraction of Amount
+    /// The distance between neighbouring taps inside a color's smear, as a fraction of Amount
     /// (0 for a hard split).
     pub gap: f32,
 }
 
 impl Taps {
-    /// True when each colour comes from a single tap (a crisp split), whatever the tap count.
+    /// True when each color comes from a single tap (a crisp split), whatever the tap count.
     pub fn is_hard(fringe: Fringe, softness: f32) -> bool {
         Self::spread(fringe, softness) < 1e-3
     }
@@ -60,7 +60,7 @@ impl Taps {
         }
         let hard = Self::is_hard(fringe, softness);
         let (offset, gap): (Vec<f32>, f32) = if hard {
-            // One tap per colour position: a crisp split.
+            // One tap per color position: a crisp split.
             (groups.clone(), 0.0)
         } else if fringe == Fringe::Spectral {
             // Evenly across the whole rainbow.
@@ -69,7 +69,7 @@ impl Taps {
             let step = (hi - lo) / count as f32;
             ((0..count).map(|k| lo + (k as f32 + 0.5) * step).collect(), step)
         } else {
-            // Spread evenly across each colour's own smear.
+            // Spread evenly across each color's own smear.
             let per = (count / groups.len()).max(1);
             let step = 2.0 * spread / per as f32;
             (groups.iter().flat_map(|&g| (0..per).map(move |k| g - spread + (k as f32 + 0.5) * step)).collect(), step)
@@ -81,7 +81,7 @@ impl Taps {
         for c in 0..3 {
             let mut sum: f32 = weight.iter().map(|w| w[c]).sum();
             if sum < 1e-6 {
-                // Too few taps to land inside this colour's smear: use the nearest one.
+                // Too few taps to land inside this color's smear: use the nearest one.
                 let nearest = (0..offset.len()).min_by(|&a, &b| (offset[a] - centres[c]).abs().total_cmp(&(offset[b] - centres[c]).abs()));
                 if let Some(w) = nearest.and_then(|i| weight.get_mut(i)) {
                     w[c] = 1.0;
@@ -92,7 +92,7 @@ impl Taps {
                 w[c] /= sum;
             }
         }
-        // Drop taps no colour uses.
+        // Drop taps no color uses.
         let (offset, weight) = offset.into_iter().zip(weight).filter(|(_, w)| w.iter().any(|&v| v > 0.0)).unzip();
         Taps { offset, weight, gap }
     }
@@ -117,7 +117,7 @@ fn bump(x: f32) -> f32 {
 /// band of an image makes the same choices and they join seamlessly.
 pub(crate) struct Plan {
     pub taps: Vec<(f32, [f32; 3])>,
-    /// True when taps read segments (smeared colours), false for a hard split.
+    /// True when taps read segments (smeared colors), false for a hard split.
     pub segmented: bool,
     /// Segment half-length as a fraction of Amount: the gap between neighbouring taps.
     pub segment: f32,

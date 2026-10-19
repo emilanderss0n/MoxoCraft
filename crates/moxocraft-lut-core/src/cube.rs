@@ -14,7 +14,7 @@ pub struct CubeData {
 }
 
 impl CubeData {
-    /// The LUT's colour for `rgb` (each 0–1, clamped) by tetrahedral interpolation, unclamped.
+    /// The LUT's color for `rgb` (each 0–1, clamped) by tetrahedral interpolation, unclamped.
     /// The same interpolation as [`Lut::lookup`](crate::Lut::lookup), on full-precision values
     /// (see there for why it is written twice).
     fn lookup(&self, rgb: [f32; 3]) -> [f32; 3] {
@@ -91,7 +91,7 @@ pub fn parse_cube(text: &str) -> Result<CubeData, String> {
     Ok(CubeData { size, values })
 }
 
-/// What a LUT that works inside DaVinci Wide Gamut / Intermediate does to a normal sRGB colour:
+/// What a LUT that works inside DaVinci Wide Gamut / Intermediate does to a normal sRGB color:
 /// into that space, through the LUT, and back out.
 pub fn through_davinci(lut: &CubeData, srgb: [f32; 3]) -> [f32; 3] {
     let wide = mat(&REC709_TO_DWG, srgb.map(srgb_decode)).map(davinci_intermediate);
@@ -105,7 +105,7 @@ fn srgb_encode_unclamped(l: f32) -> f32 {
     if l < 0.0 { -srgb_encode(-l) } else { srgb_encode(l) }
 }
 
-/// A new LUT, same size, that takes sRGB colour straight to the graded sRGB colour of a DaVinci-
+/// A new LUT, same size, that takes sRGB color straight to the graded sRGB color of a DaVinci-
 /// space LUT. Baking the round trip in once means the plug-in does a single lookup per pixel.
 /// Values are left unclamped (within the stored range) so lookups clamp after interpolating.
 pub(crate) fn bake_davinci(lut: &CubeData) -> CubeData {

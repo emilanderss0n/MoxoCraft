@@ -150,7 +150,7 @@ fn zero_strength_returns_every_sample_untouched() {
     let (w, h) = (300, 280);
     for format in every_rgb_format() {
         let mut px = scene(w, h, format.channels());
-        // Values a normal document never holds, in colour and alpha alike: they must come back
+        // Values a normal document never holds, in color and alpha alike: they must come back
         // exactly as they went in, down to the sign of zero.
         let odd = [f32::NAN, f32::INFINITY, f32::NEG_INFINITY, 1e20, -3.0, 40.0, -0.0, 1e-40];
         for i in 0..px.len() / 997 {
@@ -286,7 +286,7 @@ fn lens_mode_leaves_the_centre_and_fringes_the_corners() {
 #[test]
 fn shapes_on_transparent_layers_get_coloured_fringes_not_dark_halos() {
     let (w, h) = (40, 40);
-    // An opaque white square on a transparent layer whose hidden colour is black.
+    // An opaque white square on a transparent layer whose hidden color is black.
     let mut px = vec![0.0; w * h * 4];
     for y in 10..30 {
         for x in 10..30 {

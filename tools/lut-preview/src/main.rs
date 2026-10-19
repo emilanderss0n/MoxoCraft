@@ -2,7 +2,7 @@
 //!
 //!   cargo run --release -p moxocraft-lut-preview [photo.png] [out-dir]
 //!
-//! Without a photo it uses a test card: grey ramp, colour sweep, skin tones and a sky gradient.
+//! Without a photo it uses a test card: grey ramp, color sweep, skin tones and a sky gradient.
 //! Writes `original.png` and one PNG per LUT into a folder per plug-in under `out-dir` (default
 //! `target/preview-lut`). Bands are fed the same way PhotoCraft feeds them, so these match what the
 //! plug-ins do in the app.
@@ -52,7 +52,7 @@ fn test_card(w: usize, h: usize) -> (Vec<f32>, usize, usize) {
             let rgb = match band {
                 // Grey ramp, black to white.
                 0 => [u, u, u],
-                // Full-saturation colour sweep.
+                // Full-saturation color sweep.
                 1 => hue(u, 1.0, 1.0),
                 // The same sweep, soft and darker.
                 2 => hue(u, 0.45, 0.7),
