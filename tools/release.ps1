@@ -28,7 +28,7 @@ $LutNotices = 'SPEKTRAFILM_LICENSE.txt', 'CC-BY-SA-4.0.txt', 'CC-BY-4.0.txt', 'S
 # shipped at the same paths so they work from an unzipped copy. The release stops if the README or
 # the guide links to a file that isn't in the zip.
 $Docs = 'docs/brand/moxocraft-mark.webp', 'docs/brand/moxocraft-logo.webp', 'docs/brand/moxocraft-logo-white.webp',
-    'docs/images/readme/snow.jpg', 'docs/images/readme/chromatic-aberration.jpg', 'docs/images/readme/luts.jpg',
+    'docs/images/readme/snow.jpg', 'docs/images/readme/floating-particles.jpg', 'docs/images/readme/chromatic-aberration.jpg', 'docs/images/readme/luts.jpg',
     'docs/chromatic-aberration.md', 'docs/images/chromatic-aberration/subtle-lens.jpg', 'docs/images/chromatic-aberration/purple-fringing.jpg', 'docs/images/chromatic-aberration/dreamy-spectral.jpg', 'docs/images/chromatic-aberration/rgb-glitch.jpg'
 
 # Where a relative link in the zipped file $From leads, as a path inside the zip, or $null if it

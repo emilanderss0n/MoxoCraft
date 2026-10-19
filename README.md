@@ -75,7 +75,7 @@
     </td>
   </tr>
   <tr>
-    <td colspan="2" valign="top">
+    <td width="50%" valign="top">
       <img src="docs/images/readme/snow.jpg" alt="The MoxoCraft - Snow dialog in PhotoCraft over a snowy forest, with the falling snow previewing on the photo" width="100%">
       <br>
       <sub>MoxoCraft - Snow, previewing live in PhotoCraft.</sub>
@@ -83,6 +83,15 @@
       <b>MoxoCraft - Snow</b> draws snow the way it looks in a real photo: far flakes small, sharp and many; near flakes few, large and out of focus. Sharp flakes are irregular clumps, blurred ones soft discs, and falling flakes drift and tumble rather than drop like rain. Sizes follow the picture rather than pixels, so the same settings give the same look on any photo.
       <br><br>
       <b>Snow in front, snow behind</b>: split the snow at your subject's distance into a far layer and a near layer, then mask the far one behind your subject with <b>Select › Subject</b>. Or turn a depth map into snow that hides wherever the scene is nearer than each flake. Run Snow on an empty layer to keep it separate, where you can mask, move or fade it. <a href="#snow-behind-your-subject">How it works</a>.
+    </td>
+    <td width="50%" valign="top">
+      <img src="docs/images/readme/floating-particles.jpg" alt="The MoxoCraft - Floating Particles dialog in PhotoCraft over a camper van on a wet city street at dusk, with glowing pink particles previewing on the photo" width="100%">
+      <br>
+      <sub>MoxoCraft - Floating Particles, previewing live in PhotoCraft.</sub>
+      <h3>Floating particles in any color</h3>
+      <b>MoxoCraft - Floating Particles</b> fills the air with dust, pollen or specks of light, with the same depth as Snow: far particles small and sharp, near ones large, soft discs. <b>Glow</b> puts a halo around sharp particles, and <b>Clustering</b> gathers them into loose clouds, as dust shows where light catches it.
+      <br><br>
+      <b>Any color</b>: set it with the <b>Hue</b>, <b>Saturation</b> and <b>Brightness</b> sliders, from the warm white of sunlit dust to gold sparkles or neon pink. The same Depth options as Snow put particles behind your subject. <a href="#moxocraft---floating-particles">Settings and tips</a>.
     </td>
   </tr>
 </table>
@@ -413,11 +422,12 @@ lists every LUT with its author, source and license.
 > The licenses cover the LUTs themselves, not the photos you make with them. If you share the
 > MoxoCraft plug-ins, keep the `luts` folder (licenses, sources and changelog) with them.
 
-The example photos are by [Ian Schneider](https://unsplash.com/@goian) on Unsplash
-([snowy forest](https://unsplash.com/photos/green-pine-trees-during-snow-season-dqMxDqdhg_4)) and
+The example pictures are by [Ian Schneider](https://unsplash.com/@goian) on Unsplash
+([snowy forest](https://unsplash.com/photos/green-pine-trees-during-snow-season-dqMxDqdhg_4)),
 [Ron Lach](https://www.pexels.com/@ron-lach/) on Pexels
 ([glass jars](https://www.pexels.com/photo/makeup-products-beside-a-rock-8128070/) and
-[three women with fruit](https://www.pexels.com/photo/women-in-suits-posing-with-fruits-9463583/)).
+[three women with fruit](https://www.pexels.com/photo/women-in-suits-posing-with-fruits-9463583/))
+and [Marek Denko](https://www.artstation.com/denko) (camper van).
 
 <sub>Kodak, Fujifilm, Ilford, Agfa, Polaroid, Lomography, Rollei and the film names are trademarks
 of their owners. They are used only to describe the looks simulated; their owners don't endorse
