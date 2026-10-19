@@ -24,10 +24,12 @@ $Plugins = 'moxocraft_chromatic_aberration.wasm', 'moxocraft_lut.wasm', 'moxocra
 # The LUTs' licenses, sources and changelog (every .txt file directly in luts/), which their
 # licenses require to travel with the plug-ins.
 $LutNotices = 'SPEKTRAFILM_LICENSE.txt', 'CC-BY-SA-4.0.txt', 'CC-BY-4.0.txt', 'STRIPED_PURPLE_LICENSE.txt', 'SOURCES.txt', 'CHANGELOG.txt'
-# The logo the README shows, the guide it links to and the guide's pictures, shipped at the same
-# paths so they work from an unzipped copy. The release stops if the README or the guide links to
-# a file that isn't in the zip.
-$Docs = 'docs/brand/moxocraft-logo.webp', 'docs/brand/moxocraft-logo-white.webp', 'docs/chromatic-aberration.md', 'docs/images/chromatic-aberration/subtle-lens.jpg', 'docs/images/chromatic-aberration/purple-fringing.jpg', 'docs/images/chromatic-aberration/dreamy-spectral.jpg', 'docs/images/chromatic-aberration/rgb-glitch.jpg'
+# The logos and pictures the README shows, the guide it links to and the guide's pictures,
+# shipped at the same paths so they work from an unzipped copy. The release stops if the README or
+# the guide links to a file that isn't in the zip.
+$Docs = 'docs/brand/moxocraft-mark.webp', 'docs/brand/moxocraft-logo.webp', 'docs/brand/moxocraft-logo-white.webp',
+    'docs/images/readme/snow.jpg', 'docs/images/readme/chromatic-aberration.jpg', 'docs/images/readme/luts.jpg',
+    'docs/chromatic-aberration.md', 'docs/images/chromatic-aberration/subtle-lens.jpg', 'docs/images/chromatic-aberration/purple-fringing.jpg', 'docs/images/chromatic-aberration/dreamy-spectral.jpg', 'docs/images/chromatic-aberration/rgb-glitch.jpg'
 
 # Where a relative link in the zipped file $From leads, as a path inside the zip, or $null if it
 # leads out of it.

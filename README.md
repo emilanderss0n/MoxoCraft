@@ -1,24 +1,172 @@
 <p align="center">
+  <img alt="" src="docs/brand/moxocraft-mark.webp" width="112">
+  <br><br>
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/brand/moxocraft-logo-white.webp">
-    <img alt="MoxoCraft" src="docs/brand/moxocraft-logo.webp" width="480">
+    <img alt="MoxoCraft" src="docs/brand/moxocraft-logo.webp" width="420">
   </picture>
 </p>
 
-Creative filters for [PhotoCraft](https://github.com/storytold/photocraft), the free open-source
-photo editor. Once installed, they appear under **Filter › Plug-ins**:
+<p align="center">
+  <b>Creative filters for PhotoCraft: lens fringes, film looks and falling snow.</b><br>
+  Five plug-ins for <a href="https://github.com/storytold/photocraft">PhotoCraft</a>, the free open-source photo editor.
+</p>
 
-- **MoxoCraft - Chromatic Aberration**: colored lens fringes, from a subtle edge fringe to a
-  rainbow smear or an RGB-split glitch.
-- **MoxoCraft - Film LUTs**: the color and contrast of film stocks: color negative, slide and
-  instant films, and Fujifilm-style camera looks.
-- **MoxoCraft - Cinematic LUTs**: movie-style grades, moody and vintage looks, and black-and-white
-  films.
-- **MoxoCraft - Creative LUTs**: colorful, scenic and experimental looks.
-- **MoxoCraft - Snow**: falling snow with depth: small sharp flakes far away, large soft ones
-  close to the camera, and ways to put the snow behind your subject.
+<p align="center">
+  <img alt="Latest release" src="https://img.shields.io/github/v/release/emilanderss0n/MoxoCraft?style=flat-square&color=3a3a3a&label=release">
+  <img alt="Windows · macOS · Linux · Web" src="https://img.shields.io/badge/Windows%20%C2%B7%20macOS%20%C2%B7%20Linux%20%C2%B7%20Web-3a3a3a?style=flat-square">
+  <img alt="Written in Rust" src="https://img.shields.io/badge/written%20in-Rust-3a3a3a?style=flat-square&logo=rust">
+</p>
 
-Together the three LUT filters hold 147 looks.
+<p align="center">
+  <a href="https://github.com/emilanderss0n/MoxoCraft/releases/latest"><img alt="Download the latest release" src="https://img.shields.io/badge/Download%20MoxoCraft-69f4c7?style=for-the-badge" height="40"></a>
+</p>
+
+<p align="center">
+  <a href="#features">Features</a> ·
+  <a href="#install">Install</a> ·
+  <a href="#moxocraft---chromatic-aberration">Chromatic Aberration</a> ·
+  <a href="#lut-filters">LUTs</a> ·
+  <a href="#moxocraft---snow">Snow</a> ·
+  <a href="#credits">Credits</a>
+</p>
+
+<br>
+
+<p align="center">
+  <img src="docs/images/readme/snow.jpg" alt="The MoxoCraft - Snow dialog in PhotoCraft over a snowy forest, with the falling snow previewing on the photo" width="100%">
+  <br>
+  <sub>MoxoCraft - Snow, previewing live in PhotoCraft.</sub>
+</p>
+
+<br>
+
+<table>
+  <tr>
+    <td width="25%" valign="top">
+      <h3>Live preview</h3>
+      <p>Every filter previews on your image while you adjust it. Nothing changes until you press <b>OK</b>, and each run is a single undo step.</p>
+    </td>
+    <td width="25%" valign="top">
+      <h3>Works on selections</h3>
+      <p>Make a selection to filter only part of the image. Feathered selections blend smoothly, as with PhotoCraft's own filters.</p>
+    </td>
+    <td width="25%" valign="top">
+      <h3>Any RGB image</h3>
+      <p>8, 16 and 32 bits per channel, with or without transparency.</p>
+    </td>
+    <td width="25%" valign="top">
+      <h3>Every platform</h3>
+      <p>The same results on Windows, macOS, Linux and in the browser, and from PhotoCraft's command line for batches of photos.</p>
+    </td>
+  </tr>
+</table>
+
+<br>
+
+## Features
+
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <img src="docs/images/readme/chromatic-aberration.jpg" alt="Glass jars and their shadows on a beige table, with soft rainbow fringes along every edge" width="100%">
+      <br>
+      <sub>Soft rainbow fringes along glass and shadow edges.</sub>
+      <h3>Lens fringes, subtle to bold</h3>
+      <b>MoxoCraft - Chromatic Aberration</b> recreates the colored fringes real lenses leave along high-contrast edges. Spread them out from a center point like a real lens, or shift them the same way across the whole image for an RGB-split glitch.
+      <br><br>
+      <b>Five fringe types</b>: a smooth spectral rainbow, an RGB split, and red/cyan, green/magenta (purple fringing) and blue/yellow, from crisp copies to smooth gradients. The <a href="docs/chromatic-aberration.md">guide</a> has four recipes to start from.
+    </td>
+    <td width="50%" valign="top">
+      <img src="docs/images/readme/luts.jpg" alt="A studio portrait of three women split into three diagonal panels, each with a different look" width="100%">
+      <br>
+      <sub>Colorful - Turquoise, Film - Kodak Portra 800 (Push 2) and Scenic - Tension Warm.</sub>
+      <h3>147 ready-made looks</h3>
+      Three LUT filters, each with an <b>Intensity</b> slider: <b>MoxoCraft - Film LUTs</b> for film stocks (color negative, slide and instant films, and Fujifilm-style camera looks), <b>MoxoCraft - Cinematic LUTs</b> for movie-style grades, moody and vintage looks, and black-and-white films, and <b>MoxoCraft - Creative LUTs</b> for colorful, scenic and experimental looks.
+      <br><br>
+      <b>59 film, 52 cinematic and 36 creative looks</b>, all listed under <a href="#all-147-looks">All 147 looks</a>.
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <h3>Snow with depth</h3>
+      <b>MoxoCraft - Snow</b> draws snow the way it looks in a real photo: far flakes small, sharp and many; near flakes few, large and out of focus. Sharp flakes are irregular clumps, blurred ones soft discs, and falling flakes drift and tumble rather than drop like rain.
+      <br><br>
+      Sizes follow the picture rather than pixels, so the same settings give the same look on any photo.
+    </td>
+    <td width="50%" valign="top">
+      <h3>Snow in front, snow behind</h3>
+      Split the snow at your subject's distance into a far layer and a near layer, then mask the far one behind your subject with <b>Select › Subject</b>. Or turn a depth map into snow that hides wherever the scene is nearer than each flake.
+      <br><br>
+      Run Snow on an empty layer to keep it separate, where you can mask, move or fade it. <a href="#snow-behind-your-subject">How it works</a>.
+    </td>
+  </tr>
+</table>
+
+<br>
+
+## All 147 looks
+
+<table>
+  <tr>
+    <th align="left">Filter</th>
+    <th align="left">Group</th>
+    <th align="left">What's in it</th>
+  </tr>
+  <tr>
+    <td rowspan="5" valign="top"><b>Film LUTs</b><br><sub>59 looks</sub></td>
+    <td valign="top"><b>Film</b></td>
+    <td>Kodak Portra 160, 400 and 800 (plus 800 pushed one and two stops), Gold 200, Ultramax 400 and Ektar 100 on Portra Endura paper; Fujifilm C200, Pro 400H and X-Tra 400 on Crystal Archive paper; and Kodak Vision3 50D, 250D, 200T and 500T on 2383 print film for the classic movie look. Simulated from measured film data.</td>
+  </tr>
+  <tr>
+    <td valign="top"><b>Negative</b></td>
+    <td>More color negative films, among them Agfa Vista, Fujifilm Superia and Pro 160C/800Z, Kodak Portra NC/VC/UC, a cross-processed Kodak Elite and Lomography Redscale.</td>
+  </tr>
+  <tr>
+    <td valign="top"><b>Slide</b></td>
+    <td>Fujifilm Velvia, Provia, Astia and Sensia, Kodak Kodachrome 64, Ektachrome and Elite Chrome, Agfa Precisa, Polaroid Polachrome and a Lomography cross-process slide film.</td>
+  </tr>
+  <tr>
+    <td valign="top"><b>Instant</b></td>
+    <td>Polaroid 665, 669, 690, PX-70, PX-680, PX-100UV+ and an expired Time Zero, and Fujifilm FP-100C and FP-3000B.</td>
+  </tr>
+  <tr>
+    <td valign="top"><b>Fujifilm Style</b></td>
+    <td>The look of Fujifilm cameras' Acros, Classic Chrome, Provia Standard and Velvia Vivid modes.</td>
+  </tr>
+  <tr>
+    <td rowspan="4" valign="top"><b>Cinematic LUTs</b><br><sub>52 looks</sub></td>
+    <td valign="top"><b>Cinematic</b></td>
+    <td>Teal-and-orange and other blockbuster grades, plus warm, cool, neon and sunset looks.</td>
+  </tr>
+  <tr>
+    <td valign="top"><b>Moody</b></td>
+    <td>Dark, dramatic grades: icy, emerald, noir, night and horror looks.</td>
+  </tr>
+  <tr>
+    <td valign="top"><b>Vintage</b></td>
+    <td>Faded and retro film looks, and grades for the 1920s, 1930s, 1960s, 1970s and 1980s.</td>
+  </tr>
+  <tr>
+    <td valign="top"><b>Black &amp; White</b></td>
+    <td>Ilford HP5, FP4, Pan F and Delta 3200, Kodak Tri-X, T-Max and HIE infrared, Agfa APX, Fujifilm Neopan and Rollei Retro.</td>
+  </tr>
+  <tr>
+    <td rowspan="3" valign="top"><b>Creative LUTs</b><br><sub>36 looks</sub></td>
+    <td valign="top"><b>Colorful</b></td>
+    <td>Bright and playful color grades.</td>
+  </tr>
+  <tr>
+    <td valign="top"><b>Scenic</b></td>
+    <td>Grades made for landscapes: greens, blues, fog and snow.</td>
+  </tr>
+  <tr>
+    <td valign="top"><b>Creative</b></td>
+    <td>Bold, experimental looks, including false-color infrared and Lomochrome Purple.</td>
+  </tr>
+</table>
+
+<br>
 
 ## Install
 
@@ -48,12 +196,15 @@ press **OK**, and every run is a single undo step.
 - The filters work on RGB images at 8, 16 and 32 bits per channel, with or without transparency.
   Other color modes (Grayscale, CMYK, Lab) show an error instead.
 - They work the same on Windows, macOS, Linux and PhotoCraft in the browser.
-- You can also run them from PhotoCraft's command line, for example on a batch of photos (run
-  from the unzipped MoxoCraft folder):
 
-  ```bash
-  photocraft-cli run photo.jpg --cmd plugin.install --params '{"path":"moxocraft_lut.wasm"}' --cmd plugin.run --params '{"id":"moxocraft.lut","params":{"lut":"Film - Kodak Portra 400","intensity":80}}' --out photo-graded.jpg
-  ```
+### From the command line
+
+You can also run the filters from PhotoCraft's command line, for example on a batch of photos.
+Run this from the unzipped MoxoCraft folder:
+
+```bash
+photocraft-cli run photo.jpg --cmd plugin.install --params '{"path":"moxocraft_lut.wasm"}' --cmd plugin.run --params '{"id":"moxocraft.lut","params":{"lut":"Film - Kodak Portra 400","intensity":80}}' --out photo-graded.jpg
+```
 
 ## MoxoCraft - Chromatic Aberration
 
@@ -93,43 +244,12 @@ more on how Strength blends and how far the colors can move.
 
 Each LUT filter gives your photo a ready-made look. Pick one from the **LUT** list, which is
 grouped by category ("Film - Kodak Portra 400", "Slide - Fujifilm Velvia 50", ...), and set how
-strongly it applies.
+strongly it applies. Every look is listed under [All 147 looks](#all-147-looks).
 
 | Setting | What it does |
 |---|---|
 | **LUT** | Which look to apply. |
 | **Intensity** | How strongly it applies, from 0 (your original) to 100 (the full look). |
-
-**MoxoCraft - Film LUTs**
-
-- **Film**: Kodak Portra 160, 400 and 800 (plus 800 pushed one and two stops), Gold 200,
-  Ultramax 400 and Ektar 100 on Portra Endura paper; Fujifilm C200, Pro 400H and X-Tra 400 on
-  Crystal Archive paper; and Kodak Vision3 50D, 250D, 200T and 500T on 2383 print film for the
-  classic movie look. Simulated from measured film data.
-- **Negative**: more color negative films, among them Agfa Vista, Fujifilm Superia and Pro
-  160C/800Z, Kodak Portra NC/VC/UC, a cross-processed Kodak Elite and Lomography Redscale.
-- **Slide**: Fujifilm Velvia, Provia, Astia and Sensia, Kodak Kodachrome 64, Ektachrome and Elite
-  Chrome, Agfa Precisa, Polaroid Polachrome and a Lomography cross-process slide film.
-- **Instant**: Polaroid 665, 669, 690, PX-70, PX-680, PX-100UV+ and an expired Time Zero, and
-  Fujifilm FP-100C and FP-3000B.
-- **Fujifilm Style**: the look of Fujifilm cameras' Acros, Classic Chrome, Provia Standard and
-  Velvia Vivid modes.
-
-**MoxoCraft - Cinematic LUTs**
-
-- **Cinematic**: teal-and-orange and other blockbuster grades, plus warm, cool, neon and sunset
-  looks.
-- **Moody**: dark, dramatic grades: icy, emerald, noir, night and horror looks.
-- **Vintage**: faded and retro film looks, and a grade for each decade from the 1920s to the
-  1980s.
-- **Black & White**: Ilford HP5, FP4, Pan F and Delta 3200, Kodak Tri-X, T-Max and HIE infrared,
-  Agfa APX, Fujifilm Neopan and Rollei Retro.
-
-**MoxoCraft - Creative LUTs**
-
-- **Colorful**: bright and playful color grades.
-- **Scenic**: grades made for landscapes: greens, blues, fog and snow.
-- **Creative**: bold, experimental looks, including false-color infrared and Lomochrome Purple.
 
 Tips:
 
@@ -258,9 +378,15 @@ lists every LUT with its author, source and license.
 The licenses cover the LUTs themselves, not the photos you make with them. If you share the
 MoxoCraft plug-ins, keep the `luts` folder (licenses, sources and changelog) with them.
 
-Kodak, Fujifilm, Ilford, Agfa, Polaroid, Lomography, Rollei and the film names are trademarks of
-their owners. They are used only to describe the looks simulated; their owners don't endorse
-MoxoCraft.
+The example photos are by [Ian Schneider](https://unsplash.com/@goian) on Unsplash
+([snowy forest](https://unsplash.com/photos/green-pine-trees-during-snow-season-dqMxDqdhg_4)) and
+[Ron Lach](https://www.pexels.com/@ron-lach/) on Pexels
+([glass jars](https://www.pexels.com/photo/makeup-products-beside-a-rock-8128070/) and
+[three women with fruit](https://www.pexels.com/photo/women-in-suits-posing-with-fruits-9463583/)).
+
+<sub>Kodak, Fujifilm, Ilford, Agfa, Polaroid, Lomography, Rollei and the film names are trademarks
+of their owners. They are used only to describe the looks simulated; their owners don't endorse
+MoxoCraft.</sub>
 
 ## Development
 
@@ -276,3 +402,9 @@ cargo test
 covers how the code is organized, previews, benchmarks, adding a filter and releasing.
 [`docs/luts.md`](https://github.com/emilanderss0n/MoxoCraft/blob/main/docs/luts.md) covers the LUT
 files: adding and removing LUTs, re-making them from their sources, and their licenses.
+
+<br>
+
+<p align="center">
+  <sub>Made by <a href="https://moxopixel.com/">MoxoPixel</a> for <a href="https://github.com/storytold/photocraft">PhotoCraft</a>.</sub>
+</p>
