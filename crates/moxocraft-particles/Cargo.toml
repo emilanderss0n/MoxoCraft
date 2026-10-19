@@ -1,0 +1,9 @@
+[package]
+name = "moxocraft-particles"
+description = "The particle engine shared by MoxoCraft's overlay plug-ins: placing particles in depth, drawing them and laying them over the band"
+version.workspace = true
+edition.workspace = true
+publish = false
+
+[dependencies]
+moxocraft-sdk.workspace = true

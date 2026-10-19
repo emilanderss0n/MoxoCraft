@@ -175,8 +175,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "moxocraft-particles"
+version = "0.2.1"
+dependencies = [
+ "moxocraft-sdk",
+]
+
+[[package]]
 name = "moxocraft-sdk"
 version = "0.2.1"
+
+[[package]]
+name = "moxocraft-snow"
+version = "0.2.1"
+dependencies = [
+ "moxocraft-particles",
+ "moxocraft-sdk",
+ "png",
+]
 
 [[package]]
 name = "png"

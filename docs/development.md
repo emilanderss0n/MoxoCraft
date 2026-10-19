@@ -26,10 +26,12 @@ sources and changelog into `dist/luts/`, which must travel with the plug-ins. `d
 ```text
 crates/moxocraft-sdk/          shared plug-in plumbing every filter uses
 crates/moxocraft-lut-core/     the LUT engine the three LUT plug-ins share
+crates/moxocraft-particles/    the particle engine the overlay plug-ins (Snow) share
 filters/chromatic-aberration/  MoxoCraft - Chromatic Aberration
 filters/lut/                   MoxoCraft - Film LUTs      (its LUTs are in luts/film-luts)
 filters/lut-cinematic/         MoxoCraft - Cinematic LUTs (luts/cinematic-luts)
 filters/lut-creative/          MoxoCraft - Creative LUTs  (luts/creative-luts)
+filters/snow/                  MoxoCraft - Snow
 luts/                          the LUT files, one folder per LUT plug-in, plus their licences,
                                sources and changelog (see luts.md)
 tools/import-luts/             Python: imports the third-party LUTs into luts/ (see luts.md)
@@ -40,8 +42,8 @@ tools/release.ps1              publishes a GitHub release (see Releasing)
 build.ps1                      builds every filter into dist/
 ```
 
-Dependencies only point one way: filters depend on `moxocraft-lut-core` and `moxocraft-sdk`,
-`moxocraft-lut-core` depends on `moxocraft-sdk`, and the SDK depends on nothing. The tools depend
+Dependencies only point one way: filters depend on `moxocraft-lut-core`, `moxocraft-particles`
+and `moxocraft-sdk`, the two engines depend on `moxocraft-sdk`, and the SDK depends on nothing. The tools depend
 on the crates and plug-ins they work with; no plug-in depends on a tool.
 
 ### `moxocraft-sdk`: what every filter is built on
@@ -84,6 +86,41 @@ build time (the plug-in's build.rs, native code)       run time (inside the .was
 `lut_pack!` is a macro because the baked files sit in each plug-in crate's own `OUT_DIR`, and
 `include!` can only reach them from code written in that crate.
 
+### `moxocraft-particles`: everything the particle plug-ins share
+
+The overlay plug-ins draw particles (snowflakes now; raindrops, dust and embers next). Each one
+decides what its particles look like; the engine places them, draws them and lays them over the
+band. Everything is measured in units of the picture's longer side, so a plug-in looks the same
+at any size and on PhotoCraft's reduced live preview, which tells plug-ins the reduced size.
+
+| File | What it does |
+|---|---|
+| `scatter.rs` | where the particles sit: depth slices from the lens (0) to far away (1), each a grid of cells whose particles come from a hash of the cell, so every band agrees on every particle; also the work budget that keeps the heaviest settings inside PhotoCraft's time limit |
+| `lens.rs` | how a particle's depth changes its size and blur, focused at Subject Depth |
+| `draw.rs` | `Dab`, one particle's shape (a soft disc, round or oval, or a streak along a `Motion` path that can curve and flicker; fainter when spread out), and `Coverage`, the band-sized buffer the particles are drawn into |
+| `depth.rs` | the Depth list every particle plug-in shares, and reading a depth map |
+| `render.rs` | one band from start to finish: check it, draw, then lay the particles over it (or replace it, with a depth map) |
+| `hash.rs` | random-looking numbers that come out the same in every band |
+
+A plug-in implements `Population` (how many particles there are at each depth, how far they
+reach and roughly how much drawing they take) and calls `render` with a function that turns each
+`Spot` from `Scatter::for_each` into a `Dab`. Manifests ask for `"area": "canvas"`, so the
+plug-ins also run on an empty layer, and for no overlap: no band needs its neighbours' pixels.
+
+Two rules keep bands seamless: every position is worked out in document pixels the same way in
+every band, and `Population::reach` must never be smaller than how far a particle really
+reaches, or a band skips a particle that pokes into it. The seam tests run long streaks across
+narrow bands to catch that.
+
+PhotoCraft divides settings named like pixel lengths (`size`, `blur`, `speed`, `radius`…) by the
+preview's reduction, so particle plug-ins must not use those names; their tests check it.
+
+### `filters/snow`
+
+`lib.rs` holds the manifest and the `Filter` entry point, `settings.rs` reads the dialog, and
+`flake.rs` decides what a flake looks like (an oval clump of up to three blobs when sharp, a
+drifting, curving, flickering streak when moving) and holds Snow's `Population`.
+
 ### `filters/chromatic-aberration`
 
 `lib.rs` holds the manifest and the `Filter` entry point; the rest follows a band through the
@@ -106,6 +143,16 @@ cargo run --release -p moxocraft-chromatic-aberration --example preview
 
 Renders a test scene and several looks into `target/preview/` (add `out-dir width height` to
 change the folder or size). These match PhotoCraft's own output to within one level in 255.
+
+```bash
+cargo run --release -p moxocraft-snow --example preview [out-dir] [photo.png [depth.png] | 6000x4000]
+```
+
+Renders Snow at several settings into `target/preview-snow/`: on a test street scene with its own
+depth map (1500 × 1000, or the size given, to judge flakes at full size), or on a PNG of your own
+(with its depth map, if you have one). It also builds the two
+layered results the README describes, near and far layers and a depth map turned into snow.
+These match PhotoCraft's output to within one level in 255.
 
 ```bash
 cargo run --release -p moxocraft-lut-preview -- photo.png

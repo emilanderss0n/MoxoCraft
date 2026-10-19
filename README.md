@@ -10,6 +10,8 @@ photo editor. MoxoCraft adds these filters under **Filter › Plug-ins**:
 - **MoxoCraft - Cinematic LUTs**: movie-style grades, moody and vintage looks, and black-and-white
   films.
 - **MoxoCraft - Creative LUTs**: colourful, scenic and experimental looks.
+- **MoxoCraft - Snow**: falling snow with depth: small sharp flakes far away, large soft ones
+  close to the camera, and ways to put the snow behind your subject.
 
 Together the three LUT filters hold 147 looks.
 
@@ -22,8 +24,8 @@ Linux and PhotoCraft in the browser.
 1. Download `MoxoCraft-<version>.zip` from the latest
    [release](https://github.com/emilanderss0n/MoxoCraft/releases/latest) and unzip it somewhere
    you'll keep it. It holds the plug-in files (`moxocraft_chromatic_aberration.wasm`,
-   `moxocraft_lut.wasm`, `moxocraft_lut_cinematic.wasm` and `moxocraft_lut_creative.wasm`), plus a
-   `luts` folder with the LUTs' licences, credits and sources.
+   `moxocraft_lut.wasm`, `moxocraft_lut_cinematic.wasm`, `moxocraft_lut_creative.wasm` and
+   `moxocraft_snow.wasm`), plus a `luts` folder with the LUTs' licences, credits and sources.
 2. In PhotoCraft, either:
    - go to **Filter › Plug-ins › Install Plug-in…** and pick each `.wasm` file, or
    - go to **Edit › Preferences › Plug-ins**, turn on **Use Additional Plug-ins Folder** and point
@@ -172,6 +174,70 @@ Tips:
 - For more control, apply it to a duplicate layer and lower that layer's opacity or paint a
   mask.
 
+## MoxoCraft - Snow
+
+Falling snow with depth, the way it looks in a real photo: flakes far behind your subject are
+small and many, flakes close to the camera few, large and out of focus. In-focus flakes are
+irregular clumps, out-of-focus ones soft discs like a lens draws them, and falling flakes drift
+and tumble rather than drop straight like rain. Sizes are measured against the picture rather
+than in pixels, so the same settings give the same look on any photo, and the live preview
+matches the result.
+
+Run it on an empty layer (**Layer › New › Layer…**) to keep the snow on a layer of its own, where
+you can mask, move or fade it. It looks exactly the same as running it on the photo.
+
+| Setting | What it does |
+|---|---|
+| **Amount** | How much snow. Raising it adds flakes without moving the ones already there. |
+| **Flake Size** | How big the flakes at your subject's distance are. Every 25 doubles their size. |
+| **Defocus** | How blurry flakes get away from your subject, like a lens opened wide. Flakes in front of the subject blur the most; 0 keeps every flake sharp. |
+| **Motion** | 0 freezes the flakes. Higher values streak them, as if they fell while the shutter was open; near flakes streak the most, and each streak flickers a little as its flake tumbles. |
+| **Angle** | Which way the snow falls, in degrees from straight down; positive values lean it to the right. Only does anything when Motion is above 0. |
+| **Swirl** | How much falling flakes wander from that direction and curve: 0 for heavy, wet snow falling straight, 100 for light snow swirling in the wind. Only does anything when Motion is above 0. |
+| **Tint** | The flakes' colour: *White*, *Cool* (blue, as in shade or at dusk) or *Warm* (lit by streetlights or a low sun). |
+| **Opacity** | How strongly the snow shows, from 0 to 100. The same as lowering the opacity of a layer holding the snow. |
+| **Depth** | *None* draws all the snow. *Near Only* and *Far Only* draw only the flakes in front of or behind Subject Depth. *Depth Map* and *Depth Map (Inverted)* turn a depth map into snow. Both are explained below. |
+| **Subject Depth** | How far away your subject is, from 0 (at the lens) to 100 (as far as the snow goes). Flakes at that distance are the sharpest, and Near Only and Far Only split the snow there. |
+| **Variation** | Picks a different random layout. The other settings don't move the flakes, so you can get the look right first and then try layouts. |
+
+### Snow behind your subject
+
+A plug-in can't tell what's near or far in a photo, so on its own Snow puts every flake in front
+of everything. There are two ways to put some of it behind your subject.
+
+**Near and far layers.** This needs nothing outside PhotoCraft.
+
+1. Set **Subject Depth** to roughly where your subject stands.
+2. Add an empty layer and run Snow with **Depth** set to *Far Only*.
+3. Select your subject (**Select › Subject**, or any selection tool), choose **Select › Inverse**,
+   then **Layer › Layer Mask › Reveal Selection**. The far snow now goes behind your subject.
+4. Add another empty layer on top and run Snow again with the same settings and **Depth** set to
+   *Near Only*.
+
+The two layers together hold exactly the snow *None* draws.
+
+**A depth map.** This handles any scene, but you need a depth map: a greyscale picture of how far
+away each part of your photo is. Depth-estimation tools such as Depth Anything make one from a
+photo.
+
+1. Put the depth map on a layer of its own, lined up with your photo and the same size.
+2. Run Snow on that layer with **Depth** set to *Depth Map*. The layer turns into snow, each flake
+   hidden wherever the scene is nearer than the flake.
+
+*Depth Map* expects white for near and black for far, as most tools make them; use
+*Depth Map (Inverted)* for a map the other way round. Duplicate the depth map first if you want
+to use it again.
+
+Tips:
+
+- Snow shows best against darker backgrounds, as it does in real photos.
+- For light snow, try **Amount** 20–30 and **Defocus** 20. For a blizzard, try **Amount** 80–100,
+  **Motion** 40–60, **Angle** 30–60 and **Swirl** 60–80.
+- For a dreamy look, raise **Defocus** to 70–90 and **Flake Size** to 60–70: near flakes turn into
+  large, soft discs.
+- **Motion** streaks look best in small amounts (10–40). Real falling snow rarely streaks far.
+- Sharp flakes show their clumpy shapes best at full size. Zoomed out, every flake looks round.
+
 ## Good to know
 
 - All the filters work on RGB images at 8, 16 and 32 bits per channel, with or without
@@ -180,7 +246,12 @@ Tips:
 - On a 24-megapixel photo, Chromatic Aberration takes roughly 10–15 seconds on a fast 16-thread
   computer and up to about 35 seconds on a 4-core one; the LUT filters take 1–4 seconds.
   With **Strength** between 0 and 100, Chromatic Aberration takes up to about 20% longer.
-  PhotoCraft runs plug-ins in a safe, sandboxed way that is slower than its built-in filters.
+  Snow takes under a second at its default settings and a couple of seconds for heavy snow; with
+  every setting at its largest, up to about 5 seconds on a fast 16-thread computer and 20 on a
+  4-core one. PhotoCraft runs plug-ins in a safe, sandboxed way that is slower than its built-in
+  filters.
+- With very large, blurred and streaked flakes at a high **Amount**, Snow limits how many flakes
+  it draws so it finishes in time. Past that point, raising **Amount** adds nothing more.
 - Make a selection first to apply a filter to part of the image only; feathered selections blend
   smoothly, as with PhotoCraft's own filters.
 - You can also run the filters from PhotoCraft's command line, for example on a batch of photos
