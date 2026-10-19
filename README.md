@@ -1,6 +1,4 @@
 <p align="center">
-  <img alt="" src="docs/brand/moxocraft-mark.webp" width="112">
-  <br><br>
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/brand/moxocraft-logo-white.webp">
     <img alt="MoxoCraft" src="docs/brand/moxocraft-logo.webp" width="420">
@@ -211,9 +209,10 @@ photocraft-cli run photo.jpg --cmd plugin.install --params '{"path":"moxocraft_l
 Real lenses bend red, green and blue light by slightly different amounts, which leaves colored
 fringes along high-contrast edges. This filter recreates that, from barely there to bold.
 
-The dialog always shows every setting, whichever **Mode** you pick. **Clear Center**,
-**Falloff** and **Center X / Y** only do anything in *Lens* mode, and **Angle** only in
-*Directional* mode.
+> [!NOTE]
+> The dialog always shows every setting, whichever **Mode** you pick. **Clear Center**,
+> **Falloff** and **Center X / Y** only do anything in *Lens* mode, and **Angle** only in
+> *Directional* mode.
 
 | Setting | Mode | What it does |
 |---|---|---|
@@ -344,10 +343,11 @@ With 4 cores running two threads each, Chromatic Aberration's heaviest settings 
 seconds. **Strength** between 0 and 100 adds about 20% at light settings, but only 1–2 seconds at
 the heaviest. The LUT filters take about 1–4 seconds.
 
-Chromatic Aberration's smooth fringes are the slow part. On a computer slower than this one with
-only 4 threads, they can go past the 60-second limit; PhotoCraft then stops the filter and leaves
-the image as it was. Crisp fringes (**Softness** 0) are much quicker: the RGB Glitch recipe took 2
-seconds on 16 threads and 10 on 4 cores.
+> [!IMPORTANT]
+> Chromatic Aberration's smooth fringes are the slow part. On a computer slower than this one with
+> only 4 threads, they can go past the 60-second limit; PhotoCraft then stops the filter and leaves
+> the image as it was. Crisp fringes (**Softness** 0) are much quicker: the RGB Glitch recipe took 2
+> seconds on 16 threads and 10 on 4 cores.
 
 ## Credits
 
@@ -375,8 +375,9 @@ lists every LUT with its author, source and license.
 - **Scenic**: also Tension Warm, Tension Cold and Krakow by
   [Christoph Wurst](https://github.com/ChristophWurst/haldclut) ([CC BY-SA 4.0](luts/CC-BY-SA-4.0.txt)).
 
-The licenses cover the LUTs themselves, not the photos you make with them. If you share the
-MoxoCraft plug-ins, keep the `luts` folder (licenses, sources and changelog) with them.
+> [!IMPORTANT]
+> The licenses cover the LUTs themselves, not the photos you make with them. If you share the
+> MoxoCraft plug-ins, keep the `luts` folder (licenses, sources and changelog) with them.
 
 The example photos are by [Ian Schneider](https://unsplash.com/@goian) on Unsplash
 ([snowy forest](https://unsplash.com/photos/green-pine-trees-during-snow-season-dqMxDqdhg_4)) and
@@ -406,5 +407,6 @@ files: adding and removing LUTs, re-making them from their sources, and their li
 <br>
 
 <p align="center">
+  <img alt="MoxoCraft" src="docs/brand/moxocraft-mark.webp" width="40"><br>
   <sub>Made by <a href="https://moxopixel.com/">MoxoPixel</a> for <a href="https://github.com/storytold/photocraft">PhotoCraft</a>.</sub>
 </p>
