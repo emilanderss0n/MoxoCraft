@@ -5,6 +5,7 @@ members = [
     "crates/moxocraft-lut-core",
     "crates/moxocraft-particles",
     "filters/chromatic-aberration",
+    "filters/floating-particles",
     "filters/lut",
     "filters/lut-cinematic",
     "filters/lut-creative",

@@ -17,6 +17,7 @@ The LUT files, where they come from and how to add or remove them are covered in
 cargo test                                                       run all the tests
 cargo run --release -p moxocraft-chromatic-aberration --example preview   Chromatic Aberration previews
 cargo run --release -p moxocraft-snow --example preview-snow     Snow previews
+cargo run --release -p moxocraft-floating-particles --example preview-floating-particles   Floating Particles previews
 cargo run --release -p moxocraft-lut-preview -- photo.png        every LUT on a photo
 cargo run --release -p moxocraft-bench -- dist/<plugin>.wasm '<settings JSON>'   measure speed
 ./tools/release.ps1 -Version <x.y.z> -NotesFile ../notes.md -DryRun   try a release
@@ -44,11 +45,14 @@ without PhotoCraft running.
   own depth map (1500 × 1000 unless a size is given; full size shows the flakes' shapes), or on a
   PNG of your own. It also puts together the layered results the README describes: near and far
   layers, and a depth map turned into snow.
+- `cargo run --release -p moxocraft-floating-particles --example preview-floating-particles [out-dir] [photo.png [depth.png] | 6000x4000]`
+  does the same for Floating Particles into `target/preview-floating-particles/`, on a test scene
+  of a figure among backlit trees.
 - `cargo run --release -p moxocraft-lut-preview -- photo.png` renders every LUT of all three LUT
   plug-ins on a PNG of your own (or a test card) into `target/preview-lut/`, a folder per plug-in.
 
-The LUT previews match PhotoCraft's output exactly; the Chromatic Aberration and Snow previews
-match it to within one level in 255.
+The LUT previews match PhotoCraft's output exactly; the Chromatic Aberration, Snow and Floating
+Particles previews match it to within one level in 255.
 
 ## Measuring speed
 
@@ -66,8 +70,9 @@ comparing against an unchanged build in the same session.
 ```text
 crates/moxocraft-sdk/          shared plug-in plumbing every filter uses
 crates/moxocraft-lut-core/     the LUT engine the three LUT plug-ins share
-crates/moxocraft-particles/    the particle engine the overlay plug-ins (Snow) share
+crates/moxocraft-particles/    the particle engine the overlay plug-ins share
 filters/chromatic-aberration/  MoxoCraft - Chromatic Aberration
+filters/floating-particles/    MoxoCraft - Floating Particles
 filters/lut/                   MoxoCraft - Film LUTs      (its LUTs are in luts/film-luts)
 filters/lut-cinematic/         MoxoCraft - Cinematic LUTs (luts/cinematic-luts)
 filters/lut-creative/          MoxoCraft - Creative LUTs  (luts/creative-luts)
@@ -128,7 +133,7 @@ in [`luts.md`](luts.md#where-each-fact-lives).
 
 ### `moxocraft-particles`
 
-The overlay plug-ins (currently Snow) draw particles. Each plug-in decides what its particles look
+The overlay plug-ins (Snow and Floating Particles) draw particles. Each plug-in decides what its particles look
 like; the engine places them, draws them and lays them over the band. Positions and sizes are
 measured in units of the picture's longer side, so a plug-in looks the same at any size and on
 PhotoCraft's reduced live preview, which tells plug-ins the reduced size.
@@ -163,8 +168,12 @@ preview's reduction, so particle plug-ins must not use those names; their tests 
   afford, and `render.rs` does the pixel passes.
 - **Snow**: `settings.rs` reads the dialog, and `flake.rs` decides what a flake looks like and
   holds Snow's `Population`.
+- **Floating Particles**: `settings.rs` reads the dialog and turns Hue, Saturation and
+  Brightness into a color (PhotoCraft's dialogs have no color picker), and `particle.rs` decides
+  what a particle looks like, gathers particles into clouds for Clustering and holds the
+  plug-in's `Population`.
 
-In both, `lib.rs` holds the manifest and the `Filter` entry point.
+In each, `lib.rs` holds the manifest and the `Filter` entry point.
 
 ## Adding a filter
 

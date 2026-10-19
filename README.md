@@ -6,8 +6,8 @@
 </p>
 
 <p align="center">
-  <b>Creative filters for PhotoCraft: lens fringes, film looks and falling snow.</b><br>
-  Five plug-ins for <a href="https://github.com/storytold/photocraft">PhotoCraft</a>, the free open-source photo editor.
+  <b>Creative filters for PhotoCraft: lens fringes, film looks, falling snow and floating particles.</b><br>
+  Six plug-ins for <a href="https://github.com/storytold/photocraft">PhotoCraft</a>, the free open-source photo editor.
 </p>
 
 <p align="center">
@@ -26,6 +26,7 @@
   <a href="#moxocraft---chromatic-aberration">Chromatic Aberration</a> ·
   <a href="#lut-filters">LUTs</a> ·
   <a href="#moxocraft---snow">Snow</a> ·
+  <a href="#moxocraft---floating-particles">Floating Particles</a> ·
   <a href="#credits">Credits</a>
 </p>
 
@@ -156,9 +157,9 @@
 1. Download `MoxoCraft-<version>.zip` from the latest
    [release](https://github.com/emilanderss0n/MoxoCraft/releases/latest) and unzip it somewhere
    you'll keep it. It holds the plug-in files (`moxocraft_chromatic_aberration.wasm`,
-   `moxocraft_lut.wasm`, `moxocraft_lut_cinematic.wasm`, `moxocraft_lut_creative.wasm` and
-   `moxocraft_snow.wasm`), a `luts` folder with the LUTs' licenses, credits and sources, and a
-   `docs` folder with the Chromatic Aberration guide.
+   `moxocraft_lut.wasm`, `moxocraft_lut_cinematic.wasm`, `moxocraft_lut_creative.wasm`,
+   `moxocraft_snow.wasm` and `moxocraft_floating_particles.wasm`), a `luts` folder with the
+   LUTs' licenses, credits and sources, and a `docs` folder with the Chromatic Aberration guide.
 2. In PhotoCraft, either:
    - go to **Filter › Plug-ins › Install Plug-in…** and pick each `.wasm` file, or
    - go to **Edit › Preferences › Plug-ins**, turn on **Use Additional Plug-ins Folder** and point
@@ -309,6 +310,50 @@ Tips:
 - With very large, blurred and streaked flakes at a high **Amount**, Snow limits how many flakes
   it draws so it finishes in time. Past that point, raising **Amount** adds nothing more.
 
+## MoxoCraft - Floating Particles
+
+Dust, pollen or specks of light floating in the air, with depth: particles far behind your
+subject are small and many, particles close to the camera few, large and out of focus. Sharp
+particles are soft points, and blurred ones are round discs with a faint bright rim, as a lens
+draws them. As with Snow, sizes are measured against the picture rather than in pixels, so the
+same settings give the same look on any photo, and the live preview matches the result.
+
+Run it on an empty layer (**Layer › New › Layer…**) to keep the particles on a layer of their
+own, where you can mask, move or fade them. The result looks the same as running it on the
+photo.
+
+PhotoCraft's filter dialogs have no color picker, so you set the particles' color with the
+**Hue**, **Saturation** and **Brightness** sliders. The default is the warm white of dust in
+sunlight.
+
+| Setting | What it does |
+|---|---|
+| **Amount** | How many particles. Raising it adds particles without moving the ones already there. |
+| **Particle Size** | How big the particles at your subject's distance are. Every 25 doubles their size. |
+| **Size Variety** | How much the particles' sizes differ: 0 makes them all the same size, 100 mixes many tiny specks with a few large ones. |
+| **Defocus** | How blurry particles get away from your subject, like a lens opened wide. Particles in front of the subject blur the most; 0 keeps every particle sharp. |
+| **Glow** | A soft halo around sharp particles, the way bright points bloom in a real photo. Blurred particles get none. |
+| **Clustering** | 0 spreads the particles evenly. Higher values gather them into loose clouds with gaps between, as dust shows only where light catches it. There are about as many particles either way. |
+| **Hue** | The particles' color, in degrees around the color wheel: 0 red, 60 yellow, 120 green, 180 cyan, 240 blue, 300 magenta. |
+| **Saturation** | How strong the color is, from 0 (white or gray) to 100 (the pure hue). |
+| **Brightness** | How light the particles are, from 0 (black) to 100. Keep it high for particles of light; lower it for dark dust or soot. |
+| **Opacity** | How strongly the particles show, from 0 to 100. The same as lowering the opacity of a layer holding them. |
+| **Depth** | The same choices as Snow's. *Near Only* and *Far Only*, or a depth map, put particles behind your subject, exactly as [Snow behind your subject](#snow-behind-your-subject) describes. |
+| **Subject Depth** | How far away your subject is, from 0 (at the lens) to 100 (as far as the particles go). Particles at that distance are the sharpest, and Near Only and Far Only split them there. |
+| **Variation** | Picks a different random layout. The other settings don't move the particles, so you can get the look right first and then try layouts. |
+
+Tips:
+
+- Particles show best against darker backgrounds, like dust in a sunbeam against shade.
+- For dust in sunlight, try **Amount** 50–70, **Particle Size** 30–40 and **Clustering** 60–80.
+- For dreamy bokeh, raise **Defocus** to 80–100 and **Particle Size** to 60–70, and lower
+  **Subject Depth** to 10–20: near particles turn into large, soft discs.
+- For a magical sparkle, try **Glow** 70–100 with a gold (**Hue** 40–50, **Saturation** 60–70)
+  or any color you like. **Saturation** 0 gives white particles.
+- With very large, sharp, glowing particles at a high **Amount**, the filter limits how many
+  particles it draws so it finishes in time. Past that point, raising **Amount** adds nothing
+  more.
+
 ## Speed
 
 PhotoCraft runs plug-ins in a sandbox that keeps them safe but makes them slower than its
@@ -321,10 +366,14 @@ to 4 cores running one thread each:
 | Snow, default settings | under 0.1 s | 0.2 s |
 | Snow, heavy (Amount 100, Flake Size 60, Defocus 50, Motion 40) | 1 s | 4 s |
 | Snow, every setting at its largest | 5 s | 22 s |
+| Floating Particles, default settings | under 0.1 s | 0.2 s |
+| Floating Particles, heavy (Amount 100, Particle Size 70, Defocus 60, Glow 60) | 0.3 s | 1 s |
+| Floating Particles, heaviest settings (Amount, Particle Size, Size Variety and Glow 100, Defocus 0, Subject Depth 100) | 4 s | 14 s |
 | Chromatic Aberration, default settings | 9 s | 41 s |
 | Chromatic Aberration, heaviest settings (*Spectral*, Amount 128, Softness 100, Clear Center 0, Falloff 0.5) | 12–15 s | 48–55 s |
 
-With 4 cores running two threads each, Chromatic Aberration's heaviest settings took 19–22
+With a depth map, Floating Particles' heaviest settings took 4.5 seconds on 16 threads and 19 on 4
+cores. With 4 cores running two threads each, Chromatic Aberration's heaviest settings took 19–22
 seconds. **Strength** between 0 and 100 adds about 20% at light settings, but only 1–2 seconds at
 the heaviest. The LUT filters take about 1–4 seconds.
 

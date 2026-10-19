@@ -20,7 +20,7 @@ Add-Type -AssemblyName System.IO.Compression, System.IO.Compression.FileSystem
 $LicenseBlobHash = '303ba46793ae40c11442d6b94609165325570a91'
 # The plug-ins that ship. build.ps1 builds every crate in filters/; the release stops if what it
 # built and this list don't match, so a new filter is shipped (or left out) on purpose.
-$Plugins = 'moxocraft_chromatic_aberration.wasm', 'moxocraft_lut.wasm', 'moxocraft_lut_cinematic.wasm', 'moxocraft_lut_creative.wasm', 'moxocraft_snow.wasm'
+$Plugins = 'moxocraft_chromatic_aberration.wasm', 'moxocraft_floating_particles.wasm', 'moxocraft_lut.wasm', 'moxocraft_lut_cinematic.wasm', 'moxocraft_lut_creative.wasm', 'moxocraft_snow.wasm'
 # The LUTs' licenses, sources and changelog (every .txt file directly in luts/), which their
 # licenses require to travel with the plug-ins.
 $LutNotices = 'SPEKTRAFILM_LICENSE.txt', 'CC-BY-SA-4.0.txt', 'CC-BY-4.0.txt', 'STRIPED_PURPLE_LICENSE.txt', 'SOURCES.txt', 'CHANGELOG.txt'

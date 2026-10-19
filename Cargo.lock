@@ -135,6 +135,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "moxocraft-floating-particles"
+version = "0.3.1"
+dependencies = [
+ "moxocraft-particles",
+ "moxocraft-sdk",
+ "png",
+]
+
+[[package]]
 name = "moxocraft-lut"
 version = "0.3.1"
 dependencies = [
