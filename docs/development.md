@@ -212,15 +212,16 @@ In each, `lib.rs` holds the manifest and the `Filter` entry point.
 
 The script stops with a message if main has changes or isn't pushed, the version doesn't match,
 the release already exists, the notes are missing the spektrafilm credit or still name an older
-zip, or the README or the Chromatic Aberration guide links to a file that won't be in the zip.
-Otherwise it runs the tests, rebuilds the plug-ins from scratch and packs `MoxoCraft-v<x.y.z>.zip`
-(the plug-ins, the README, the guide and its pictures, and the LUTs' licenses, sources and
-changelog). It writes `SHA256SUMS.txt` with Unix line endings, since `sha256sum -c` rejects
+zip, the Chromatic Aberration guide links to a file that won't be in the zip, or the README links
+to a file that isn't committed. Otherwise it runs the tests, rebuilds the plug-ins from scratch and
+packs `MoxoCraft-v<x.y.z>.zip` (the plug-ins, the Chromatic Aberration guide and its pictures, and
+the LUTs' licenses, sources and changelog). The README and its pictures aren't in the zip, as
+people read them on GitHub. It writes `SHA256SUMS.txt` with Unix line endings, since `sha256sum -c` rejects
 Windows ones, uploads the zip, the `.wasm` files and the checksums as a release of the commit it
 built, then downloads them again and checks each one. `-DryRun` stops before uploading and prints
 the folder holding the files.
 
 Three lists at the top of the script say what ships: `$Plugins` (the `.wasm` files `build.ps1`
 built) and `$LutNotices` (the `.txt` files in `luts/`), which must match what is on disk, and
-`$Docs` (the README's logo, the guide and its pictures), which must hold everything the README
-and the guide link to. Links to the developer docs go to GitHub instead, as those docs aren't in the zip.
+`$Docs` (the guide and its pictures), which must hold everything the guide links to. The guide
+links to the README and the developer docs on GitHub instead, as those aren't in the zip.

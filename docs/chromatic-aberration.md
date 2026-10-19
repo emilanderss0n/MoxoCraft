@@ -1,7 +1,7 @@
 # Chromatic Aberration guide
 
 Recipes and tips for **MoxoCraft - Chromatic Aberration**. The settings are described in the
-[README](../README.md#moxocraft---chromatic-aberration).
+[README](https://github.com/emilanderss0n/MoxoCraft#moxocraft---chromatic-aberration).
 
 ## Recipes
 

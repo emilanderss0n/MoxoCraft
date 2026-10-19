@@ -24,15 +24,13 @@ $Plugins = 'moxocraft_chromatic_aberration.wasm', 'moxocraft_floating_particles.
 # The LUTs' licenses, sources and changelog (every .txt file directly in luts/), which their
 # licenses require to travel with the plug-ins.
 $LutNotices = 'SPEKTRAFILM_LICENSE.txt', 'CC-BY-SA-4.0.txt', 'CC-BY-4.0.txt', 'STRIPED_PURPLE_LICENSE.txt', 'SOURCES.txt', 'CHANGELOG.txt'
-# The logos and pictures the README shows, the guide it links to and the guide's pictures,
-# shipped at the same paths so they work from an unzipped copy. The release stops if the README or
-# the guide links to a file that isn't in the zip.
-$Docs = 'docs/brand/moxocraft-mark.webp', 'docs/brand/moxocraft-logo.webp', 'docs/brand/moxocraft-logo-white.webp',
-    'docs/images/readme/snow.jpg', 'docs/images/readme/floating-particles.jpg', 'docs/images/readme/chromatic-aberration.jpg', 'docs/images/readme/luts.jpg',
-    'docs/chromatic-aberration.md', 'docs/images/chromatic-aberration/subtle-lens.jpg', 'docs/images/chromatic-aberration/purple-fringing.jpg', 'docs/images/chromatic-aberration/dreamy-spectral.jpg', 'docs/images/chromatic-aberration/rgb-glitch.jpg'
+# The Chromatic Aberration guide and its pictures, shipped at the same paths so the guide works
+# from an unzipped copy. The release stops if the guide links to a file that isn't in the zip. The
+# README and its pictures aren't shipped: people read them on GitHub.
+$Docs = 'docs/chromatic-aberration.md', 'docs/images/chromatic-aberration/subtle-lens.jpg', 'docs/images/chromatic-aberration/purple-fringing.jpg', 'docs/images/chromatic-aberration/dreamy-spectral.jpg', 'docs/images/chromatic-aberration/rgb-glitch.jpg'
 
-# Where a relative link in the zipped file $From leads, as a path inside the zip, or $null if it
-# leads out of it.
+# Where a relative link in the file $From leads, as a path from the repo's root (which is also the
+# zip's folder), or $null if it leads out of it.
 function Resolve-ZipLink([string]$From, [string]$Link) {
     $parts = New-Object System.Collections.Generic.List[string]
     foreach ($part in ((Split-Path $From -Parent).Replace('\', '/') + '/' + $Link).Split('/')) {
@@ -180,25 +178,31 @@ try {
     if ($otherZips) { Fail "the notes mention $(($otherZips | Select-Object -Unique) -join ', ') instead of $Name.zip" }
     Write-Host "  $NotesFile looks right"
 
-    # Checked early too. The README and the guide ship in the zip, so their relative links and
-    # pictures (Markdown, or HTML src, srcset and href) must point at files that ship with them
-    # (links to websites are fine).
+    # Checked early too. Relative links and pictures (Markdown, or HTML src, srcset and href) must
+    # lead somewhere; links to websites are fine. The guide ships in the zip, so its links must point
+    # at files that ship with it. The README doesn't ship, but GitHub shows it at this commit, so
+    # its links must point at files committed here.
     Step 'Checking the documentation links'
-    $shipped = @('README.md') + $Docs + ($LutNotices | ForEach-Object { "luts/$_" })
+    $shipped = $Docs + ($LutNotices | ForEach-Object { "luts/$_" })
     foreach ($file in $Docs) {
         if (-not (Test-Path -LiteralPath (Join-Path $Root $file) -PathType Leaf)) { Fail "$file, listed in `$Docs, doesn't exist" }
     }
+    $committed = (Invoke-Git @('-c', 'core.quotepath=off', 'ls-files')) -split "`n"
     foreach ($page in @('README.md') + @($Docs | Where-Object { $_ -like '*.md' })) {
         $text = [regex]::Replace([IO.File]::ReadAllText((Join-Path $Root $page)), '(?s)```.*?```', '')
         $targets = @([regex]::Matches($text, '!?\[[^\]]*\]\(([^)\s]+)\)') | ForEach-Object { $_.Groups[1].Value })
         $targets += @([regex]::Matches($text, '(?:src|srcset|href)="([^"\s,]+)') | ForEach-Object { $_.Groups[1].Value })
         foreach ($target in $targets) {
             if ($target -match '^(https?:|mailto:|#)') { continue }
-            $inZip = Resolve-ZipLink $page ($target -split '#')[0]
-            if ($shipped -notcontains $inZip) { Fail "$page links to $target, which isn't in the zip; add it to `$Docs or link to it on GitHub" }
+            $path = Resolve-ZipLink $page ($target -split '#')[0]
+            if ($page -eq 'README.md') {
+                if ($committed -notcontains $path) { Fail "README.md links to $target, which isn't committed in the repo" }
+            } elseif ($shipped -notcontains $path) {
+                Fail "$page links to $target, which isn't in the zip; add it to `$Docs or link to it on GitHub"
+            }
         }
     }
-    Write-Host "  README.md and $(@($Docs | Where-Object { $_ -like '*.md' }).Count) guide(s) only link to files in the zip"
+    Write-Host "  README.md only links to committed files, and $(@($Docs | Where-Object { $_ -like '*.md' }).Count) guide(s) only to files in the zip"
 
     # 3. Test, then build from scratch so nothing stale ends up in the release. --locked stops if
     # Cargo.lock still has the old version, which would otherwise change during the build.
@@ -221,7 +225,7 @@ try {
     $after = (Invoke-Git @('status', '--porcelain')) -split "`n" | Where-Object { $_ -and $_ -ne '?? .idea/' }
     if ($after) { Fail "the build changed files in the repo, so the release wouldn't match the commit:`n$($after -join "`n")" }
 
-    # 4. Package. The zip holds one folder with the plug-ins, the README, the guide and its
+    # 4. Package. The zip holds one folder with the plug-ins, the Chromatic Aberration guide and its
     # pictures, and the LUT notices; the plug-ins are also uploaded on their own.
     Step 'Packaging'
     $work = Join-Path ([IO.Path]::GetTempPath()) ("$Name-" + [IO.Path]::GetRandomFileName().Replace('.', ''))
@@ -234,7 +238,6 @@ try {
     $contents = [ordered]@{}
     foreach ($file in $Plugins) { $contents["$Name/$file"] = Join-Path $Root "dist/$file" }
     foreach ($file in $LutNotices) { $contents["$Name/luts/$file"] = Join-Path $Root "luts/$file" }
-    $contents["$Name/README.md"] = Join-Path $Root 'README.md'
     foreach ($file in $Docs) { $contents["$Name/$file"] = Join-Path $Root $file }
 
     $licenseSource = Join-Path $Root 'luts/SPEKTRAFILM_LICENSE.txt'
