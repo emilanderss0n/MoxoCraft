@@ -15,7 +15,7 @@ members = [
 
 # The one version number for every plug-in: their manifests take it from here at build time.
 [workspace.package]
-version = "0.2.1"
+version = "0.3.0"
 edition = "2024"
 
 [workspace.dependencies]
