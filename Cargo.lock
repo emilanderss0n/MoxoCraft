@@ -120,7 +120,7 @@ dependencies = [
 
 [[package]]
 name = "moxocraft-bench"
-version = "0.3.1"
+version = "0.4.0"
 dependencies = [
  "moxocraft-sdk",
  "wasmi",
@@ -128,7 +128,7 @@ dependencies = [
 
 [[package]]
 name = "moxocraft-chromatic-aberration"
-version = "0.3.1"
+version = "0.4.0"
 dependencies = [
  "moxocraft-sdk",
  "png",
@@ -136,7 +136,7 @@ dependencies = [
 
 [[package]]
 name = "moxocraft-floating-particles"
-version = "0.3.1"
+version = "0.4.0"
 dependencies = [
  "moxocraft-particles",
  "moxocraft-sdk",
@@ -145,35 +145,35 @@ dependencies = [
 
 [[package]]
 name = "moxocraft-lut"
-version = "0.3.1"
+version = "0.4.0"
 dependencies = [
  "moxocraft-lut-core",
 ]
 
 [[package]]
 name = "moxocraft-lut-cinematic"
-version = "0.3.1"
+version = "0.4.0"
 dependencies = [
  "moxocraft-lut-core",
 ]
 
 [[package]]
 name = "moxocraft-lut-core"
-version = "0.3.1"
+version = "0.4.0"
 dependencies = [
  "moxocraft-sdk",
 ]
 
 [[package]]
 name = "moxocraft-lut-creative"
-version = "0.3.1"
+version = "0.4.0"
 dependencies = [
  "moxocraft-lut-core",
 ]
 
 [[package]]
 name = "moxocraft-lut-preview"
-version = "0.3.1"
+version = "0.4.0"
 dependencies = [
  "moxocraft-lut",
  "moxocraft-lut-cinematic",
@@ -185,18 +185,18 @@ dependencies = [
 
 [[package]]
 name = "moxocraft-particles"
-version = "0.3.1"
+version = "0.4.0"
 dependencies = [
  "moxocraft-sdk",
 ]
 
 [[package]]
 name = "moxocraft-sdk"
-version = "0.3.1"
+version = "0.4.0"
 
 [[package]]
 name = "moxocraft-snow"
-version = "0.3.1"
+version = "0.4.0"
 dependencies = [
  "moxocraft-particles",
  "moxocraft-sdk",
