@@ -33,21 +33,17 @@
 
 <table>
   <tr>
-    <td width="25%" valign="top">
+    <td width="33%" valign="top">
       <h3>Live preview</h3>
       <p>Every filter previews on your image while you adjust it. Nothing changes until you press <b>OK</b>, and each run is a single undo step.</p>
     </td>
-    <td width="25%" valign="top">
+    <td width="33%" valign="top">
       <h3>Works on selections</h3>
       <p>Make a selection to filter only part of the image. Feathered selections blend smoothly, as with PhotoCraft's own filters.</p>
     </td>
-    <td width="25%" valign="top">
+    <td width="33%" valign="top">
       <h3>Any RGB image</h3>
       <p>8, 16 and 32 bits per channel, with or without transparency.</p>
-    </td>
-    <td width="25%" valign="top">
-      <h3>Every platform</h3>
-      <p>The same results on Windows, macOS, Linux and in the browser, and from PhotoCraft's command line for batches of photos.</p>
     </td>
   </tr>
 </table>
